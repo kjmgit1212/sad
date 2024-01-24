@@ -1,0 +1,101 @@
+<html>
+
+<head>
+<title>Connector Event Notification API Example</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta name=author content="Alexander Amies">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Connector Event Notification API Example</h1>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+The file <a
+href="../src/examples/serviceprovider/eventNotification/EventNotifier.java">EventNotifier.java</a>
+illustrates how to use the connector event notification API &nbsp;<br>
+<br>
+<b>Building and Deploying the Example</b></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the
+examples.jar file created by the build process to the application server's
+classpath by following the instructions given in <a href="../../Classpath.html">Adding
+examples.jar to Classpath</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To build the
+examples follow the instructions given in <a href="../../Building.html">Building
+the Examples</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Copy the JSP and
+CSS files in the webfiles directory to </span><code><i><span style='font-size:
+10.0pt;color:black'>WAS_HOME/profiles/[profile]/installedApps/[cell]/ITIM.ear/itim_console.war/.</span></i></code><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+<b>Running the Example</b></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This example will
+only work with older DAML services like the WinLocal service.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The example is a
+web application that displays an html user interface to enter test data. Use a
+web browser to request the URL http://host:port/itim/console/eventtest1of3.jsp.
+&nbsp;<br>
+<br>
+If you have difficulty with JSP compilation, run the utility
+JspBatchCompiler.bat from the WAS bin directory to pre-compile the JSP pages.<br>
+<br>
+Enter appropriate values for tenant, service filter, principal, and password
+and submit. That step will locate the service instance. &nbsp;Next select an
+operation from the dropdown. &nbsp;The modify operation test is hard-coded to
+suspend the account specified. &nbsp;Navigate to the ISIM user interface and
+check that the accounts were added, changed, or deleted.<br>
+<br>
+<b>Description of the Code</b><br>
+The event notification API's are a subset of the connector API's used for the
+implementation of communication protocols to endpoints. The API's include
+classes InitialPlatformContext, PlatformContext, and UnsolicitedEventProcessor
+in package com.ibm.itim.remoteservices.provider.<br>
+&nbsp;<br>
+The code containing the calls the the event notification API are in class <a
+href="../src/examples/serviceprovider/eventNotification/AccountEventListener.java">AccountEventListener</a>.
+The other classes are for displaying a web interface and responding to user
+events.<br>
+<br>
+Method getInitialPlatformContext in class AccountEventListener demonstrates how
+to authenticate the the server and get an instance of InitialPlatformContext.
+Method testLookupService() demonstrates how to lookup a service. Method
+processTestEvent() demonstrates methods to process add, delete, and modify
+events.</span></p>
+
+</div>
+
+</body>
+
+</html>

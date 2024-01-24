@@ -1,0 +1,60 @@
+.title {
+ color:#505878;
+ font-family:Arial,Helvetica,sans-serif;
+ font-weight:700;
+ padding:2px 2px 0px;
+}
+.instructions {
+ color:#000000;
+ font-family:Arial,Helvetica,sans-serif;
+ font-size:smaller;
+ padding:0px 2px 3px;
+}
+.entry {
+ font-family:Arial,Helvetica,sans-serif;
+ font-size:smaller;
+ padding-bottom:3px;
+ padding-top:3px;
+ margin-left:10px;
+} 
+input {
+ background-color:#FFFFFF;
+ border-color:#CCCCCC rgb(186, 186, 186) rgb(186, 186, 186) rgb(204, 204, 204);
+ border-style:groove;
+ border-width:2px 1px 1px 2px;
+ font-family:Arial,Helvetica,sans-serif;
+ font-size:smaller;
+ padding:1px; 
+ margin-left:10px;
+}
+button {
+ background-color:#E8E8E8;
+ background-position:center top;
+ background-repeat:repeat-x;
+ border:1px solid #000000;
+ font-family:Arial,Helvetica,sans-serif;
+ font-size:smaller;
+ margin-top:10px;
+ margin-right:4px;
+ over:expression(onmouseover=new Function("this.className='hover';"));
+ out: expression(onmouseout=new Function("this.className='';"));
+}
+button:hover,.hover {
+ background-color:#FFF;
+ color:#039;
+}
+#readwrite_buttons {
+ margin-left:10px;
+}
+.hide {
+ display:none;
+}
+hr {
+ width:100%;
+ color:#505878;
+ height:2px;
+ border:1px solid #505878;
+ clear:both;
+ text-align:left;
+ margin-left:0px;
+}

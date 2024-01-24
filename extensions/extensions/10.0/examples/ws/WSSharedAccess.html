@@ -1,0 +1,295 @@
+<html>
+
+<head>
+<title>Running the WebServices API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Running the WSSharedAccessClient Web Services API Example</h1>
+
+<h2>Overview</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The Java sample <dfn><span
+style='font-family:"Arial","sans-serif"'>WSSharedAccessClient.java</span></dfn>
+source file demonstrates how to access the IBM Security Identity Manager shared
+access Web services (named WSSharedAccessService). </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The sample also
+demonstrate how use the Web Services API to retrieve authorized shared
+credentials, get the password for a shared account, and check in the credential
+from WSSharedAccessService Web services.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>When working with
+the Web Services API, the best practice is to first use the standard IBM
+Security Manager user interface to manually test any operations to be
+performed. <br>
+<br>
+The source code for the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/src</span></dfn>
+directory. The scripts to run the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/win</span></dfn>
+directory for Windows and <dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/unix</span></dfn>
+directory for UNIX. <br>
+<br>
+The following operations are implemented in the sample:</span></p>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>Get
+authorized shared accesses </span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Demostrates
+      calling the getAuthorizedSharedAccess web services method to retrieve all
+      shared credentials authorized for the login user by the Universal
+      Resource Identifier (URI) for a service. </span></li>
+ </ul>
+</ul>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>Get
+password of the credential </span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Demonstrates
+      calling the getCredential web services method to retrieve credential
+      information such as user ID, password, and the lease information (the
+      distinguished name of the lease and expired time). The program asks the
+      user to enter the distinguished name of the credential or credential pool
+      for which the credential information is to be retrieved. </span></li>
+ </ul>
+</ul>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>Check
+in a checkout credential </span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Demonstrates
+      calling the checkIn web services method to check in the checkout
+      credential by the distinguished name of the lease. The program asks the
+      user to enter the distinguished name of the lease to be checked in. </span></li>
+ </ul>
+</ul>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Building the Examples</h2>
+
+<p><a name=build></a><span style='font-family:"Arial","sans-serif";color:black'>To
+build the examples follow the instructions given in <a href="../Building.html">Building
+the Examples</a>. </span></p>
+
+<h2>Installing the Examples on WebSphere</h2>
+
+<p style='margin-bottom:0in;margin-bottom:.0001pt'><span style='font-family:
+"Arial","sans-serif";color:black'>Nothing additional needs to be done if the examples
+are executed from their default location (IBM Security Identity Manager
+installation area). The examples can also be configured to run on a separate
+system. This document does not describe how to set up the examples remotely.
+Refer to the instructions in the API Packaging Guide to configure the IBM
+Security Identity Manager Web Services APIs. </span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Using ws_example_config.properties file</h2>
+
+<p><a name="ws_example_config.properties"></a><span style='font-family:"Arial","sans-serif";
+color:black'>Copy the ws_example_config.properties file from the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples</span></dfn>
+directory to the following locations: <br>
+<br>
+On Windows: <br>
+<dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/win</span></dfn>
+</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+On Unix:<br>
+<dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/unix</span></dfn><br>
+<br>
+Modify the appropriate file and specify the correct host and port values. This
+properties file provides the host and port information to the examples.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Setup data</h2>
+
+<p><a name="ws_example_config.properties0"></a><span style='font-family:"Arial","sans-serif";
+color:black'>Before running the example, make sure the login user is authorized
+for at least one credential or credential pool. You can use the standard IBM
+Security Identity Manager user interface to define a shared access policy and
+authorize the login user to the credentials or credential pools. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Refer to section
+&quot;Manage Shared Access&quot; in the Adminstratation guide for how to define
+a shared access policy and manage a credential or credential pool. </span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Running the WSSharedAccessClient Example</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><a
+href="../Building.html">Build the Examples</a> before running them. Make sure
+the IBM Security Identity Manager server is running. Also verify that the
+values entered for the environment variables <var><span style='font-family:
+"Arial","sans-serif"'>ITIM_USER</span></var> and <var><span style='font-family:
+"Arial","sans-serif"'>ITIM_PSWD</span></var> in the <dfn><span
+style='font-family:"Arial","sans-serif"'>bin/[win/setEnv.bat|unix/setEnv.sh]</span></dfn>
+files have a valid IBM Security Identity Manager user and password.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To invoke the
+WSSharedAccessClient sample, you can execute the accompanying <dfn><span
+style='font-family:"Arial","sans-serif"'>wsSharedAccessClient.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSharedAccessClient.cmd</span></dfn>
+file. Use the following command syntax and argument list to enter the command
+at a command prompt:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 0in 0in 0in'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSharedAccessClient loginID password</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>where
+  loginID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID for logging in to
+  SIM, for example &quot;itim manager&quot;</span><span style='font-family:
+  "Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Password for logging in to SIM </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsSharedAccessClient &quot;itim manager&quot; &quot;secret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After the program
+successfully logs the specified user in to IBM Security Identity Manager, the
+menu selection is displayed. Select one of the following options:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 0in 0in 0in'>
+  <p><span style='font-family:"Arial","sans-serif";color:black'>=======================================================<br>
+  MENU SELECTION :: Shared Access Web Service Client <br>
+  =======================================================<br>
+  Options: <br>
+  1. Get authorized shared accesses<br>
+  2. Get password of the credential<br>
+  3. Check in a checkout credential<br>
+  0. Exit <br>
+  =======================================================</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The following are
+inputs for each option:</span></p>
+
+<p><i><span style='font-family:"Arial","sans-serif";color:black'>Option 1:</span></i><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p style='margin-left:.5in;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>service
+URI - Required. This value must match the eruri attribute of the service, which
+must uniquely identify the service. </span></p>
+
+<p style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'>Note: eruri attribute is not included on service form by default.
+Please use Form Designer to add it to the service form. </span></p>
+
+<p><i><span style='font-family:"Arial","sans-serif";color:black'>Option 2:</span></i><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>distinguished
+name of shared access - Required. This value is displayed in the search result
+of option # 1. </span></p>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>justification
+- Optional. The justification for checking out the credential. </span></p>
+
+<p style='margin-left:.5in;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>duration
+- Optional. The checkout duration. </span></p>
+
+<p><i><span style='font-family:"Arial","sans-serif";color:black'>Option 3:</span></i><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p style='margin-left:.5in;text-indent:-.25in'><span style='font-size:10.0pt;
+font-family:Symbol;color:black'><LI><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-family:"Arial","sans-serif";color:black'>distinguished
+name of the lease - Required. This value is displayed in the output of option #
+2. </span></p>
+
+</div>
+
+</body>
+
+</html>

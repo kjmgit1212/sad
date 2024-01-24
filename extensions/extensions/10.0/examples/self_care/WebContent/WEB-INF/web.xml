@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+      <display-name>expi</display-name>
+      <description>External Portfolio Integration Samples (ITIM)</description>
+      <filter>
+      	<description>
+      	</description>
+      	<display-name>ExpiFilter</display-name>
+      	<filter-name>ExpiFilter</filter-name>
+      	<filter-class>examples.expi.ExpiFilter</filter-class>
+      </filter>
+      <filter-mapping>
+      	<filter-name>ExpiFilter</filter-name>
+      	<url-pattern>/j_security_check</url-pattern>
+      	<dispatcher>FORWARD</dispatcher>
+      	<dispatcher>INCLUDE</dispatcher>
+      	<dispatcher>REQUEST</dispatcher>
+      	<dispatcher>ERROR</dispatcher>
+      </filter-mapping>
+      <servlet id="Servlet_1065208949137">
+         <servlet-name>applicationServlet</servlet-name>
+         <display-name>applicationServlet</display-name>
+         <servlet-class>examples.expi.ApplicationServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949138">
+         <servlet-name>registerServlet</servlet-name>
+         <display-name>registerServlet</display-name>
+         <servlet-class>examples.expi.RegisterServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949139">
+         <servlet-name>selfCareServlet</servlet-name>
+         <display-name>selfCareServlet</display-name>
+         <servlet-class>examples.expi.SelfCareServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949140">
+         <servlet-name>ChangePasswordServlet</servlet-name>
+         <display-name>ChangePasswordServlet</display-name>
+         <servlet-class>examples.expi.ChangePasswordServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949141">
+         <servlet-name>ForgotPasswordServlet</servlet-name>
+         <display-name>ForgotPasswordServlet</display-name>
+         <servlet-class>examples.expi.ForgotPasswordServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949142">
+         <servlet-name>ChangeChallengeResponseServlet</servlet-name>
+         <display-name>ChangeChallengeResponseServlet</display-name>
+         <servlet-class>examples.expi.ChangeChallengeResponseServlet</servlet-class>
+      </servlet>
+      <servlet id="Servlet_1065208949143">
+         <servlet-name>mainServlet</servlet-name>
+         <display-name>mainServlet</display-name>
+         <servlet-class>examples.expi.MainServlet</servlet-class>
+      </servlet>
+      <servlet-mapping id="ServletMapping_1065208952958">
+         <servlet-name>applicationServlet</servlet-name>
+         <url-pattern>/applicationServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952959">
+         <servlet-name>registerServlet</servlet-name>
+         <url-pattern>/registerServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952960">
+         <servlet-name>selfCareServlet</servlet-name>
+         <url-pattern>/selfCareServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952961">
+         <servlet-name>ChangePasswordServlet</servlet-name>
+         <url-pattern>/ChangePasswordServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952962">
+         <servlet-name>ForgotPasswordServlet</servlet-name>
+         <url-pattern>/ForgotPasswordServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952963">
+         <servlet-name>ChangeChallengeResponseServlet</servlet-name>
+         <url-pattern>/ChangeChallengeResponseServlet</url-pattern>
+      </servlet-mapping>
+      <servlet-mapping id="ServletMapping_1065208952964">
+         <servlet-name>mainServlet</servlet-name>
+         <url-pattern>/mainServlet</url-pattern>
+      </servlet-mapping>
+      <welcome-file-list id="WelcomeFileList_1065208952961">
+         <welcome-file>index.html</welcome-file>
+      </welcome-file-list>
+      <security-constraint>
+      	<display-name>SelfCare UI security</display-name>
+      	<web-resource-collection>
+      		<web-resource-name>Protected resources</web-resource-name>
+      		<url-pattern>/*</url-pattern>
+      		<http-method>GET</http-method>
+      		<http-method>POST</http-method>
+      	</web-resource-collection>
+      	<auth-constraint>
+      		<description>
+      		SelfCare client security role</description>
+      		<role-name>SELFCARE_CLIENT</role-name>
+      	</auth-constraint>
+      </security-constraint>
+      <security-constraint>
+      	<display-name>Unproteced resources</display-name>
+      	<web-resource-collection>
+      		<web-resource-name>Unprotected jsp files</web-resource-name>
+      		<url-pattern>/jsp/unprotected/*</url-pattern>
+      		<http-method>GET</http-method>
+      		<http-method>POST</http-method>
+      	</web-resource-collection>
+      	<web-resource-collection>
+      		<web-resource-name>Image files</web-resource-name>
+      		<url-pattern>/images/*</url-pattern>
+      	</web-resource-collection>
+      	<web-resource-collection>
+      		<web-resource-name>css files</web-resource-name>
+      		<url-pattern>/css/*</url-pattern>
+      	</web-resource-collection>
+      	<web-resource-collection>
+      		<web-resource-name>Unprotected html files</web-resource-name>
+      		<url-pattern>/index.html</url-pattern>
+      		<url-pattern>/TivoliIdentityProductsIntegrationSample_readme.html</url-pattern>
+      	</web-resource-collection>
+      	<web-resource-collection>
+      		<web-resource-name>Unprotected servlets</web-resource-name>
+      		<url-pattern>/ChangePasswordServlet</url-pattern>
+      		<url-pattern>/ForgotPasswordServlet</url-pattern>
+      		<url-pattern>/registerServlet</url-pattern>
+      		<http-method>GET</http-method>
+      		<http-method>POST</http-method>
+      	</web-resource-collection>
+      </security-constraint>
+      <login-config>
+      	<auth-method>FORM</auth-method>
+      	<form-login-config>
+      		<form-login-page>/jsp/unprotected/logon.jsp</form-login-page>
+      		<form-error-page>/jsp/unprotected/logon_error.jsp</form-error-page>
+      	</form-login-config>
+      </login-config>
+      <security-role>
+      	<description>
+      	The security role for SelfCare example</description>
+      	<role-name>SELFCARE_CLIENT</role-name>
+      </security-role>
+   </web-app>

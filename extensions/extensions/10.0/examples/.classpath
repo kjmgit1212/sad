@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="apps/src"/>
+	<classpathentry kind="src" path="authentication/src"/>
+	<classpathentry kind="src" path="dataservices/src"/>
+	<classpathentry kind="src" path="identitypolicy/src"/>
+	<classpathentry kind="src" path="javascript/src"/>
+	<classpathentry kind="src" path="mail/src"/>
+	<classpathentry kind="src" path="passwordrules/src"/>
+	<classpathentry kind="src" path="policyanalysis/src"/>
+	<classpathentry kind="src" path="self_care/src"/>
+	<classpathentry kind="src" path="selfregistration/src"/>
+	<classpathentry kind="src" path="serviceprovider/src"/>
+	<classpathentry kind="src" path="workflow/src"/>
+	<classpathentry kind="src" path="ws/src"/>
+	<classpathentry kind="src" path="sa_authority/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_COMMON"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_PUBLIC_API"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_SERVER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_SERVER_API"/>
+	<classpathentry kind="lib" path="/LIB_SUPPORT/was/6/lmproxy.jar"/>
+	<classpathentry kind="lib" path="/EJB_API/ejbModule"/>
+	<classpathentry kind="lib" path="/EJB_APP/ejbModule"/>
+	<classpathentry kind="lib" path="/EJB_MDB/ejbModule"/>
+	<classpathentry kind="lib" path="/EJB_PAGER/ejbModule"/>
+	<classpathentry kind="lib" path="/EJB_WF/ejbModule"/>
+	<classpathentry kind="lib" path="/LIB_SUPPORT/was/6/j2ee.jar"/>
+	<classpathentry kind="lib" path="/ITIM_HOME/data"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_UI_API"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_WSCLIENT"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JAR_WSMODEL"/>
+	<classpathentry kind="lib" path="/LIB_SUPPORT/was/7/com.ibm.jaxws.thinclient_7.0.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.ibm.ws.ast.st.runtime.runtimeTarget.v70/was.base.v7"/>
+	<classpathentry kind="lib" path="C:/Users/precursor/Desktop/itim_ws_model_lib/itim_common.jar"/>
+	<classpathentry kind="lib" path="C:/Users/precursor/Desktop/itim_ws_model_lib/itim_ws_client.jar"/>
+	<classpathentry kind="lib" path="C:/Users/precursor/Desktop/itim_ws_model_lib/itim_ws_model.jar"/>
+	<classpathentry kind="lib" path="C:/Users/precursor/Desktop/itim_ws_model_lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

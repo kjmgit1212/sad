@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Workflow API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR><A HREF="#overview">Overview</A><BR><A HREF="#apiDescription">API
+Description</A><BR><A HREF="#apiExample">API Example</A></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is designed with
+extensibility as a primary goal. Many of the architectural components
+have been built using frameworks that can make use of custom
+extensions. The workflow module is an example of an extensible
+component. In order for customers to build extensions to be called
+from within a running workflow environment, an Application
+Programming Interface (API) for the workflow component has been
+designed to query and even make modifications to this environment.
+This document describes that API.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The Workflow API has been developed to provide the developers of
+custom extensions to Identity Manager a portable and
+backwards-compatible interface to the workflow environment. This
+interface is most beneficial when building custom code that can be
+called from a workflow process as a custom Java application or a
+JavaScript function (see the JavaScript API for more details). This
+custom code can then perform special business logic, query external
+data stores, or even integrate with other workflow engines.</P>
+<P>The API consists of a set of java classes that abstract the more
+commonly used concepts of the workflow environment, such as
+processes, activities, and relevant data. The classes that make up
+this API are the same classes the platform uses for its
+out-of-the-box feature set. A note about security: these classes
+communicate directly with the workflow engine without authenticating
+the caller. Clients of this API will be assumed to have an
+appropriate level of trust. The API is not intended to be used by
+external un-trusted clients, but to be used within the flow of the
+provisioning platform’s business logic. The easiest way to deploy
+client code within the platform’s environment is to have the
+platform call the code from its published workflow extensions, such
+as a Java Application activity or a JavaScript activity.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The Workflow API consists of a set of classes that represent the
+more commonly used concepts of the workflow environment. All of these
+classes can be found in the <A HREF="../../api/com/ibm/itim/workflow/model/package-summary.html">com.ibm.itim.workflow.model
+package</A> and its sub-packages.</P>
+<P>The UML class diagram in figure 1 below illustrates the primary
+objects available in the API and their relationships. The primary
+object is the WorkflowProcess. A WorkflowProcess is parameterized by
+a set of RelevantDataItems and is implemented by a set of Activities.
+If an Activity is manual and requires the participation of a
+Resource, and Assignment is created to represent the task and fulfill
+the relationship. The most typical type of Resource is the
+HumanResource. There are several more objects available in the API
+that are not shown here. Please see the accompanying <A HREF="../../api/index.html">API
+Reference Document</A> for more details on the individual objects. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image004.gif" NAME="graphics2" ALIGN=BOTTOM WIDTH=573 HEIGHT=419 BORDER=0><BR><B>Figrue
+1: Primary Workflow Class Diagram</B> 
+</P>
+<P>There is a consistent framework implemented in this API for
+querying and operating on workflow objects. This framework is
+centered on an entity class. An entity class is a composite class
+that holds a reference to a value class that holds the defining
+attribute information for the entity, and provides access to other
+related entities. The attribute information is cached for the life of
+the entity, however, every time a relationship is evaluated, the
+entity, or entities, that participate in that relationship will be
+loaded from the data store. For example, the name of a workflow
+process is cached within the WorkflowProcess entity class, but when
+the client requests the activities of the process, the activities
+will be retrieved from the data store and represented as Activity
+entities.</P>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P>The following method uses the Workflow API to print the audit
+trail of a specified process. It organizes the audit trail by
+activity.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> printAuditTrail(</FONT><B><FONT COLOR="#7f0055">long</FONT></B><FONT COLOR="#000000"> processId) {</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">   </FONT><B>try</FONT></B><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// Retrieve the process information</FONT>
+<FONT COLOR="#000000">      WorkflowProcessEntity process = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ProcessManager()</FONT>
+         .getProcess(processId);
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// Retrieve activities</FONT>
+      Collection activities = process.getActivities();
+
+      Iterator iter = activities.iterator();
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// Iterate over all activities and obtain audit trail</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">      </FONT><B>while</FONT></B><FONT COLOR="#000000"> (iter.hasNext()) {</FONT>
+         ActivityEntity activity = (ActivityEntity) iter.next();
+<FONT COLOR="#000000">         System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(activity.getValueObject().getId());</FONT>
+         List auditTrail = activity.getHistory();
+
+         Iterator auditIter = auditTrail.iterator();
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">         </FONT>// Iterate over all audit records and print</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">         </FONT><B>while</FONT></B><FONT COLOR="#000000"> (auditIter.hasNext()) {</FONT>
+            EventAudit record = (EventAudit) auditIter.next();
+
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(record.getTimeStamp() + </FONT><FONT COLOR="#2a00ff">&quot;: &quot;</FONT>
+               + record.getEventType());
+         }
+<FONT COLOR="#000000">         System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println();</FONT>
+      }
+<FONT COLOR="#000000">   } </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (WorkflowException ex) {</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">err</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Workflow Exception: &quot;</FONT><FONT COLOR="#000000"> + ex.toString());</FONT>
+   }
+<FONT COLOR="#000000">}</FONT>
+        </PRE>
+</BODY>
+</HTML>

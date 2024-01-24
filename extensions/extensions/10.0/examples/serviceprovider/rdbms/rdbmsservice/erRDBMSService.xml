@@ -1,0 +1,88 @@
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<page>
+<body>
+<tabbedForm>
+<tab index="0" selected="true">
+<title>General</title>
+<image/>
+<url>javascript:switchTabs(document.forms['body'],0);</url>
+<formElement name="data.erservicename" label="$erservicename" required="true">
+<input name="data.erservicename" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+<formElement name="data.errdbmsdatasource" label="$errdbmsdatasource" required="true">
+<input name="data.errdbmsdatasource" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+<formElement name="data.owner" label="$owner">
+<searchControl operator="1" type="input" attribute="cn" orgSubTreeSearch="true" category="Person" class="Person">
+<comboItem></comboItem>
+</searchControl>
+</formElement>
+<formElement name="data.errdbmsrecontransactional" label="$errdbmsrecontransactional">
+<checkbox name="checkbox" value="no"/></formElement>
+</tab>
+<tab index="1" selected="false">
+<title>SQL</title>
+<image/>
+<url>javascript:switchTabs(document.forms['body'],1);</url>
+<formElement name="data.errdbmsaddsql" label="$errdbmsaddsql">
+<textarea name="data.errdbmsaddsql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmschangepasswordsql" label="$errdbmschangepasswordsql">
+<textarea name="data.errdbmschangepasswordsql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmsdeletesql" label="$errdbmsdeletesql">
+<textarea name="data.errdbmsdeletesql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmsmodifysql" label="$errdbmsmodifysql">
+<textarea name="data.errdbmsmodifysql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmsrestoresql" label="$errdbmsrestoresql">
+<textarea name="data.errdbmsrestoresql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmssearchsql" label="$errdbmssearchsql">
+<textarea name="data.errdbmssearchsql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmssuspendsql" label="$errdbmssuspendsql">
+<textarea name="data.errdbmssuspendsql" rows="2" cols="40"></textarea>
+</formElement>
+</tab>
+<tab index="2" selected="false">
+<title>Attribute Map</title>
+<image/>
+<url>javascript:switchTabs(document.forms['body'],2);</url>
+<formElement name="data.errdbmsattributemap" label="$errdbmsattributemap">
+<textarea name="data.errdbmsattributemap" rows="15" cols="40"></textarea>
+</formElement>
+</tab>
+<tab index="3" selected="false">
+<title>Value Map</title>
+<image/>
+<url>javascript:switchTabs(document.forms['body'],3);</url>
+<formElement name="data.errdbmsvaluemap" label="$errdbmsvaluemap">
+<textarea name="data.errdbmsvaluemap" rows="15" cols="40"></textarea>
+</formElement>
+</tab>
+<tab index="4" selected="false">
+<title>Group Data</title>
+<image/>
+<url>javascript:switchTabs(document.forms['body'],4);</url>
+<formElement name="data.errdbmssearchgroupsql" label="$errdbmssearchgroupsql">
+<textarea name="data.errdbmssearchgroupsql" rows="2" cols="40"></textarea>
+</formElement>
+<formElement name="data.errdbmsgroupdnattr" label="$errdbmsgroupdnattr">
+<input name="data.errdbmsgroupdnattr" size="50" type="text"/>
+</formElement>
+</tab>
+
+</tabbedForm></body>
+</page>

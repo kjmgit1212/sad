@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DSML file for schema for the relational database connector -->
+<dsml>
+  <directory-schema>
+
+<!-- 
+
+******************************************************
+      OIDs
+      
+OIDs are constructed in the following manner:
+
+enterprise id (access360 1.3.6.1.4.1.6054)
+product id (enrole 1)
+example branch (3)
+example id (jndiserviceprovider 1)
+class (attribute 1, object class 2)
+instance id (sequential)
+
+example attribute object id: 1.3.6.1.4.1.6054.1.3.1.1.1
+example class object id: 1.3.6.1.4.1.6054.1.3.1.2.1
+
+********************************************************
+
+-->  
+  
+<!-- ******************************************************** -->
+<!-- Service attributes                                       -->
+<!-- ******************************************************** -->  
+
+    <attribute-type single-value="true">
+        <name>erRDBMSDataSource</name>
+        <description>Service attribute: the application server data source</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.1</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSAddSQL</name>
+        <description>Service attribute: SQL statement to add an account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.2</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSChangePasswordSQL</name>
+        <description>Service attribute: SQL statement to change password for an account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.3</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSDeleteSQL</name>
+        <description>Service attribute: SQL statement to delete for an account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.4</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSModifySQL</name>
+        <description>Service attribute: SQL statement to modify an account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.5</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSRestoreSQL</name>
+        <description>Service attribute: SQL statement to restore an account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.6</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSSearchSQL</name>
+        <description>Service attribute: SQL statement to search for accounts and supporting data</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.7</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSSearchGroupSQL</name>
+        <description>Service attribute: SQL statement to search for accounts and supporting data</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.8</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSSuspendSQL</name>
+        <description>Service attribute: SQL statement to search for accounts and supporting data</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.9</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSAttributeMap</name>
+        <description>Service attribute: Map of TIM attributes to managed resource attributes</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.10</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSGroupDNAttr</name>
+        <description>Service attribute: Map of TIM attributes to managed resource attributes</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.11</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+<!-- ******************************************************** -->
+<!-- Account attributes                                       -->
+<!-- ******************************************************** -->  
+
+    <attribute-type single-value="true">
+        <name>erRDBMSHUID</name>
+        <description>Account attribute: human resources identifier</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.12</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="false">
+        <name>erRDBMSGroupMembership</name>
+        <description>Account attribute: name of each group the user belongs to</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.13</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+      </attribute-type>
+
+<!-- ******************************************************** -->
+<!-- Group attributes                                         -->
+<!-- ******************************************************** -->  
+
+    <attribute-type single-value="true">
+        <name>erRDBMSGroupName</name>
+        <description>Group attribute: name of the group in the group definition</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.14</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+      </attribute-type>
+
+<!-- ******************************************************** -->
+<!-- Service attributes (continued)                           -->
+<!-- ******************************************************** -->  
+    <attribute-type single-value="true">
+        <name>erRDBMSValueMap</name>
+        <description>Service attribute: Map of TIM attribute values to managed resource values</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.15</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+    <attribute-type single-value="true">
+        <name>erRDBMSReconTransactional</name>
+        <description>Service attribute: Whether to place reconciliation within a transaction.</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.1.16</object-identifier>  
+        <syntax>1.3.6.1.4.1.1466.115.121.1.15</syntax>
+        <equality>2.5.13.2</equality>
+    </attribute-type>
+
+<!-- ******************************************************** -->
+<!--                      classes                             -->
+<!-- ******************************************************** -->  
+
+    <class superior="top">
+        <name>erRDBMSService</name>
+        <description>Class representing the RDBMS connector service</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.2.1</object-identifier>
+        <attribute ref="erServiceName" required="true" />
+        <attribute ref="erRDBMSDataSource" required="true" />
+        <attribute ref="erRDBMSAddSQL" required="false" />
+        <attribute ref="erRDBMSChangePasswordSQL" required="false" />
+        <attribute ref="erRDBMSDeleteSQL" required="false" />
+        <attribute ref="erRDBMSModifySQL" required="false" />
+        <attribute ref="erRDBMSRestoreSQL" required="false" />
+        <attribute ref="erRDBMSSearchSQL" required="false" />
+        <attribute ref="erRDBMSSearchGroupSQL" required="false" />
+        <attribute ref="erRDBMSSuspendSQL" required="false" />
+        <attribute ref="erRDBMSAttributeMap" required="false" />
+        <attribute ref="erRDBMSGroupDNAttr" required="false" />
+        <attribute ref="erRDBMSValueMap" required="false" />
+        <attribute ref="erPassword" required="false" />
+        <attribute ref="erRDBMSReconTransactional" required="false" />
+    </class>
+
+    <class superior="top">
+        <name>erRDBMSAccount</name>
+        <description>Class representing the RDBMS connector account</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.2.2</object-identifier>
+        <attribute ref="erUid" required="true" />
+        <attribute ref="erPassword" required="false" />
+        <attribute ref="erAccountStatus" required="false" />
+        <attribute ref="mail" required="false" />
+        <attribute ref="erRDBMSHUID" required="true" />
+        <attribute ref="givenname" required="false" />
+        <attribute ref="initials" required="false" />
+        <attribute ref="sn" required="false" />
+        <attribute ref="erRDBMSGroupMembership" required="false" />
+        <attribute ref="title" required="false" />
+    </class>
+
+    <class superior="top">
+        <name>erRDBMSGroup</name>
+        <description>Class representing the RDBMS connector group</description>
+        <object-identifier>1.3.6.1.4.1.6054.1.3.300.2.3</object-identifier>
+        <attribute ref="erRDBMSGroupName" required="true" />
+    </class>
+
+  </directory-schema>
+
+</dsml>

@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Policy Analysis API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR><A HREF="#overview">Overview</A><BR><A HREF="#apiDescription">API
+Description</A><BR><A HREF="#apiExample">API Example</A></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform controls access to
+managed resources using the provisioning policies defined in the
+system. Managed resources can be services such as Identity 
+Manager, Windows NT, Solaris, and other clients. A provisioning
+policy grants entitlement to these resources based on the person's
+membership in a particular organization, an organizational role, or
+the fact that the person is not in any organizational role. Depending
+on how the provisioning policies are defined, more than one
+provisioning policy may apply to a given person. A person might be
+granted access to one service by one provisioning policy, and another
+service by another provisioning policy. More complex is the case
+where a person's access to a single service might be controlled by
+more than one provisioning policy. For example, the person might
+reside in an organization for which access to a service is controlled
+by one policy, and the person might have an organizational role for
+which access to the same service is controlled by another policy.
+This can make it rather difficult to determine the precise resources
+to which a given person is entitled. This document describes the
+Application Programming Interface (API) that is available for clients
+to analyze the policy enforcement being performed in the system.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The Policy Analysis API has been developed to provide developers
+an interface to Identity Manager that will allow them to obtain
+information about the provisioning policies defined in the system and
+the access granted a given individual.</P>
+<P>The API consists of a set of java classes that retrieve and
+abstract the provisioning policy information that is used to control
+access to managed resources. The API does not provide support to
+allow a client to alter the provisioning policy enforcement in the
+system. Rather, it simply reports the enforcement as it is defined in
+the system. The client may use this information for the purposes of
+auditing, making decisions about potential changes to the policy
+enforcement in the system, and other tasks.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The API consists of a main class that provides the methods that
+can be used by a client to obtain policy enforcement information, and
+a set of classes the represent the policy enforcement in the system,
+and that are returned by the methods of the main class. All of these
+classes can be found in the <A HREF="../api/com/ibm/itim/policy/analysis/package-summary.html">com.ibm.itim.policy.analysis
+package</A>.</P>
+<P ALIGN=CENTER><BR><B>Figrue 1: Policy Analysis API Class Diagram</B>
+</P>
+<P>The <A HREF="../api/com/ibm/itim/policy/analysis/ProvisioningPolicyAnalysis.html">ProvisioningPolicyAnalysis</A>
+class provides the external interfaces for querying the policy
+enforcement being performed in the system. It provides interfaces
+that: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">Return the provisioning policies
+	that apply to a given role. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">Return the entitlements that apply
+	to a given person. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">Return the joined entitlement that
+	represents a given person's entitlement for a given service. 
+	</P>
+	<LI><P>Return the provisioning parameters of interest for the
+	entitlement that represents a given person's entitlement for a given
+	service. 
+	</P>
+</UL>
+<P>The other classes in the API represent the output from these
+interfaces, described below.</P>
+<P>The <A HREF="../api/com/ibm/itim/policy/analysis/PPAProvisioningPolicy.html">PPAProvisioningPolicy</A>
+class represents a provisioning policy, including information such
+as: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">The name of the provisioning
+	policy. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">The priority of the provisioning
+	policy. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">The scope of the provisioning
+	policy. 
+	</P>
+	<LI><P>The entitlements associated with the provisioning policy. 
+	</P>
+</UL>
+<P>The <A HREF="../api/com/ibm/itim/policy/analysis/PPAEntitlement.html">PPAEntitlement</A>
+class represents an entitlement, including information such as: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">The name of the target service. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">The type of the target service,
+	such as all, hosted service, service instance, or service type. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">An indication as to whether or not
+	a workflow process is associated with the entitlement. 
+	</P>
+	<LI><P>The provisioning parameters associated with the entitlement. 
+	</P>
+</UL>
+<P>The <A HREF="../api/com/ibm/itim/policy/analysis/PPAProvisioningParameter.html">PPAProvisioningParameter</A>
+class represents a provisioning parameter, including information such
+as: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">The name of the provisioning
+	parameter. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0in">The value(s) of the provisioning
+	parameter. 
+	</P>
+	<LI><P>The enforcement(s) for the value(s) of the provisioning
+	parameter, such as allowed, default, excluded, or mandatory. 
+	</P>
+</UL>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P>The following method prints the entitlement a given person has on
+a given service using the Policy Analysis API.</P>
+<PRE>
+<B><FONT COLOR="#7f0055">public</FONT></B> <B><FONT COLOR="#7f0055">static</FONT></B> <B><FONT COLOR="#7f0055">void</FONT></B> printEntitlement(PersonEntity person,
+      ServiceEntity service) {
+<FONT COLOR="#000000"></FONT><B><FONT COLOR="#7f0055">   try</FONT></B><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#000000"></FONT><FONT COLOR="#3f7f5f">      // get the entitlement for the person and service</FONT>
+      PPAEntitlement entitlement = ProvisioningPolicyAnalysis
+         .<I>getEntitlement</I>(person, service);
+
+<FONT COLOR="#000000">      </FONT><FONT COLOR="#3f7f5f">// print summary information</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Target Name: &quot;</FONT><FONT COLOR="#000000"> + entitlement.getTargetName());</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Target Type: &quot;</FONT><FONT COLOR="#000000"> + entitlement.getTargetType());</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Workflow required: &quot;</FONT>
+         + entitlement.isWorkflowRequired());
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println();</FONT>
+
+<FONT COLOR="#000000"></FONT><FONT COLOR="#3f7f5f">      // print parameters</FONT>
+      Collection params = entitlement.getProvisioningParameters();
+      Iterator iter = params.iterator();
+<FONT COLOR="#000000"></FONT><B><FONT COLOR="#7f0055">     while</FONT></B><FONT COLOR="#000000"> (iter.hasNext()) {</FONT>
+         PPAProvisioningParameter param = (PPAProvisioningParameter) iter.next();
+<FONT COLOR="#000000">         System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot; Parameter: &quot;</FONT><FONT COLOR="#000000"> + param.getName());</FONT>
+
+<FONT COLOR="#000000">         </FONT><B><FONT COLOR="#7f0055">int</FONT></B><FONT COLOR="#000000">[] enforcements = param.getEnforcements();</FONT>
+         Object[] values = param.getValues();
+
+<FONT COLOR="#000000"></FONT><FONT COLOR="#3f7f5f">         // print parameter values and associated enforcements</FONT>
+<FONT COLOR="#000000"></FONT><B><FONT COLOR="#7f0055">        for</FONT></B><FONT COLOR="#000000"> (</FONT><B><FONT COLOR="#7f0055">int</FONT></B><FONT COLOR="#000000"> i = 0; i &lt; enforcements.</FONT><FONT COLOR="#0000c0">length</FONT><FONT COLOR="#000000">; i++)</FONT> {
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Value: &quot;</FONT><FONT COLOR="#000000"> + values[i].toString()</FONT>
+<FONT COLOR="#000000">               + </FONT><FONT COLOR="#2a00ff">&quot; Enforcement: &quot;</FONT><FONT COLOR="#000000"> + enforcements[i]);</FONT>
+         }
+
+<FONT COLOR="#000000">         System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println();</FONT>
+      }
+<FONT COLOR="#000000">   } </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (PPAException ex) {</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+   }
+}</PRE>
+</BODY>
+</HTML>

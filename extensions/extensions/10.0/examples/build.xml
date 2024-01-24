@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ant build file for ITIM examples -->
+
+<!-- Licensed Materials - Property of IBM                              -->
+<!--                                                                   -->
+<!-- Source File Name = build.xml                                      -->
+<!--                                                                   -->
+<!-- (C) COPYRIGHT IBM Corp. 1999, 2012 All Rights Reserved      -->
+<!--                                                                   -->
+<!-- US Government Users Restricted Rights - Use, duplication or       -->
+<!-- disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+
+<project name="enRole examples" default="all" basedir="../" >
+
+    
+	<property name="all" value="${basedir}/examples" />
+	<property name="itim.home" value="${basedir}/../../"/>
+    <property name="extensions.lib" value="${itim.home}/lib"/>
+    <property name="dest" value="${extensions.lib}" />
+	<property name="srdest" value="${basedir}/examples/selfregistration" />
+	<property name="expisrc" value="${basedir}/examples//self_care/src" />
+	<property name="expistage" value="${basedir}/examples//self_care/stage" />
+	<property name="wssrc" value="${basedir}/examples/ws/SSOSample/src" />
+	<property name="wsstage" value="${basedir}/examples/ws/SSOSample/stage" />
+    <property name="was.home" value="${WAS_HOME}"/>
+
+    
+	<!-- An informational message. -->
+	<target name="help" description="displays an informational message">
+		<echo message="Compiles itim extensions examples" />
+		<echo message="ITIM home directory (property itim.home): ${itim.home}" />
+        <echo message="WebSphere home directory (property was.home): ${was.home}" />
+        <echo message="Compiled java files will be placed in the directory ${dest}" />
+		<echo message="If these values are not correct please set the apprpriate properties in the ant launch script" />
+		<echo message="To get help about build targets type build -projecthelp" />
+	</target>
+
+	<!-- Create the time stamp and create destination directory-->
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${dest}" />
+	</target>
+
+	<!-- set-up the classpath for compiling -->
+	<path id="classpath">
+		<fileset dir="${itim.home}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+        <fileset dir="${was.home}/lib">
+			<include name="j2ee.jar" />
+		</fileset>
+        <fileset dir="${was.home}/runtimes">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="all" depends="compile,jar,selfReg,sso_sample,self_care" description="compiles the source files and places them in examples.jar" />
+
+	<target name="compile" depends="init" description="compiles all java class files">
+		<javac debug="on" srcdir="${all}" destdir="${dest}" encoding="ISO8859-1">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="init" description="jars all class files into examples.jar">
+		<jar jarfile="${dest}/examples.jar">
+			<fileset dir="${dest}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+		<antcall target="clean" />
+	</target>
+
+	<target name="clean" description="deletes the compiled java class files">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${dest}/examples" />
+			<fileset dir="${dest}">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
+
+	<!-- self registration setup -->
+	<target name="selfReg" description="compiles ValidateData.java and creates sr.war">
+		<mkdir dir="${srdest}/sr/WEB-INF/classes" />
+		<javac debug="on" srcdir="${all}/selfregistration/src/" destdir="${srdest}/sr/WEB-INF/classes" encoding="ISO8859-1">
+			<classpath refid="classpath" />
+		</javac>
+		<copy todir="${srdest}/sr/WEB-INF/lib">
+			<fileset dir="${itim.home}/lib/" includes="itim_api.jar
+														itim_server_api.jar
+														itim_common.jar
+														com.ibm.cv.kmip.ext.jar
+														enroleagent.jar 
+														jlog.jar
+														api_ejb.jar">
+				<present present="srconly" targetdir="${srdest}/sr/WEB-INF/lib" />
+			</fileset>
+		</copy>
+		<jar jarfile="${srdest}/sr.war" basedir="${srdest}/sr" />
+		<delete>
+			<fileset dir="${srdest}/sr/WEB-INF/lib" includes="itim_api.jar
+																itim_server_api.jar
+																itim_common.jar
+																com.ibm.cv.kmip.ext.jar
+																enroleagent.jar 
+														            jlog.jar
+																api_ejb.jar">
+				<present present="both" targetdir="${itim.home}/lib/" />
+			</fileset>
+		</delete>
+	</target>
+	
+		
+
+	<!-- build self_care war -->
+	<target name="self_care"  description="Compiles all java files for self-care and creates itim_expi.war">
+		<mkdir dir="${expistage}" />
+		<mkdir dir="${expistage}/WEB-INF/classes" />
+		<javac debug="on" srcdir="${expisrc}" destdir="${expistage}/WEB-INF/classes" encoding="ISO8859-1">
+			<classpath refid="classpath" />
+		</javac>
+		<copy todir="${expistage}">
+			<fileset dir="${expisrc}/../WebContent" includes="**/**" />
+		</copy>
+		<copy todir="${expistage}/WEB-INF/lib">
+			<fileset dir="${itim.home}/lib/" includes="itim_api.jar
+														itim_server_api.jar
+														itim_common.jar
+														com.ibm.cv.kmip.ext.jar
+														api_ejb.jar
+														jlog.jar">
+				<present present="srconly" targetdir="${expisrc}/WEB-INF/lib" />
+			</fileset>
+		</copy>
+		<jar jarfile="${expisrc}/../itim_expi.war" basedir="${expistage}" includes="**" />
+		<delete dir="${expistage}" />
+	</target>
+	<!-- build ssosample war -->
+	<target name="sso_sample" description="Compiles all java files for SSO sample app and creates itim_ws.war">
+		<mkdir dir="${wsstage}" />
+		<mkdir dir="${wsstage}/WEB-INF/classes" />
+		<javac debug="on" srcdir="${wssrc}" destdir="${wsstage}/WEB-INF/classes" encoding="ISO8859-1">
+			<classpath refid="classpath" />
+		</javac>
+		<copy todir="${wsstage}">
+			<fileset dir="${wssrc}/../WebContent" includes="**/**" />
+		</copy>
+		<copy todir="${wsstage}/WEB-INF/lib">
+			<fileset dir="${itim.home}/lib/" includes="itim_ws_client.jar
+				                             itim_ws_model.jar">
+				<present present="srconly" targetdir="${wssrc}/WEB-INF/lib" />
+			</fileset>
+		</copy>
+		<jar jarfile="${wssrc}/../itim_ws.war" basedir="${wsstage}" includes="**" />
+	    <delete dir="${wsstage}" />
+	</target>
+
+</project>

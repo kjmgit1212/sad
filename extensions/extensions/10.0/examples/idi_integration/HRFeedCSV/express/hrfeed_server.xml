@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<MetamergeConfig created="Wed Feb 01 11:48:22 PST 2006" createdBy="Geoff" modified="Fri Feb 24 11:35:25 PST 2006" modifiedBy="Geoff" version="1.1">
+<Folder name="AssemblyLines">
+<AssemblyLine name="processSearch">
+<LogEnabled>true</LogEnabled>
+<Settings>
+<parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+<parameter name="ScriptEngine">JavaScript</parameter>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="includeGlobalPrologs">true</parameter>
+<parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+</Settings>
+<Hooks/>
+<CheckpointConfig/>
+<SandboxConfig/>
+<LogConfig/>
+<ContainerEF name="EntryFeedContainer">
+<Connector name="CSV File Connector">
+<InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="filePath">C:\Program Files\IBM\itim\extensions\examples\idi_integration\HRFeedCSV\People1.csv</parameter>
+</Configuration>
+<ComputeChanges>true</ComputeChanges>
+<DeltaBehavior>0</DeltaBehavior>
+<DeltaStrict>true</DeltaStrict>
+<Parser>
+<InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+<parameter name="characterSet"></parameter>
+<parameter name="csvEnableQuoting">true</parameter>
+<parameter name="csvLogLongLines">0</parameter>
+<parameter name="csvWriteHeader">true</parameter>
+<parameter name="debug">false</parameter>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value="uid=" + conn.getString("Last");</Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>Title</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Title</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value=conn.getString("First") + " " + conn.getString("Last");</Script>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>givenname</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>First</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>objectclass</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value="erexpressperson";</Script>
+<Simple>objectclass</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Last</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Last</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings>
+<Driver>CloudScape</Driver>
+</DeltaSettings>
+<Schema name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>First</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+<SchemaItem>
+<Name>Last</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+<SchemaItem>
+<Name>Title</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+</Schema>
+<Schema name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+<CheckpointConfig/>
+<SandboxConfig/>
+<Reconnect>
+<parameter name="autoreconnect">true</parameter>
+<parameter name="numberOfRetries">1</parameter>
+<parameter name="retryDelay">10</parameter>
+</Reconnect>
+</Connector>
+</ContainerEF>
+<ContainerDF name="DataFlowContainer"/>
+<ThreadOptions/>
+<CallReturn>
+<Schema name="Input"/>
+<Schema name="Output"/>
+<AttributeMap name="Output"/>
+<AttributeMap name="Input"/>
+</CallReturn>
+</AssemblyLine>
+</Folder>
+<Folder name="Connectors"/>
+<Folder name="Parsers"/>
+<Folder name="EventHandlers">
+<EventHandler name="ITIM Listener">
+<ScriptEngine>javascript</ScriptEngine>
+<LogEnabled>true</LogEnabled>
+<Configuration>
+<InheritFrom>system:/EventHandlers/ibmdi.DSMLv2EventHandler</InheritFrom>
+<parameter name="addAssemblyLine">(none)</parameter>
+<parameter name="authConnector">(none)</parameter>
+<parameter name="authRealm">IBM-Directory-Integrator</parameter>
+<parameter name="binaryAttributes"><![CDATA[photo, personalSignature, audio, jpegPhoto, javaSerializedData, thumbnailPhoto, 
+thumbnailLogo, userPassword, userCertificate, authorityRevocationList, 
+certificateRevocationList, crossCertificatePair, x500UniqueIdentifier, 
+objectGUID, objectSid]]></parameter>
+<parameter name="compareAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.addAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.compareAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.deleteAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.modifyAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.modifyDnAssemblyLine">(none)</parameter>
+<parameter name="dc=HRLoad.searchAssemblyLine">/AssemblyLines/processSearch</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="deleteAssemblyLine">(none)</parameter>
+<parameter name="headersAsProperties">true</parameter>
+<parameter name="modifyAssemblyLine">(none)</parameter>
+<parameter name="modifyDnAssemblyLine">(none)</parameter>
+<parameter name="msgChunked">true</parameter>
+<parameter name="namingContext">dc=HRLoad</parameter>
+<parameter name="namingContextList">dc=HRLoad</parameter>
+<parameter name="port">8800</parameter>
+<parameter name="searchAssemblyLine">/AssemblyLines/processSearch</parameter>
+<parameter name="selectedNamingContext">dc=HRLoad</parameter>
+<parameter name="useSSL">false</parameter>
+<parameter name="userComment"></parameter>
+</Configuration>
+<ActionMaps/>
+<LogConfig/>
+<AttributeMap name="Input"/>
+<AttributeMap name="Output"/>
+</EventHandler>
+</Folder>
+<Folder name="Scripts"/>
+<JavaLibraries/>
+<JavaProperties/>
+<Folder name="Includes"/>
+<Folder name="ExternalProperties">
+<ExternalProperties name=" Default">
+<Encrypted>false</Encrypted>
+</ExternalProperties>
+</Folder>
+<Folder name="Config">
+<LogConfig name="Logging"/>
+<InstanceProperties name="AutoStart">
+<AutoStart/>
+</InstanceProperties>
+</Folder>
+<Folder name="Functions"/>
+<Folder name="AttributeMaps"/>
+</MetamergeConfig>

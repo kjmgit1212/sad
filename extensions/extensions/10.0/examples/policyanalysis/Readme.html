@@ -1,0 +1,168 @@
+<html>
+
+<head>
+<title>Running the Policy Analysis API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Compiling and Running the Policy Analysis API Example</h1>
+
+<h3>Compiling the Policy Analysis API Example</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>See <a
+href="../Building.html">Building the Examples</a> for general instructions.</span></p>
+
+<h3>Preparing to Run the Example</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Properties values
+associated with running the example are contained in the <a
+href="example.properties">example.properties</a> file. Before attempting to run
+the example, you must update the values in the example.properties file
+appropriately. See <a href="../Updating_property_files.html">Updating the
+property files</a>.</span></p>
+
+<h3>Running the Example</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After compiling
+the example and setting the values in the example.properties file, run the
+example by running the <a href="runExample.cmd">runExample.cmd</a> or <a
+href="runExample.sh">runExample.sh</a> file.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The example
+accepts the following input:</span></p>
+
+<table  border=1 cellspacing=1 cellpadding=0>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Argument</span></b></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>getEntitlement</span></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Obtains and prints the
+  entitlement for the person and service specified in the example.properties
+  file.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>getEntitlements</span></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Obtains the prints the
+  entitlements for the person specified in the example.properties file.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>getProvisioningParameters</span></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Obtains the prints the
+  provisioning parameters for the person and service specified in the
+  example.properties file.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>getProvisioningPolicies</span></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Obtains the prints the
+  provisioning policies for the role specified in the example.properties file.
+  The provisioning policies returned do not include wildcard provisioning
+  policies.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>getProvisioningPoliciesWildcard</span></p>
+  </td>
+  <td style='padding:3.75pt 3.75pt 3.75pt 3.75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Obtains the prints the
+  provisioning policies for the role specified in the example.properties file.
+  The provisioning policies returned include wildcard provisioning policies.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>None, one, or
+multiple arguments can be specified on a single invocation of the runExample.cmd
+or runExample.sh file. If no arguments are specified, all of the aforementioned
+functions are performed.</span></p>
+
+<h1>Running the Examples</h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To perform all of
+the functions associated with the example:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;<b>runExample</b></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To obtain and
+print the entitlement for the person and service specified in the
+example.properties file:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;<b>runExample
+getEntitlement</b></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To obtain the
+print the entitlements for the person specified in the example.properties file,
+and to obtain and print the provisioning policies for the role specified in the
+example.properties file (not including wildcard provisioning policies):</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;&nbsp;&nbsp;&nbsp;<b>runExample
+getEntitlements getProvisioningPolicies</b></span></p>
+
+</div>
+
+</body>
+
+</html>

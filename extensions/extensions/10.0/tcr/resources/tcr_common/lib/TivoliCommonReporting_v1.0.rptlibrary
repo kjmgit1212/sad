@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">IBM Tivoli Common Reporting</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="includeResource">itim/properties/itim_common</property>
+    <text-property name="title">IBM Tivoli Common Reporting Library v1.0</text-property>
+    <property name="comments">Licensed Materials - Property of IBM
+5724-T69 
+IBM Tivoli Reporting
+
+(C) Copyright IBM Corp. 2007 All Rights Reserved.
+
+US Government Users Restricted Rights - Use, duplication or
+disclosure restricted by GSA ADP Schedule Contract with
+IBM Corp.</property>
+    <html-property name="description">The Tivoli Common Reporting library contains the base styles, master page and report items used to meet the guidelines set for Tivoli reports.</html-property>
+    <property name="theme">TCRTheme_v1</property>
+    <parameters>
+        <parameter-group name="Date Range" id="1663">
+            <text-property name="displayName" key="report_period_group_header"></text-property>
+            <text-property name="helpText" key="report_period_group_header_help"></text-property>
+            <parameters>
+                <scalar-parameter name="Report Period" id="1660">
+                    <text-property name="helpText" key="report_period_help_text">Report will be filtered on the date range selected.  If no range is selected, no filtering on date occurs.</text-property>
+                    <property name="valueType">static</property>
+                    <property name="dataType">string</property>
+                    <text-property name="promptText" key="report_period">Select desired date range for report</text-property>
+                    <property name="controlType">list-box</property>
+                    <property name="mustMatch">true</property>
+                    <property name="fixedOrder">true</property>
+                    <property name="defaultValue">L30</property>
+                    <property name="distinct">false</property>
+                    <structure name="format">
+                        <property name="category">Unformatted</property>
+                    </structure>
+                    <list-property name="selectionList">
+                        <structure>
+                            <property name="value">ALL</property>
+                            <property name="label">All</property>
+                            <property name="labelID">ALL</property>
+                        </structure>
+                        <structure>
+                            <property name="value">T</property>
+                            <property name="label">Today</property>
+                            <property name="labelID">T</property>
+                        </structure>
+                        <structure>
+                            <property name="value">Y</property>
+                            <property name="label">Yesterday</property>
+                            <property name="labelID">Y</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L24</property>
+                            <property name="label">Last 24 Hours</property>
+                            <property name="labelID">L24</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L7</property>
+                            <property name="label">Last 7 Days</property>
+                            <property name="labelID">L7</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L30</property>
+                            <property name="label">Last 30 Days</property>
+                            <property name="labelID">L30</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L90</property>
+                            <property name="label">Last 90 Days</property>
+                            <property name="labelID">L90</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L365</property>
+                            <property name="label">Last 365 Days</property>
+                            <property name="labelID">L365</property>
+                        </structure>
+                        <structure>
+                            <property name="value">CW</property>
+                            <property name="label">Current Week</property>
+                            <property name="labelID">CW</property>
+                        </structure>
+                        <structure>
+                            <property name="value">LW</property>
+                            <property name="label">Last Week</property>
+                            <property name="labelID">LW</property>
+                        </structure>
+                        <structure>
+                            <property name="value">CM</property>
+                            <property name="label">Current Month</property>
+                            <property name="labelID">CM</property>
+                        </structure>
+                        <structure>
+                            <property name="value">LM</property>
+                            <property name="label">Last Month</property>
+                            <property name="labelID">LM</property>
+                        </structure>
+                        <structure>
+                            <property name="value">L3M</property>
+                            <property name="label">Last 3 Months</property>
+                            <property name="labelID">L3M</property>
+                        </structure>
+                        <structure>
+                            <property name="value">YTD</property>
+                            <property name="label">Year to Date</property>
+                            <property name="labelID">YTD</property>
+                        </structure>
+                    </list-property>
+                </scalar-parameter>
+                <scalar-parameter name="Begin Date" id="1664">
+                    <text-property name="helpText" key="begin_date_tooltip"></text-property>
+                    <property name="valueType">static</property>
+                    <property name="dataType">dateTime</property>
+                    <text-property name="promptText" key="begin_date">Start Date</text-property>
+                    <property name="isRequired">false</property>
+                    <property name="controlType">text-box</property>
+                    <property name="distinct">true</property>
+                    <structure name="format">
+                        <property name="category">Unformatted</property>
+                    </structure>
+                </scalar-parameter>
+                <scalar-parameter name="End Date" id="1665">
+                    <text-property name="helpText" key="end_date_tooltip"></text-property>
+                    <property name="valueType">static</property>
+                    <property name="dataType">dateTime</property>
+                    <text-property name="promptText" key="end_date">End Date</text-property>
+                    <property name="isRequired">false</property>
+                    <property name="controlType">text-box</property>
+                    <property name="distinct">true</property>
+                    <structure name="format">
+                        <property name="category">Unformatted</property>
+                    </structure>
+                </scalar-parameter>
+            </parameters>
+        </parameter-group>
+    </parameters>
+    <themes>
+        <theme name="TCRTheme_v1" id="253">
+            <styles>
+                <style name="report" id="254">
+                    <property name="fontFamily">"Verdana", "Arial", sans-serif</property>
+                    <property name="fontSize">70%</property>
+                    <property name="marginTop">0px</property>
+                    <property name="marginLeft">0.5in</property>
+                    <property name="marginBottom">0.5in</property>
+                    <property name="marginRight">0.5in</property>
+                </style>
+                <style name="main-title" id="256">
+                    <property name="fontSize">150%</property>
+                    <property name="color">#444E68</property>
+                    <property name="borderBottomColor">#444E68</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">3px</property>
+                    <property name="marginTop">0px</property>
+                    <property name="marginLeft">0px</property>
+                    <property name="marginBottom">0px</property>
+                    <property name="marginRight">0px</property>
+                    <property name="paddingTop">10px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0px</property>
+                </style>
+                <style name="section-title" id="257">
+                    <property name="fontSize">125%</property>
+                    <property name="fontWeight">normal</property>
+                    <property name="color">#444E68</property>
+                    <property name="borderBottomColor">#444E68</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">2px</property>
+                    <property name="marginTop">0px</property>
+                    <property name="marginLeft">0px</property>
+                    <property name="marginBottom">0px</property>
+                    <property name="marginRight">0px</property>
+                    <property name="paddingTop">10px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0px</property>
+                </style>
+                <style name="parameter-table" id="258">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderBottomWidth">0px</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderLeftWidth">0px</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderRightWidth">0px</property>
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderTopWidth">0px</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="parameter-name" id="259">
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">3px</property>
+                    <property name="paddingRight">5px</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="parameter-value" id="260">
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">3px</property>
+                    <property name="paddingRight">0px</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="table-without-group" id="261">
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">2px</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">2px</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="table-header-cell" id="262">
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">3px</property>
+                    <property name="paddingBottom">3px</property>
+                    <property name="paddingRight">3px</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="group-table-without-section" id="264">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderRightColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="table-group-1" id="265">
+                    <property name="backgroundColor">#7E90BF</property>
+                    <property name="fontSize">125%</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#FFFFFF</property>
+                    <property name="marginLeft">0px</property>
+                    <property name="paddingLeft">5px</property>
+                    <property name="paddingRight">0px</property>
+                </style>
+                <style name="table-group-2" id="267">
+                    <property name="backgroundColor">#ABC3FF</property>
+                    <property name="backgroundImage">group_2of2.gif</property>
+                    <property name="backgroundRepeat">repeat-y</property>
+                    <property name="fontSize">110%</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="marginTop">0px</property>
+                    <property name="marginLeft">0px</property>
+                    <property name="paddingTop">0pt</property>
+                    <property name="paddingLeft">5px</property>
+                    <property name="paddingRight">0px</property>
+                </style>
+                <style name="table-group-3" id="269">
+                    <property name="backgroundColor">#94ABE0</property>
+                    <property name="backgroundImage">group_2of2.gif</property>
+                    <property name="backgroundRepeat">repeat-y</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#FFFFFF</property>
+                    <property name="paddingLeft">5px</property>
+                    <property name="paddingRight">0px</property>
+                </style>
+                <style name="table-details" id="277">
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">3px</property>
+                    <property name="paddingBottom">3px</property>
+                    <property name="paddingRight">3px</property>
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">eq</property>
+                            <property name="backgroundColor">#F0F0F0</property>
+                            <expression name="testExpr">Total.runningCount() % 2</expression>
+                            <expression name="value1">0</expression>
+                        </structure>
+                    </list-property>
+                </style>
+                <style name="secondary-title" id="279">
+                    <property name="color">#444E68</property>
+                    <property name="borderBottomStyle">dotted</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="chart" id="285">
+                    <property name="fontFamily">"SansSerif"</property>
+                    <property name="fontSize">10pt</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="description-text" id="286">
+                    <property name="marginTop">15px</property>
+                    <property name="marginBottom">15px</property>
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingBottom">3px</property>
+                </style>
+                <style name="date" id="287">
+                    <structure name="dateTimeFormat">
+                        <property name="category">Custom</property>
+                        <property name="pattern">MM-dd-yy hh:mm a</property>
+                    </structure>
+                </style>
+                <style name="section" id="291">
+                    <property name="paddingTop">15px</property>
+                    <property name="paddingBottom">15px</property>
+                </style>
+                <style name="group-data" id="293">
+                    <property name="paddingTop">3pt</property>
+                    <property name="paddingLeft">3pt</property>
+                    <property name="paddingBottom">3pt</property>
+                    <property name="paddingRight">3pt</property>
+                </style>
+                <style name="group-table-with-section" id="294"/>
+                <style name="message-box-style" id="295">
+                    <property name="backgroundColor">#EAECF0</property>
+                    <property name="borderBottomColor">#7E90BF</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">1px</property>
+                    <property name="borderLeftColor">#7E90BF</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">1px</property>
+                    <property name="borderRightColor">#7E90BF</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">1px</property>
+                    <property name="borderTopColor">#7E90BF</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                    <property name="marginBottom">15px</property>
+                    <property name="marginRight">15px</property>
+                    <property name="paddingTop">0pt</property>
+                    <property name="paddingLeft">0pt</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">0pt</property>
+                </style>
+                <style name="table-footer-cell" id="296">
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">1px</property>
+                    <property name="paddingTop">3pt</property>
+                    <property name="paddingLeft">3pt</property>
+                    <property name="paddingBottom">3pt</property>
+                    <property name="paddingRight">3pt</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="group-1-spacer" id="1632">
+                    <property name="marginLeft">0px</property>
+                    <property name="paddingLeft">15px</property>
+                </style>
+                <style name="table-cell-highlight" id="1661">
+                    <property name="backgroundColor">#F0F0F0</property>
+                </style>
+                <style name="sub-title" id="1662">
+                    <property name="color">#444E68</property>
+                </style>
+                <style name="multi-column-heading-secondary-header" id="1667">
+                    <property name="fontStyle">italic</property>
+                    <property name="color">#444E68</property>
+                </style>
+            </styles>
+        </theme>
+        <theme name="maximoTheme" id="1674">
+            <styles>
+                <style name="report" id="1675">
+                    <property name="backgroundColor">#FFFFFF</property>
+                    <property name="fontFamily">"Verdana", "Arial", sans-serif</property>
+                    <property name="fontSize">x-small</property>
+                </style>
+                <style name="title" id="1676">
+                    <property name="fontSize">150%</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="titlesub" id="1677">
+                    <property name="fontSize">125%</property>
+                    <property name="color">#444E68</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="reportheaderlabel" id="1678">
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="textAlign">right</property>
+                    <property name="verticalAlign">top</property>
+                </style>
+                <style name="reportheaderdata" id="1679">
+                    <property name="textAlign">left</property>
+                    <property name="verticalAlign">top</property>
+                </style>
+                <style name="tableheaderrow" id="1680">
+                    <property name="backgroundColor">#7E90BF</property>
+                </style>
+                <style name="tableheaderlabel" id="1681">
+                    <property name="fontSize">100%</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#FFFFFF</property>
+                    <property name="marginLeft">0px</property>
+                    <property name="paddingLeft">4pt</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="tableheaderdata" id="1682">
+                    <property name="fontSize">100%</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#FFFFFF</property>
+                    <property name="paddingLeft">2px</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="tabledetailslabel" id="1683">
+                    <property name="fontWeight">bold</property>
+                    <property name="color">#444E68</property>
+                    <property name="textAlign">right</property>
+                    <property name="verticalAlign">bottom</property>
+                </style>
+                <style name="tabledetailslabelcell" id="1684">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="paddingTop">2px</property>
+                    <property name="paddingLeft">4px</property>
+                    <property name="paddingBottom">2px</property>
+                </style>
+                <style name="tabledetailsdatacell" id="1685">
+                    <property name="borderBottomColor">#808080</property>
+                    <property name="borderBottomStyle">dotted</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="paddingLeft">4px</property>
+                </style>
+                <style name="tabledetailsdatarow" id="1686">
+                    <property name="textAlign">right</property>
+                </style>
+                <style name="summarylabel" id="1687">
+                    <property name="fontWeight">bold</property>
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="summarydata" id="1688">
+                    <property name="textAlign">left</property>
+                </style>
+                <style name="footer" id="1689"/>
+                <style name="chart" id="1690">
+                    <property name="fontFamily">"SansSerif"</property>
+                    <property name="fontSize">10pt</property>
+                    <property name="marginTop">15px</property>
+                    <property name="marginLeft">15px</property>
+                </style>
+                <style name="table-header" id="1691">
+                    <property name="marginTop">2px</property>
+                </style>
+            </styles>
+        </theme>
+    </themes>
+    <components>
+        <text name="Begin Date" id="137">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("begin_date_tooltip");</VALUE-OF>"><VALUE-OF>getNLS("begin_date");</VALUE-OF></div>]]></text-property>
+        </text>
+        <text name="End Date" id="140">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("end_date_tooltip");</VALUE-OF>"><VALUE-OF>getNLS("end_date");</VALUE-OF></div>]]></text-property>
+        </text>
+        <text name="Report Period" id="126">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("report_period_tooltip");</VALUE-OF>"><VALUE-OF>getNLS("report_period");</VALUE-OF></div>]]></text-property>
+        </text>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Description text goes here. Enter a short description about the report.Description text goes here. Enter a short description about the report.Description text goes here. Enter a short description about the report.Description text goes here. Enter a short description.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <text name="Secondary Title or Parameter Group Heading" id="332">
+            <property name="style">secondary-title</property>
+            <property name="contentType">auto</property>
+            <text-property name="content"><![CDATA[Secondary Report Title]]></text-property>
+        </text>
+        <text name="Section Heading or Sub-title" id="172">
+            <property name="style">section-title</property>
+            <property name="contentType">auto</property>
+            <text-property name="content"><![CDATA[Section 1 Sub-Title Text]]></text-property>
+        </text>
+        <text name="Report Title" id="1613">
+            <property name="style">main-title</property>
+            <property name="contentType">auto</property>
+            <text-property name="content" key="report_title"><![CDATA[Report Title]]></text-property>
+        </text>
+        <grid name="Warning Message Dialog" id="5">
+            <property name="style">message-box-style</property>
+            <property name="marginTop">15px</property>
+            <property name="marginLeft">15px</property>
+            <property name="marginRight">15px</property>
+            <property name="width">90%</property>
+            <column id="6">
+                <property name="width">0.5833333333in</property>
+            </column>
+            <column id="7">
+                <property name="width">4.5208333333in</property>
+            </column>
+            <row id="8">
+                <cell id="1584">
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">10px</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">10px</property>
+                    <property name="textAlign">center</property>
+                    <image name="NewImage" id="49">
+                        <property name="source">file</property>
+                        <expression name="uri">"tcr_common/images/minor-2.gif"</expression>
+                    </image>
+                </cell>
+                <cell id="1585">
+                    <property name="paddingTop">0px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0pt</property>
+                    <text name="NewText" id="1586">
+                        <property name="paddingTop">3px</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<b><font color="#444E68" style="bold"> A123456W </font></b> <br>Message text warning user that something might be wrong.<br>]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Error Message Dialog" id="1587">
+            <property name="style">message-box-style</property>
+            <property name="width">90%</property>
+            <column id="1588">
+                <property name="width">0.5833333333in</property>
+            </column>
+            <column id="1589">
+                <property name="width">4.5208333333in</property>
+            </column>
+            <row id="36">
+                <cell id="1590">
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">10px</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">10px</property>
+                    <property name="textAlign">center</property>
+                    <image name="NewImage1" id="1591">
+                        <property name="source">file</property>
+                        <expression name="uri">"tcr_common/images/critical-2.gif"</expression>
+                    </image>
+                </cell>
+                <cell id="39">
+                    <property name="paddingTop">0px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0pt</property>
+                    <text name="NewText1" id="51">
+                        <property name="paddingTop">3px</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<b><font color="#444E68" style="bold"> A123456E </font></b> <br>Message text telling user something is wrong with the product and action needs to be taken to fix the problem.<br>]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Information Message Dialog" id="41">
+            <property name="style">message-box-style</property>
+            <property name="width">90%</property>
+            <expression name="bookmark">"Info Message"</expression>
+            <column id="42">
+                <property name="width">0.583in</property>
+            </column>
+            <column id="43">
+                <property name="width">4.6770833333in</property>
+            </column>
+            <row id="44">
+                <cell id="45">
+                    <property name="paddingTop">3px</property>
+                    <property name="paddingLeft">10px</property>
+                    <property name="paddingBottom">0pt</property>
+                    <property name="paddingRight">10px</property>
+                    <property name="textAlign">center</property>
+                    <image name="NewImage2" id="46">
+                        <property name="source">file</property>
+                        <expression name="uri">"tcr_common/images/information-2.gif"</expression>
+                    </image>
+                </cell>
+                <cell id="47">
+                    <property name="paddingTop">0px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0pt</property>
+                    <text name="NewText2" id="52">
+                        <property name="paddingTop">3px</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<b><font color="#444E68" style="bold"> A123456I </font></b> <br>Message text providing some information to the user.<br>]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <image name="Collapse Icon" id="1633">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/collapse.gif"</expression>
+        </image>
+        <image name="Critical Icon" id="1634">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/critical.gif"</expression>
+        </image>
+        <image name="Critical Large Icon" id="1635">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/critical-2.gif"</expression>
+        </image>
+        <image name="Expand Icon" id="1636">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/expand.gif"</expression>
+        </image>
+        <image name="Fatal Icon" id="1637">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/fatal.gif"</expression>
+        </image>
+        <image name="Fatal Large Icon" id="1638">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/fatal-2.gif"</expression>
+        </image>
+        <image name="IBM Logo" id="1639">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/IBM logo Black.gif"</expression>
+        </image>
+        <image name="Information Icon" id="1640">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/information.gif"</expression>
+        </image>
+        <image name="Information Large Icon" id="1641">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/information-2.gif"</expression>
+        </image>
+        <image name="Minor Icon" id="1642">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/minor.gif"</expression>
+        </image>
+        <image name="Minor Large Icon" id="1643">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/minor-2.gif"</expression>
+        </image>
+        <image name="Normal Icon" id="1644">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/normal.gif"</expression>
+        </image>
+        <image name="Normal Large Icon" id="1645">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/normal-2.gif"</expression>
+        </image>
+        <image name="Tivoli Logo" id="1646">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/tivoli.gif"</expression>
+        </image>
+        <image name="Unknown Icon" id="1647">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/unknown.gif"</expression>
+        </image>
+        <image name="Unknown Large Icon" id="1648">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/unknown-2.gif"</expression>
+        </image>
+        <image name="Warning Icon" id="1649">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/warning.gif"</expression>
+        </image>
+        <image name="Warning Large Icon" id="1650">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/warning-2.gif"</expression>
+        </image>
+        <data name="Begin Date Value" id="1655">
+            <structure name="dateTimeFormat">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <property name="displayName">Begin Date Value</property>
+                    <expression name="expression">getStartDateFromGroupNames("Report Period","Begin Date","End Date")</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Column Binding</property>
+        </data>
+        <data name="End Date Value" id="1656">
+            <structure name="dateTimeFormat">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <property name="displayName">End Date Value</property>
+                    <expression name="expression">getEndDateFromGroupNames("Report Period","Begin Date","End Date")</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Column Binding</property>
+        </data>
+        <data name="Report Period Value" id="1657">
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <property name="displayName">Report Period Value</property>
+                    <expression name="expression">getReportPeriodFromGroupNames("Report Period","Begin Date","End Date")</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Column Binding</property>
+        </data>
+        <image name="Heat Chart Bad Icon" id="1668">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_bad_legend.gif"</expression>
+        </image>
+        <image name="Heat Chart Good Icon" id="1669">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_best_legend.gif"</expression>
+        </image>
+        <image name="Heat Chart Warning Icon" id="1670">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_fair_legend.gif"</expression>
+        </image>
+        <image name="Heat Chart Fair Icon" id="1671">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_good_legend.gif"</expression>
+        </image>
+        <image name="Heat Chart Critical Icon" id="1672">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_really_bad_legend.gif"</expression>
+        </image>
+        <image name="Heat Chart Unknown Icon" id="1673">
+            <property name="source">file</property>
+            <expression name="uri">"tcr_common/images/hc_unknown_legend.gif"</expression>
+        </image>
+        <label name="Style Package Version" id="1666">
+            <text-property name="text">Style Package Version 1.2.0.2</text-property>
+        </label>
+    </components>
+    <page-setup>
+        <simple-master-page name="TCR Master Page" id="3">
+            <page-header>
+                <grid id="9">
+                    <property name="width">100%</property>
+                    <column id="10"/>
+                    <column id="11"/>
+                    <row id="12">
+                        <cell id="13"/>
+                        <cell id="14">
+                            <property name="textAlign">right</property>
+                            <image id="38">
+                                <property name="source">file</property>
+                                <expression name="uri">"tcr_common/images/IBM logo Black.gif"</expression>
+                            </image>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+            <page-footer>
+                <grid id="19">
+                    <property name="width">100%</property>
+                    <column id="20"/>
+                    <column id="301">
+                        <property name="width">1.46875in</property>
+                    </column>
+                    <column id="21">
+                        <property name="width">2.9479166667in</property>
+                    </column>
+                    <row id="22">
+                        <cell id="23">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <text name="NewText3" id="1719">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<VALUE-OF>new Date()</VALUE-OF>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="24">
+                            <grid id="25">
+                                <property name="width">100%</property>
+                                <column id="26">
+                                    <property name="width">2.1145833333in</property>
+                                </column>
+                                <column id="27">
+                                    <property name="width">0.2083333333in</property>
+                                </column>
+                                <column id="28">
+                                    <property name="width">0.5625in</property>
+                                </column>
+                                <row id="29">
+                                    <property name="textAlign">right</property>
+                                    <cell id="30">
+                                        <property name="paddingLeft">50pt</property>
+                                        <property name="textAlign">right</property>
+                                        <auto-text id="31">
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="32">
+                                        <text id="33">
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="34">
+                                        <auto-text id="35">
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+        <simple-master-page name="maximoLandscape" id="1692">
+            <property name="orientation">landscape</property>
+            <property name="topMargin">0.5in</property>
+            <property name="leftMargin">0.5in</property>
+            <property name="bottomMargin">0.5in</property>
+            <property name="rightMargin">0.5in</property>
+            <page-header>
+                <grid name="NewGrid2" id="1693">
+                    <property name="width">100%</property>
+                    <column id="1694">
+                        <property name="width">5in</property>
+                    </column>
+                    <column id="1695">
+                        <property name="width">5in</property>
+                    </column>
+                    <row id="1696">
+                        <cell id="1697">
+                            <image id="1698">
+                                <property name="source">file</property>
+                                <expression name="uri">"tivoli.gif"</expression>
+                            </image>
+                        </cell>
+                        <cell id="1699">
+                            <property name="textAlign">right</property>
+                            <image name="NewImage3" id="1700">
+                                <property name="source">file</property>
+                                <expression name="uri">"IBM_logo_Black.gif"</expression>
+                            </image>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+            <page-footer>
+                <grid name="NewGrid" id="1701">
+                    <property name="width">100%</property>
+                    <column id="1702">
+                        <property name="width">5in</property>
+                    </column>
+                    <column id="1703">
+                        <property name="width">5in</property>
+                    </column>
+                    <row id="1704">
+                        <cell id="1705">
+                            <text id="1706">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<value-of format="General Date">new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="1707">
+                            <grid name="NewGrid1" id="1708">
+                                <property name="textAlign">right</property>
+                                <property name="width">100%</property>
+                                <column id="1709">
+                                    <property name="width">4.5in</property>
+                                </column>
+                                <column id="1710">
+                                    <property name="width">0.1in</property>
+                                </column>
+                                <column id="1711">
+                                    <property name="width">0.4in</property>
+                                </column>
+                                <row id="1712">
+                                    <cell id="1713">
+                                        <property name="textAlign">right</property>
+                                        <auto-text name="NewAutoText" id="1714">
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="1715">
+                                        <property name="textAlign">right</property>
+                                        <text id="1716">
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1717">
+                                        <property name="textAlign">right</property>
+                                        <auto-text name="NewAutoText1" id="1718">
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+</library>

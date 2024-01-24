@@ -1,0 +1,665 @@
+<html>
+
+<head>
+<title>Connector Event Notification API Example</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta name=author content="Alexander Amies">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Directory Service Markup Language Version 2 JNDI Provider Example</h1>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+The program <a
+href="../src/examples/serviceprovider/dsml2/DSML2DirContextTest.java">DSML2DirContextTest.java</a>
+illustrates how to communicate with ISIM using the Directory Service Markup
+Language Version 2 (DSMLv2) Java Naming and Directory Interface (JNDI)
+provider. Comments within the program describe it's logic and a description of
+how to set up the supporting data files and run it is provided here.<br>
+<br>
+<b>Building the Example</b></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the
+examples by following the instructions given in <a href="../../Building.html">Building
+the Examples</a>.</span></p>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'>The
+build script will create the jar file
+${ITIM_HOME}/extensions/{RELEASE_VERSION}/lib/examples.jar. This contains the
+class file for Java classes for this example.<br>
+<br>
+The example is a stand-alone program so there are no changes required to the
+application server to enable it to work.<br>
+<br>
+<b>Running the Example</b><br>
+<br>
+Within the ISIM user interface, add a service instance of type 'IDI Data Feed'.
+This service type uses the DSMLv2 protocol to send and receive requests. It is
+not actually necessary to use IBM Directory Integrator (IDI) with it. &nbsp;<br>
+<br>
+Enter the values for the service shown in Table 1.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Table
+1 Parameters for ISIM Server Instance</span></b></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width="90%"
+ style='width:90.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Value</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Service Name</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>&lt;pick a name&gt;</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This name is purely
+  descriptive and is for use in the user interface.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>URL</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>&lt;arbitrary&gt;</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Although not used in
+  this example, a non-null value is required to conform with the schema.
+  &nbsp;A value is required because of the more common usage of service
+  definitions to communicate outwardly from ISIM to a remote agent.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>User ID</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is the value for
+  the principal used for authentication of incoming requests.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Password</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is the value for
+  the password used for authentication of incoming requests.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Naming Context</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>namingContexts=DSML2
+  Test</span></p>
+  </td>
+  </nobr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is used to identify
+  the service to associate imported data with. &nbsp;The value, including the
+  single space between 'DSML2' and 'Test', must be a case-sensitive match to
+  the value sent by the JNDI client</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Use Workflow</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Off (False)</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This can be either on or
+  off but it simpler to have it off.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Name Attribute</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>uid</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is the attribute
+  that will be used to do lookups on. &nbsp;This should be unique for all
+  people within ISIM. &nbsp;If there are multiple people found with the same
+  value then an error will be returned.</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+An example screen shot is shown in Figure 1.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=749 height=458 src="images/service.gif"
+alt="Screen shot of service detail form."></span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Figure
+1 Screen Shot of Service Detail Form</span></b></p>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+Edit the file <a href="runJNDITest.cmd">runJNDITest.cmd</a> (<a
+href="runJNDITest.sh">runJNDITest.sh</a> on unix) to set your java interpreter
+and classpath correctly.<br>
+<br>
+In the file <a href="data/test.properties">test.properties</a>, enter the
+values shown in Table 2 to connect to the ISIM server.</span></p>
+
+<p  align=center style='margin-top:0in;margin-right:0in;
+margin-bottom:12.0pt;margin-left:0in;text-align:center'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Table 2 Parameters for
+Connection to ISIM Server</span></b></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width="90%"
+ style='width:90.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Value</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>java.naming.factory.initial</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>com.ibm.dsml2.jndi.DSML2InitialContextFactory</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The factory class for
+  the DSMLv2 JNDI implementation provided with ISIM.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>java.naming.provider.url</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>http://&lt;host&gt;:&lt;port&gt;/itim/console/dsml2_event_handler<br>
+  <br>
+  For example,<br>
+  <br>
+  http://localhost:9080/itim/console/dsml2_event_handler</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>We will start with http
+  and then try https later in the example. &nbsp;The host is either the dns
+  name or ip address of the machine. &nbsp;The port is the port that the
+  application server is listening on. &nbsp;The path part of the url identities
+  the web application and servlet.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>java.naming.security.principal</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user id entered in
+  the service form definition.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>java.naming.security.credentials</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user id entered in
+  the service form definition.</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The value for the JNDI factory class
+com.ibm.dsml2.jndi.DSML2InitialContextFactory leads to the instantiation of the
+DSMLv2 provider by the JNDI framework. &nbsp;This provider transports DSMLv2
+text directly over a HTTP or HTTPS transport.<br>
+<br>
+Appropiate values for data are given in the file <a
+href="data/test_data.properties">test_data.properties</a>. &nbsp;This file does
+not need to be modified but you should look at it to compare it to the
+variables in the example code and the values inserted into the ISIM data store
+by the program.<br>
+<br>
+To run the program use the command line parameters shown in Table 3.<br>
+<br>
+Table 3 Command Line Parameters to run the example program. &nbsp;The
+description column provides help to verify that the effect of the command
+within the ISIM user interface.</span></p>
+
+<p  align=center style='margin-top:0in;margin-right:0in;
+margin-bottom:12.0pt;margin-left:0in;text-align:center'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Table 3 &nbsp;Command Line
+Parameters to Run the Example Program</span></b></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width="90%"
+ style='width:90.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Command Line</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><tt><span
+  style='font-size:10.0pt;color:black'>runJNDITest -op add</span></tt></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'></nobr>Adds person with
+  cn 'wilma flintstone' to ISIM. &nbsp;Go to My Organization | Manage People to
+  check that Wilma was added successfully.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><tt><span
+  style='font-size:10.0pt;color:black'>runJNDITest -op lookup</span></tt></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'></nobr>Looks up the
+  person just added in the directory. &nbsp;Check standard out from the client
+  program to see whether the person was found and the information is correct.
+  &nbsp;There are other output print statements present that can be ignored or
+  used to better understand the program.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><tt><span
+  style='font-size:10.0pt;color:black'>runJNDITest -op </span></tt><span
+  style='font-family:"Arial","sans-serif";color:black'></nobr>mod</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Change the value of
+  Wilma's cn to 'wilma d flinstone'. &nbsp;Go to Wilma's personal information
+  to verify that the new cn (Full Name) is correct.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><tt><span
+  style='font-size:10.0pt;color:black'>runJNDITest -op&nbsp;</nobr>del</span></tt></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Delete Wilma from the
+  ISIM data store. &nbsp;Wilma should no longer appear in the list of people in
+  My Organization.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'><nobr>
+  <p  style='margin:0in;margin-bottom:.0001pt'><tt><span
+  style='font-size:10.0pt;color:black'>runJNDITest -op DSE</span></tt></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'></nobr>Does a root DSE
+  Search as defined in <a href="http://www.faqs.org/rfcs/rfc2251.html">RFC 2251</a>,
+  which provides information about the server. &nbsp;Check for the information
+  printed to standard out.</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+<b>Description of the Code</b><br>
+The only imports required for communication with ISIM are the JNDI interfaces: <br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:#990000'>import</span></tt><tt><span
+style='font-size:10.0pt;color:#FF0055'> </span></tt><tt><span style='font-size:
+10.0pt;color:black'>javax.naming.NamingException;</span></tt><span
+style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+</span><tt><span style='font-size:10.0pt;color:#990000'>import</span></tt><tt><span
+style='font-size:10.0pt;color:black'> javax.naming.NamingEnumeration;</span></tt><span
+style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+</span><tt><span style='font-size:10.0pt;color:#990000'>import</span></tt><tt><span
+style='font-size:10.0pt;color:black'> javax.naming.directory.*;</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+A connection is made in the method </span><tt><span style='font-size:10.0pt;
+color:black'>getDirContext()</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> by reading the properties in the file test.properties into a </span><tt><span
+style='font-size:10.0pt;color:black'>Properties </span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>object and constructing an
+</span><tt><span style='font-size:10.0pt;color:black'>InitialDirContext </span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>object that represents the
+connection.<br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:#990000'>private </span></tt><tt><span
+style='font-size:10.0pt;color:black'>DirContext getDirContext() throws
+NamingException,</span></tt><span style='font-size:10.0pt;font-family:"Courier New";
+color:black'><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IOException {</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; Properties connectorProps = new Properties();</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; InputStream is = new FileInputStream(PROPS);</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; connectorProps.load(is);</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; </tt></span><tt><span style='font-size:10.0pt;
+color:#990000'>return </span></tt><tt><span style='font-size:10.0pt;color:black'>new
+InitialDirContext(connectorProps);</span></tt><span style='font-size:10.0pt;
+font-family:"Courier New";color:black'><br>
+<tt>}</tt></span><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+There is no need to reference any DSMLv2 implementation specific classes in the
+code. &nbsp;In that way, properties for connection using another provider, such
+as DAML or LDAP, can be used without changes to the code.<br>
+<br>
+The method testCreateSubcontext() creates a person with the following lines of
+code:<br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:black'>&nbsp;&nbsp;&nbsp; String
+dn = name + &quot;,&quot; + namingContext;</span></tt><span style='font-size:
+10.0pt;font-family:"Courier New";color:black'><br>
+<tt>&nbsp;&nbsp;&nbsp; context.createSubcontext(dn, attributes);</tt><br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+The distinguished name used is a combination of the entity name and a naming
+context identifying the service. &nbsp;The attributes are read from the data
+file.<br>
+<br>
+The DSMLv2 implementation supports lookup of entities, whereas the DAML
+provider does not. &nbsp;The method testLookup() looks up the entry previously
+inserted in the directory and prints out the attribute values:<br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:black'>&nbsp;&nbsp;&nbsp;
+Attributes attributes =
+((DirContext)context.lookup(dn)).getAttributes(&quot;&quot;);</span></tt><span
+style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+<tt>&nbsp;&nbsp;&nbsp; assertTrue(&quot;attributes == null&quot;, attributes !=
+null);</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; NamingEnumeration enum = attributes.getAll();</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; while (enum.hasMore()) {</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Attribute attribute =
+(Attribute)enum.next();</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(&quot;id:
+&quot; + attribute.getID() + &quot;, values: &quot;);</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NamingEnumeration values =
+attribute.getAll();</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (values.hasMore()) {</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(&quot;\t&quot; + values.next());</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt><br>
+<tt>&nbsp;&nbsp;&nbsp; }</tt><br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+Searches returning more than a single result are not supported by the DSMLv2
+implementation.<br>
+<br>
+Also the DSMLv2 provider supports a root DSE search, whereas the DAML provider
+did not. &nbsp;This is useful for a ping facility or to find out the version of
+the server. &nbsp;The method </span><tt><span style='font-size:10.0pt;
+color:black'>testSearchRootDSE() </span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>demonstrates this.<br>
+<br>
+The methods </span><tt><span style='font-size:10.0pt;color:black'>testModifyPerson()</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> and </span><tt><span
+style='font-size:10.0pt;color:black'>testDestroySubcontext()</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> demonstrate modifying and
+deleting a person, respectivly.<br>
+<br>
+<b>Running the Example with a Secure Protocol</b><br>
+This section describes how to run the example with HTTP over a secure socket
+connection (ie with HTTPS). &nbsp;<br>
+<br>
+The DSMLv2 JNDI implementation uses the standard Java Secure Sockets Extension
+(JSSE) mechanism in conjuction with the Java URL protocol handling mechanism.
+&nbsp;This means that the secure protocol details are handled by an
+implementation of a standard interface in a pluggable way. Implementations are
+provided, among others, by Sun and IBM. &nbsp;Details need not be understood
+beyond the basic concepts of certificate management and knowing the appropriate
+system properties to set. &nbsp;However, the details can be found at the <a
+href="http://java.sun.com/products/jsse/">Sun JSSE page</a>.<br>
+<br>
+In the file test.properties, change the protocol to https for the
+java.naming.provider.url property and change the port to the appropriate value
+(default is 9443 for WAS and 7002 for Weblogic).<br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:black'>java.naming.provider.url=https://localhost:9443/enrole/dsml2_event_handler</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+You must use a Java virtual machine (JVM) with a&nbsp;JSSE implementation
+installed. &nbsp;This is provided out of the box with Websphere so the easiest
+path is to set the JAVA variable in the runJNDITest script to use that JVM.
+&nbsp;If using a machine with a standard java implementation, you can install
+JSSE from Sun's site at <a href="http://java.sun.com/products/jsse/">java.sun.com/products/jsse</a>.
+&nbsp;However, with the JDK 1.4 it is provided out of the box so it is not
+necessary to do anything special when using a JDK1.4 based client.<br>
+<br>
+There are several properties that must be set to enable use of HTTPS.
+&nbsp;These are described in Table 4. &nbsp;They should be specified in the
+command line as written in the runJNDITest scripts. &nbsp;The settings provided
+in the example script files may be adequate for many test environments.</span></p>
+
+<p  align=center style='margin-top:0in;margin-right:0in;
+margin-bottom:12.0pt;margin-left:0in;text-align:center'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Table 4 HTTPS System
+Properties</span></b></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width="90%"
+ style='width:90.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Property</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Value</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>java.protocol.handler.pkgs</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>com.ibm.net.ssl.internal.www.protocol</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This value is the IBM
+  implementation shipped with Websphere. &nbsp;Not required if using JDK 1.4.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>javax.net.ssl.trustStore</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>${WAS_HOME}/etc/DummyServerTrustFile.jks</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is the default
+  trust file shipped with Websphere. &nbsp;It is not recommended for
+  production.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>javax.net.ssl.trustStorePassword</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>WebAS</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This is the default for
+  the trust file shipped with Websphere. &nbsp;It is not recommended for
+  production.</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+<b>Troubleshooting</b><br>
+Hostname is Wrong<br>
+If using a dummy certificate you may receive an error with the message
+'Hostname is Wrong'. &nbsp;To avoid this obtain a proper certificate
+appropriate for the machine housing your application server. &nbsp;For testing
+purposes, however, you may add an entry to the hosts file matching the IP of
+the host to the name in the certificate and then use this as if it were a DNS
+name. &nbsp;For example, by adding the following entry to /etc/hosts:<br>
+<br>
+</span><tt><span style='font-size:10.0pt;color:black'>9.168.6.100 &nbsp; &nbsp;
+&nbsp; &nbsp;jserver</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+where 'jserver' is the name of the host in the trust certificate.<br>
+<br>
+<br>
+</span></p>
+
+</div>
+
+</body>
+
+</html>

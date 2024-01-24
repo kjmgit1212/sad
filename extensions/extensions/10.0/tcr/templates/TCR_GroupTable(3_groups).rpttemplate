@@ -1,0 +1,1259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.14" id="1">
+    <property name="author">IBM Tivoli Common Reporting</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.1.v20070809 Build &lt;2.2.0.v20070810-0630></property>
+    <property name="units">in</property>
+    <property name="includeResource">tcr_common/properties/TCR_GroupTable(3_groups)</property>
+    <text-property name="title">TCR_GrouptTable(3_Groups)</text-property>
+    <property name="comments">Licensed Materials - Property of IBM
+5724-T69 
+IBM Tivoli Reporting
+
+(C) Copyright IBM Corp. 2007 All Rights Reserved.
+
+US Government Users Restricted Rights - Use, duplication or
+disclosure restricted by GSA ADP Schedule Contract with
+IBM Corp.</property>
+    <html-property name="description">This template contains tables with three levels of grouping using the Tivoli Common Reporting Guidelines. 
+
+The same table is shown in two different ways. In the first approach, the first level of grouping has the look and feel of a section and applies the section and section-title styles. The second level of grouping adopts the group-1 style and the third level adopts group-2 style. In the second approach, the first group does not look like a section and is applied the group-1 style, the second group is applied the group-2 style and the third group is applied group-3 style. The different approaches are applicable under different scenarios.</html-property>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName">TCR_GroupTable(3_Groups)</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/ModifyQuery.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Param1" id="306">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">param1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Param 2" id="307">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">param2</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Param 3" id="308">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">param3</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="SampleDataSource" id="153">
+            <property name="odaDriverClass">org.eclipse.birt.report.data.oda.sampledb.Driver</property>
+            <property name="odaURL">jdbc:classicmodels:sampledb</property>
+            <property name="odaUser">ClassicModels</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SampleDataSet" id="154">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CUSTOMERNUMBER</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">CUSTOMERNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">CONTACTLASTNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">CONTACTFIRSTNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">PHONE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ADDRESSLINE1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ADDRESSLINE2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">CITY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">STATE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">POSTALCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">COUNTRY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">SALESREPEMPLOYEENUMBER</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">CREDITLIMIT</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">SampleDataSource</property>
+            <method name="afterOpen"><![CDATA[dataSetRowCount=0;]]></method>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CUSTOMERNUMBER</property>
+                    <property name="nativeName">CUSTOMERNUMBER</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">CUSTOMERNAME</property>
+                    <property name="nativeName">CUSTOMERNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">CONTACTLASTNAME</property>
+                    <property name="nativeName">CONTACTLASTNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">CONTACTFIRSTNAME</property>
+                    <property name="nativeName">CONTACTFIRSTNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">PHONE</property>
+                    <property name="nativeName">PHONE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ADDRESSLINE1</property>
+                    <property name="nativeName">ADDRESSLINE1</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ADDRESSLINE2</property>
+                    <property name="nativeName">ADDRESSLINE2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">CITY</property>
+                    <property name="nativeName">CITY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">STATE</property>
+                    <property name="nativeName">STATE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">POSTALCODE</property>
+                    <property name="nativeName">POSTALCODE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">COUNTRY</property>
+                    <property name="nativeName">COUNTRY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">SALESREPEMPLOYEENUMBER</property>
+                    <property name="nativeName">SALESREPEMPLOYEENUMBER</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">CREDITLIMIT</property>
+                    <property name="nativeName">CREDITLIMIT</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select *
+from CLASSICMODELS.CUSTOMERS</property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="TCR Master Page" id="1614" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="37" id="37"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1659" name="NewData" id="1659"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <text name="Report Title" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="report_title"><![CDATA[]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232">
+                    <text name="Secondary Title or Parameter Group Heading" id="332">
+                        <property name="style">secondary-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="secondary_title"><![CDATA[]]></text-property>
+                    </text>
+                    <grid name="Parameter Table" id="95">
+                        <property name="style">parameter-table</property>
+                        <property name="width">100%</property>
+                        <column id="96">
+                            <property name="width">20%</property>
+                        </column>
+                        <column id="97">
+                            <property name="width">30%</property>
+                        </column>
+                        <column id="98">
+                            <property name="width">20%</property>
+                        </column>
+                        <column id="99">
+                            <property name="width">30%</property>
+                        </column>
+                        <row id="100">
+                            <cell id="101">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 1" id="214">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content" key="parameter1"><![CDATA[]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="102">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 1" id="312">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Param 1</property>
+                                            <expression name="expression">params["Param1"]</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Param 1</property>
+                                </data>
+                            </cell>
+                            <cell id="103">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 2" id="140">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content" key="parameter2"><![CDATA[]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="104">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3px</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 2" id="319">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Param 2</property>
+                                            <expression name="expression">params["Param 2"]</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Param 2</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="105">
+                            <cell id="106">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 3" id="126">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content" key="parameter3"><![CDATA[]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="107">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3px</property>
+                                <data name="Parameter Value 3" id="314">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Param 3</property>
+                                            <expression name="expression">params["Param 3"]</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Param 3</property>
+                                </data>
+                            </cell>
+                            <cell id="108">
+                                <property name="style">parameter-name</property>
+                            </cell>
+                            <cell id="109">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3px</property>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="162">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="163"/>
+            <row id="1611">
+                <cell id="1612">
+                    <property name="paddingTop">10pt</property>
+                    <text name="Section Heading or Sub-title" id="1613">
+                        <property name="style">section-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="section_heading_1"><![CDATA[]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="168">
+                <cell id="169">
+                    <property name="paddingTop">10pt</property>
+                    <table name="Group table with Sections" id="553">
+                        <property name="style">group-table-with-section</property>
+                        <property name="marginTop">0px</property>
+                        <property name="marginLeft">0px</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">SampleDataSet</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero()</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">CUSTOMERNUMBER</property>
+                                <expression name="expression">dataSetRow["CUSTOMERNUMBER"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CUSTOMERNAME</property>
+                                <expression name="expression">dataSetRow["CUSTOMERNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CONTACTLASTNAME</property>
+                                <expression name="expression">dataSetRow["CONTACTLASTNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CONTACTFIRSTNAME</property>
+                                <expression name="expression">dataSetRow["CONTACTFIRSTNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PHONE</property>
+                                <expression name="expression">dataSetRow["PHONE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ADDRESSLINE1</property>
+                                <expression name="expression">dataSetRow["ADDRESSLINE1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ADDRESSLINE2</property>
+                                <expression name="expression">dataSetRow["ADDRESSLINE2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CITY</property>
+                                <expression name="expression">dataSetRow["CITY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">STATE</property>
+                                <expression name="expression">dataSetRow["STATE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POSTALCODE</property>
+                                <expression name="expression">dataSetRow["POSTALCODE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COUNTRY</property>
+                                <expression name="expression">dataSetRow["COUNTRY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SALESREPEMPLOYEENUMBER</property>
+                                <expression name="expression">dataSetRow["SALESREPEMPLOYEENUMBER"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CREDITLIMIT</property>
+                                <expression name="expression">dataSetRow["CREDITLIMIT"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                        </list-property>
+                        <column id="581">
+                            <property name="width">15px</property>
+                        </column>
+                        <column id="592">
+                            <property name="width">5px</property>
+                        </column>
+                        <column id="603">
+                            <property name="width">5px</property>
+                        </column>
+                        <column id="83">
+                            <property name="width">1.9895833333in</property>
+                        </column>
+                        <column id="84"/>
+                        <column id="85"/>
+                        <group id="90">
+                            <property name="groupName">Country</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["COUNTRY"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["COUNTRY"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="91">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="572">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">section</property>
+                                        <property name="paddingTop">15px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">15px</property>
+                                        <text id="1483">
+                                            <property name="style">section-title</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["COUNTRY"]==null?getNLS("unknown"):row["COUNTRY"]</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="556">
+                                    <property name="height">3px</property>
+                                    <cell id="579">
+                                        <property name="style">group-1-spacer</property>
+                                        <property name="paddingTop">0px</property>
+                                    </cell>
+                                    <cell id="590">
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="601">
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                    </cell>
+                                    <cell id="557">
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">0px</property>
+                                    </cell>
+                                    <cell id="558">
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">0px</property>
+                                    </cell>
+                                    <cell id="559">
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">0px</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <group id="561">
+                            <property name="groupName">State</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["STATE"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["STATE"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="562">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="573">
+                                        <property name="style">group-1-spacer</property>
+                                        <property name="backgroundColor">#FFFFFF</property>
+                                        <property name="paddingTop">0px</property>
+                                    </cell>
+                                    <cell id="584">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-1</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">1px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <text id="1465">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["STATE"]==null?getNLS("unknown"):row["STATE"]</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="117">
+                                    <property name="height">3px</property>
+                                    <cell id="578">
+                                        <property name="style">group-1-spacer</property>
+                                        <property name="paddingTop">0px</property>
+                                    </cell>
+                                    <cell id="589">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="600">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="118">
+                                        <property name="style">table-group-1</property>
+                                    </cell>
+                                    <cell id="119">
+                                        <property name="style">table-group-1</property>
+                                    </cell>
+                                    <cell id="120">
+                                        <property name="style">table-group-1</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">1px</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <group id="567">
+                            <property name="groupName">City</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["CITY"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["CITY"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="127">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="574">
+                                        <property name="style">group-1-spacer</property>
+                                        <property name="backgroundColor">#FFFFFF</property>
+                                        <property name="paddingTop">0px</property>
+                                    </cell>
+                                    <cell id="585">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="596">
+                                        <property name="colSpan">4</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-2</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">1px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <text id="1466">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["CITY"]==null?getNLS("unknown"):row["CITY"]</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                                <row id="152">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="fontWeight">bold</property>
+                                    <cell id="575">
+                                        <property name="style">group-1-spacer</property>
+                                        <property name="paddingTop">0px</property>
+                                    </cell>
+                                    <cell id="586">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="597">
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="568">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <text id="1486">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="customer_name"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="569">
+                                        <property name="style">table-header-cell</property>
+                                        <text id="1487">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="postal_code"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="155">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">1px</property>
+                                        <text id="1488">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="phone"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1681">
+                                    <property name="height">3px</property>
+                                    <cell id="1682"/>
+                                    <cell id="1683">
+                                        <property name="style">table-group-1</property>
+                                    </cell>
+                                    <cell id="1684">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1685">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1686">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1687">
+                                        <property name="style">table-group-2</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">1px</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="60">
+                                <cell id="576">
+                                    <property name="style">group-1-spacer</property>
+                                    <property name="paddingTop">0px</property>
+                                </cell>
+                                <cell id="587">
+                                    <property name="style">table-group-1</property>
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <property name="paddingRight">0pt</property>
+                                </cell>
+                                <cell id="598">
+                                    <property name="style">table-group-2</property>
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <property name="paddingRight">0px</property>
+                                </cell>
+                                <cell id="61">
+                                    <property name="style">group-data</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <data id="1489">
+                                        <property name="resultSetColumn">CUSTOMERNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="63">
+                                    <property name="style">group-data</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <data id="1490">
+                                        <property name="resultSetColumn">POSTALCODE</property>
+                                    </data>
+                                </cell>
+                                <cell id="65">
+                                    <property name="style">group-data</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <data id="1491">
+                                        <property name="resultSetColumn">PHONE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1616" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero()</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1617"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("msg_hdr_dataset_empty");&lt;/VALUE-OF>  &lt;/font>&lt;/b> &lt;br> &lt;VALUE-OF>getNLS("msg_dataset_empty");&lt;/VALUE-OF>  &lt;/br></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 2" id="1530">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="1531"/>
+            <row id="1532">
+                <cell id="1533">
+                    <property name="paddingTop">10pt</property>
+                    <text name="Section 2 Heading or Sub-title" id="1534">
+                        <property name="style">section-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="section_heading_2"><![CDATA[]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="1535">
+                <cell id="1536">
+                    <property name="paddingTop">10pt</property>
+                    <table name="Group table without sections" id="1537">
+                        <property name="style">group-table-without-section</property>
+                        <property name="marginTop">15px</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">SampleDataSet</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero()</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">CUSTOMERNUMBER</property>
+                                <expression name="expression">dataSetRow["CUSTOMERNUMBER"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CUSTOMERNAME</property>
+                                <expression name="expression">dataSetRow["CUSTOMERNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CONTACTLASTNAME</property>
+                                <expression name="expression">dataSetRow["CONTACTLASTNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CONTACTFIRSTNAME</property>
+                                <expression name="expression">dataSetRow["CONTACTFIRSTNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PHONE</property>
+                                <expression name="expression">dataSetRow["PHONE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ADDRESSLINE1</property>
+                                <expression name="expression">dataSetRow["ADDRESSLINE1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ADDRESSLINE2</property>
+                                <expression name="expression">dataSetRow["ADDRESSLINE2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CITY</property>
+                                <expression name="expression">dataSetRow["CITY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">STATE</property>
+                                <expression name="expression">dataSetRow["STATE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POSTALCODE</property>
+                                <expression name="expression">dataSetRow["POSTALCODE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COUNTRY</property>
+                                <expression name="expression">dataSetRow["COUNTRY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SALESREPEMPLOYEENUMBER</property>
+                                <expression name="expression">dataSetRow["SALESREPEMPLOYEENUMBER"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CREDITLIMIT</property>
+                                <expression name="expression">dataSetRow["CREDITLIMIT"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                        </list-property>
+                        <column id="1594">
+                            <property name="width">5px</property>
+                        </column>
+                        <column id="1595">
+                            <property name="width">5px</property>
+                        </column>
+                        <column id="1596">
+                            <property name="width">5px</property>
+                        </column>
+                        <column id="1597">
+                            <property name="width">1.9895833333in</property>
+                        </column>
+                        <column id="1598"/>
+                        <column id="1599"/>
+                        <group id="1538">
+                            <property name="groupName">Country</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["COUNTRY"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["COUNTRY"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="1539">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="1540">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                        <text id="1541">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["COUNTRY"]==null?getNLS("unknown"):row["COUNTRY"]</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1542">
+                                    <property name="height">3px</property>
+                                    <cell id="1543">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="1544">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1545">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">0pt</property>
+                                    </cell>
+                                    <cell id="1546">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">0pt</property>
+                                    </cell>
+                                    <cell id="1547">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">0pt</property>
+                                    </cell>
+                                    <cell id="1548">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">0pt</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <group id="1549">
+                            <property name="groupName">State</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["STATE"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["STATE"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="1550">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="1551">
+                                        <property name="style">table-group-1</property>
+                                        <property name="backgroundColor">#7E90BF</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="1552">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <text id="1553">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["STATE"]==null?getNLS("unknown"):row["STATE"]</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1554">
+                                    <property name="height">3px</property>
+                                    <cell id="1555">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="1556">
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1557">
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1558">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1559">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1560">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <group id="1561">
+                            <property name="groupName">City</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["CITY"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["CITY"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <header>
+                                <row id="1562">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <cell id="1563">
+                                        <property name="style">table-group-1</property>
+                                        <property name="backgroundColor">#7E90BF</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="1564">
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1565">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-3</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1609">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">table-group-3</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <text id="1566">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div><VALUE-OF>row["CITY"]==null?getNLS("unknown"):row["CITY"]</VALUE-OF></text>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                                <row id="1567">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="fontWeight">bold</property>
+                                    <cell id="1568">
+                                        <property name="style">table-group-1</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                        <property name="paddingRight">0pt</property>
+                                    </cell>
+                                    <cell id="1569">
+                                        <property name="style">table-group-2</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1570">
+                                        <property name="style">table-group-3</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingRight">0px</property>
+                                    </cell>
+                                    <cell id="1571">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <text id="1572">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="customer_name"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1573">
+                                        <property name="style">table-header-cell</property>
+                                        <text id="1574">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="postal_code"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1575">
+                                        <property name="style">table-header-cell</property>
+                                        <text id="1576">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content" key="phone"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1674">
+                                    <property name="height">3px</property>
+                                    <cell id="1675">
+                                        <property name="style">table-group-1</property>
+                                    </cell>
+                                    <cell id="1676">
+                                        <property name="style">table-group-2</property>
+                                    </cell>
+                                    <cell id="1677">
+                                        <property name="style">table-group-3</property>
+                                    </cell>
+                                    <cell id="1678">
+                                        <property name="style">table-group-3</property>
+                                    </cell>
+                                    <cell id="1679">
+                                        <property name="style">table-group-3</property>
+                                    </cell>
+                                    <cell id="1680">
+                                        <property name="style">table-group-3</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="1577">
+                                <cell id="1578">
+                                    <property name="style">table-group-1</property>
+                                    <property name="paddingTop">0px</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <property name="paddingBottom">0pt</property>
+                                    <property name="paddingRight">0pt</property>
+                                </cell>
+                                <cell id="1579">
+                                    <property name="style">table-group-2</property>
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <property name="paddingRight">0px</property>
+                                </cell>
+                                <cell id="1580">
+                                    <property name="style">table-group-3</property>
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <property name="paddingRight">0px</property>
+                                </cell>
+                                <cell id="1581">
+                                    <property name="style">group-data</property>
+                                    <property name="paddingLeft">5px</property>
+                                    <data id="1582">
+                                        <property name="resultSetColumn">CUSTOMERNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="1583">
+                                    <property name="style">group-data</property>
+                                    <data id="1584">
+                                        <property name="resultSetColumn">POSTALCODE</property>
+                                    </data>
+                                </cell>
+                                <cell id="1585">
+                                    <property name="style">group-data</property>
+                                    <data id="1586">
+                                        <property name="resultSetColumn">PHONE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog1" id="1618" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero()</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="1619"/>
+                            <ref-entry baseId="43" id="1620"/>
+                            <ref-entry baseId="44" id="1621"/>
+                            <ref-entry baseId="45" id="1622"/>
+                            <ref-entry baseId="46" name="NewImage21" id="1623"/>
+                            <ref-entry baseId="47" id="1624"/>
+                            <ref-entry baseId="52" name="NewText21" id="1625">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("msg_hdr_dataset_empty");&lt;/VALUE-OF>  &lt;/font>&lt;/b> &lt;br> &lt;VALUE-OF>getNLS("msg_dataset_empty");&lt;/VALUE-OF>  &lt;/br></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="report_description"><![CDATA[<b>Description text goes here. This is the non-NLS report description. If this displays within the report preview in Eclipse, the localization is not set correctly. This should be a globalized description from a properties file.  
+
+Set the resources property for the report to point to a valid properties file and make sure the localization property for the report description text element is set correctly.  If within Eclipse, make sure the Window->preferences->ReportDesign->resources value is set correctly.</b>]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

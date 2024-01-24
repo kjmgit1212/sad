@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<title>Configure Person</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='tab-interval:
+.5in;margin-left:52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:
+24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%;mso-cellspacing:0in;mso-padding-alt:0in 0in 0in 0in'>
+ <tr style='mso-yfti-irow:0;mso-yfti-lastrow:yes'>
+  <td style='padding:0in 0in 0in 0in'>
+  <p ><span style='font-family:Arial;color:black'><img
+  width=283 height=58 id="_x0000_i1025" src="../../ibm_banner.gif" border=0></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='text-align:right'><span
+  style='font-family:Arial;color:black'><img width=170 height=58
+  id="_x0000_i1026" src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Introduction</h1>
+
+<p ><span style='font-family:Arial;color:black'>It is sometimes 
+convenient to use the <span class=SpellE><i style='mso-bidi-font-style:normal'>
+erPersonStatus</i></span> attribute in person add and modify operations to cause 
+a person and his/her accounts to be suspended or restored. For example, it
+may be desirable to use a DSML feed to suspend or restore users using this
+attribute. (The &quot;Use workflow&quot; checkbox on the DSML service form must be checked for these examples to work.) The following two sections provide an overview of how this may be 
+done. The complete XML definitions for these examples may be found in 
+<span class=SpellE>person_add.xml</span> and <span class=SpellE>person_modify.xml</span>.</span>
+</p>
+<p class="MsoNormal"><span style='font-family:Arial;color:black'>To get to the workflow editor for the two examples, navigate to Configure System &gt; Manage Operations, select Entity Type level for Operation Level, and Person for Entity type. Then select add operation for the first example, and modife for the second.</span></p>
+
+<h2>Configuring the Person Add Operation to Use erPersonStatus</h2><h3>Add Operation Node</h3>
+<ol>
+<li>Create a new Operation node. </li>
+	<li>Create a link from the output of the ENFORCEPOLICYFORPERSON
+	node to the input of the new Operation node.</li>
+	<li>Create a link from the output of the new Operation node to the End node.</li>
+	<li>If you click on the Update button, the nodes should be organized like Figure 1.<br>
+	<img border="0" src="images/add_operation_layout.gif" width="582"
+		height="122">
+	<br>Figure 1 - Added Operation node
+	</li>
+</ol><h3>Update CREATEPERSON node</h3>
+<ol>
+	<li>Double-click on the new CREATEPERSON Node to open the properties
+	dialog.</li><li>Under Input Parameters select the item with the ID container then click on the Search Relevant Data button above the selection area.<br>
+	<img border="0" src="images/search_relevant_data.gif" width="591"
+		height="125">
+	<br>Figure 2
+	</li>
+	<li>Click on the Add button to create a new Relevant Data Item
+	with and ID of <font face="Monospace">action</font> and type of <font
+		face="Monospace">String</font>.<br>
+	<img border="0" src="images/action_relevant_data.gif" width="477"
+		height="281"> <br>
+	Figure 3 - action Relevant Data Item<br>
+	</li>
+	<li>Add a second new relevant data item with ID <font
+		face="Monospace">CONST_TRUE</font> of <font face="Monospace">String</font>
+	type, and set the default value to <font face="Monospace">true</font>.<br>
+	<img border="0" src="images/const_true_relevant_data.gif" width="477"
+		height="281"> <br>
+	Figure 4 - CONST_TRUE Relevant Data Item <br>
+	<br>
+	Once you have added <font face="Monospace">CONST_TRUE</font>, select
+	the relevant data item with the id <font face="Monospace">container</font>
+	and click OK. (If you don't first select <font face="Monospace">container</font>,
+	you will get an error when you click OK.)</li><li>Use the following script as the postscript to the CREATEPERSON
+	activity: <pre>
+var personObj = person.get();
+var personStatus = personObj.getProperty("erpersonstatus");
+
+if(personStatus != null && personStatus.length > 0) {
+
+  if(personStatus[0] == 1) {
+    action.set("suspend");
+  } else {
+    action.set("none");
+  }
+
+} else {
+  action.set("none");
+}</pre></li>
+	</ol>
+	<h3>Update the new Operation node</h3>
+<ol>
+	<li>Double click on the Operation node to open the properties dialog.</li>
+	<li>Set the Activity Id to <font face="Monospace">SUSPEND_PERSON</font>.</li>
+	<li>Set the Operation Activity Type to <font face="Monospace">Data
+	Reference</font>.</li>
+	<li>Set the Relevant Data field to <font face="Monospace">person</font>.</li>
+	<li>Set the Operation to <font face="Monospace">suspend</font>.</li>
+	<li>Set the accountSuspend parameter to <font face="Monospace">CONST_TRUE</font> using the Search Relevant Data button.</li>
+	<li>When you are done, the Operation node properties dialog should look like figure 5.<br>
+	<img border="0" src="images/operation_node_properties.gif" width="471"
+		height="579">
+	<br>Figure 5 - Operations node properties dialog
+	</li>
+	</ol>
+<h3>Update transitions between nodes</h3>
+<ol>
+
+	<li>Double click on the transition from ENFORCEPOLICYFORPERSON to SUSPEND_PERSON
+	to open the Transitions dialog and set the transition condition to: <font
+		face="Monospace">action.get()=="suspend"</font>.<br>
+	<img border="0" src="images/transition_condition.gif" width="465"
+		height="319">
+	<br>Figure 6 - Transition condition properites dialog
+	</li>
+
+	<li>Set the transition condition for the ENFORCEPOLICYFORPERSON to
+	END transition to: <font face="Monospace">action.get()=="none"</font>.</li>
+
+</ol>
+</p>
+
+Refer to person_add.xml from the complete operation definition in XML format.
+
+<h2>Configuring the Person Modify Operation to use erPersonStatus</h2><h3>Add new nodes and transitions</h3>
+<ol>
+<li>Create two new Operation nodes.</li>
+	<li>Add a transition from the output of ENFORCEPOLICYFORPERSON to the input of each new Operation Node.</li>
+	<li>Add a transition from the output of each new Operation Node to the End node.</li>
+	<li>If you click the Update button, the nodes should be organized like Figure 7.<br>
+	<img border="0" src="images/modify_operation_layout.gif" width="566"
+		height="168">
+	<br>Figure 7 - Modify operation layout</li>
+	
+</ol>
+<h3>Update Start node</h3>
+<ol>
+<li>Open the Start node's properties dialog.</li>
+	<li>Use the following script in the JavaScript section.<pre>
+var person = Entity.get();
+action.set("none");
+var changes = person.getChanges();
+
+if(changes != null && changes.length > 0) {
+  for (i =0 ; i < changes.length ; i++) {
+    var op = changes[i].op;
+    if(op == 1 || op == 2 || op == 3) {
+      var name = changes[i].attr;
+
+      if(name == "erpersonstatus") {
+        var values = changes[i].values;
+        
+        if(values[0] == "1") {
+          action.set("suspend");
+        } else {
+          action.set("restore");
+        }
+      }
+    }
+  }
+}</pre></li>
+	<li>Save the Start node.</li>
+	
+</ol>
+<h3>Update the new Operation nodes</h3>
+<ol>
+<li>Open the properties dialog of one of the new Operations nodes.
+</li>
+	<li>Set the Activity Id to SUSPEND_PERSON.</li>
+	<li>Set the Operation Activity Type to Data Reference.</li>
+	<li>Click on the eplisis (...) button next to the Relevant Data field.</li>
+	<li>Add a new Relevant data item with id <font face="Monospace">action</font> and type <font
+		face="Monospace">String</font>.</li>
+	<li>Add a second new Relevant data item with id <font face="Monospace">CONST_TRUE</font>, type <font
+		face="Monospace">String</font>, and defaut value <font
+		face="Monospace">true</font>.</li>
+	<li>Select the Relevant data item with id <font face="Monospace">Entity</font> and click Ok.</li>
+	<li>Set the Operation to <font face="Monospace">suspend</font>.</li>
+	<li>Set the accountSuspend parameter to <font face="Monospace">CONST_TRUE</font>.</li>
+	<li>Open the properties dialog of the second new Operation node.</li>
+	<li>Set the Activity Id to <font face="Monospace">RESTORE_PERSON</font>.</li>
+	<li>Set the Operation Activity Type to <font face="Monospace">Data
+	Reference</font>.</li>
+	<li>Set the Relevant Data field to <font face="Monospace">Entity</font>.</li>
+	<li>Set the Operation to <font face="Monospace">restore</font>.</li>
+	<li>Set the accountRestore parameter to <font face="Monospace">CONST_TRUE</font>.</li>
+</ol>
+<h3>Update transitions between nodes</h3>
+<ol>
+
+	<li>Update the transition from ENFORCEPOLICYFORPERSON to SUSPEND_PERSON
+	and set the transition condition to: <font face="Monospace">action.get()=="suspend"</font></li>
+	<li>Update the transition from ENFORCEPOLICYFORPERSON to RESTORE_PERSON
+	and set the transition condition to: <font face="Monospace">action.get()=="restore"</font></li>
+	<li>Update the transition from ENFORCEPOLICYFORPERSON to
+	END transition to: <font face="Monospace">action.get()=="none"</font></li>
+	<li>Ensure that the split condition for ENFORCEPOLICYFORPERSON is
+	set to "OR".</li>
+
+</ol>
+</p>
+Refer to person_modify.xml from the complete operation definition in XML format.
+
+</div>
+
+</body>
+</html>

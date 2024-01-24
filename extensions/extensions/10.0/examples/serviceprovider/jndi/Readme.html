@@ -1,0 +1,103 @@
+<html>
+
+<head>
+<title>Running the Service Provider API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif" alt=Banner></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif" alt=Logo></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>JNDI Service Provider Examples</h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The files in the
+JNDI directory implement a JNDI connector example. The JNDI connector example
+comes with configuration files that can be installed on the ISIM directory
+server to work without much effort. The JNDI connector, however, can be
+configured to use different schemas and can use different directory servers by
+updating these configuration files (see the <a
+href="../../../doc/serviceprovider/serviceprovider.html">Connector API
+documentation</a> for more details). The only limitations of the connector is
+that it can&#8217;t support inheritance in the schema (other than from top), the user
+id attribute in the schema must be named erUid, and the password attribute must
+be named userPassword.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To run the
+example, first make sure the example code has been built and integrated with
+the ISIM platform (see <a href="../../Building.html">Building the Examples</a>).
+Then register the connector and its associated schema by following these steps.</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>To install the example,
+run the build file (build.bat for windows and build.sh for unix) found in the
+serviceprovider directory. The build file will create a jndisampleservice.jar
+file in the same directory. (You will need to set the ANT_HOME_LIB variable
+first.) <br>
+<br>
+Now log in to ISIM as ITIM Manager and select Configure System &gt; Manage
+Service Types. Press the Import button and select jndisampleservice.jar. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>From this point,
+you can create an instance of the JNDI Sample Service registered by the
+connector and provision it. To properly configure an instance of the JNDI
+Sample Service, the following service attributes must be set correctly:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>erJNDIFactory &#8211;
+Class name of a JNDI service provider. You can use the </span><span
+style='font-family:"Courier New";color:black'>java.naming.factory.initial</span><span
+style='font-family:"Arial","sans-serif";color:black'> property in the
+enRoleLDAPConnection.properties file to use ISIM&#8217;s JNDI service provider. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>erJNDIProviderURL
+&#8211; URL to the directory server to provision. You can use the </span><span
+style='font-family:"Courier New";color:black'>java.naming.provider.url</span><span
+style='font-family:"Arial","sans-serif";color:black'> property in the
+enRoleLDAPConnection.properties file to use ISIM&#8217;s directory.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>erJNDIPrincipal &#8211;
+User id to authenticate as to the directory server. You can use the </span><span
+style='font-family:"Courier New";color:black'>java.naming.security.principal</span><span
+style='font-family:"Arial","sans-serif";color:black'> property in the
+enRoleLDAPConnection.properties file to authenticate as the ISIM system.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>erJNDICredentials
+&#8211; Password to authenticate with to the directory server. You can use the </span><span
+style='font-family:"Courier New";color:black'>java.naming.security.credentials</span><span
+style='font-family:"Arial","sans-serif";color:black'> property in the
+enRoleLDAPConnection.properties to authenticate as the ISIM system.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>erJNDIRoot &#8211; Root
+node in the directory tree to search from and to add users to. This value must
+be the distinguished name of an existing object in the directory.</span></p>
+
+</div>
+
+</body>
+
+</html>

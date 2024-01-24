@@ -1,0 +1,1116 @@
+<html>
+
+<head>
+<title>Relational Database Service Provider Example</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif" alt=Banner></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif" alt=Logo></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Relational Database Service Provider Example</h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This example
+demonstrates use of the ServiceProvider API to build a connector to a
+relational database.&nbsp;It is more complete than the JNDI example
+ServiceProvider in that it manages group data and it handles suspending and
+restoring accounts.&nbsp;However, this comes at the cost of additional
+complexity in code and set up.<br>
+<br>
+The ServiceProvider implementation does not make assumptions about the schema,
+except that there is only one type of supporting data allowed.&nbsp;This is
+referred to as group data or supporting data, however, it may correspond to
+role or some other type on the remote database.&nbsp; In addition, it does
+make&nbsp; assumptions about the service schema, in particular the presence of
+the attributes described below.&nbsp;Therefore, the same ServiceProvider
+implementation can be used for other schemas, provided that certain conventions
+are used in the definition of the service schema and resource definition file.</span></p>
+
+<h2>Service Provider Installation</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The service
+provider is the component that facilitates communication betweeen ISIM and the
+remote database. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To build the
+examples follow the instructions given in <a href="../../Building.html">Building
+the Examples</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the examples.jar
+file created by the build process to the application server's classpath by
+following the instructions given in <a href="../../Classpath.html">Adding
+examples.jar to Classpath</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>An example service
+profile suited to the relational database table described below is also
+included.&nbsp;</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To install the
+example, run the build file (build.bat for Windows and build.sh for UNIX) found
+in the serviceprovider directory. The build file will create a rdbmsservice.jar
+file in the same directory. (You will need to set the ANT_HOME_LIB variable
+first.)</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Now log in to
+ISIM as ITIM Manager and select Configure System &gt; Manage Service Types.
+Press the Import button and select rdbmsservice.jar. rdbmsservice.jar is a simple
+jar file that contains a directory called fileserviceprofile and the following
+files:</span></p>
+
+<table  border=1 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td colspan=2 style='border:none;padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Files for Service Profile</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>File Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="rdbmsservice/schema.dsml"><code><span style='font-size:10.0pt'>schema.dsml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This defines the schema
+  for accounts, services, and groups for the new relational database
+  service.&nbsp; The account class, erRDBMSAccount, represents an account entry
+  in the database.&nbsp; The service class, erRDBMSService, describes the
+  information needed to communicate to the database and interpret the results
+  back.&nbsp; The group class, erRDBMSService, corresponds the ROLE table in
+  the database.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="rdbmsservice/resource.def"><code><span style='font-size:10.0pt'>resource.def</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This file describes
+  service profile configuration information, including which connector
+  properties and service parameters should be sent to the ServiceProvider
+  implementation.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="rdbmsservice/CustomLabels.properties"><code><span style='font-size:
+  10.0pt'>CustomLabels.properties</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Human understandable
+  labels for the schema entries.&nbsp; These will be displayed in the ISIM user
+  inteface.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="rdbmsservice/erRDBMSAccount.xml"><code><span style='font-size:10.0pt'>erRDBMSAccount.xml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An optional file
+  containing the account form.&nbsp; This will be imported during profile
+  install so that the form will not have to be designed in the form design
+  utility.&nbsp; It was created by using the form designer and copying the data
+  from the LDAP server into a file with the account class name and an 'xml'
+  postfix.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="rdbmsservice/erRDBMSService.xml"><code><span style='font-size:10.0pt'>erRDBMSService.xml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An optional file
+  containing the service form.&nbsp; This will be imported during profile
+  install so that the form will not have to be designed in the form design
+  utility.&nbsp; It was created in the same way as the account form.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After installing the
+service profile, restart the application server.</span></p>
+
+<h2>Database setup</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The example uses
+a database table for accounts and another for roles.&nbsp; These tables are
+described in the table below.</span></p>
+
+<table  border=1 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td colspan=2 style='border:none;padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description of Accounts Table</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Field</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>HRID</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Human resources
+  identifier.&nbsp; May not be null.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>LOGIN</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user id used to log
+  into the customer database application.&nbsp; This is the primary key.&nbsp;
+  May not be null. </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>PASSWORD</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The password used to log
+  into the customer database application. </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>FIRST_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user's given name.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>MIDDLE_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user's middle name. </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>LAST_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The user's surname. </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>TITLE</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Professional title.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>ROLE</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Membership in a
+  role.&nbsp; This has a foreign key constraint to ROLE_NAME in the Roles
+  table.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>EMAIL</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Internet email address.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>STATUS</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Status of the
+  account.&nbsp; Possible values are active and inactive.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<table  border=1 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td colspan=2 style='border:none;padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description of Roles Table</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Field</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>ROLE_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The name of the
+  role.&nbsp; May not be null. </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>SQL scripts are included
+that will create the tables and add a small amount of sample data.&nbsp; Run
+the script in file <a href="accounts.ddl"><code><span style='font-size:10.0pt'>accounts.ddl</span></code></a>
+(DB2), <a href="accounts_oracle.ddl"><code><span style='font-size:10.0pt'>accounts_oracle.ddl</span></code></a>
+(Oracle) or <a href="accounts_sqlserver.ddl"><code><span style='font-size:10.0pt'>accounts_sqlserver.ddl</span></code></a>
+(Microsoft SQL Server) using the native database command tools. <br>
+<br>
+Check the database to make sure that the tables have been created.<br>
+<br>
+The service provider connects to the database via an application server data
+source. For the same database as ISIM uses there is no additional setup to do
+on the application server. However, to provision to another database, a data
+source must be set up on the application server.&nbsp; These are the steps for
+Microsoft SQL Server on WebSphere.&nbsp;Other combinations of database vendor
+and application server are similar, however, you must use an XA driver to
+enable it to act in a distributed transaction.</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Log
+     into the WebSphere 6.1 console.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Expand
+     </span><span style='font-family:"Courier New"'>Resources</span><span
+     style='font-family:"Arial","sans-serif"'> in the navigation tree, then
+     expand</span><span style='font-family:"Courier New"'> JDBC</span><span
+     style='font-family:"Arial","sans-serif"'>, finally select </span><span
+     style='font-family:"Courier New"'>JDBC Providers</span><span
+     style='font-family:"Arial","sans-serif"'>.&nbsp; </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>From
+     the drop-down combo box select the correct scope. The scope should be the
+     same as the provider named </span><span style='font-family:"Courier New"'>ITIM
+     XA DB2 JDBC Provider</span><span style='font-family:"Arial","sans-serif"'>
+     (The ISIM provider is defined by the ISIM installer).</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     the New button.&nbsp; </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+     the values in the following table to fill out the form:</span></li>
+</ol>
+
+<table  border=1 cellpadding=0 style='margin-left:.5in'>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Name</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Value</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Database type</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>User-defined</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Implementation class
+  name </span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Name</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>JNetDirect</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>JNetDirect MSSQLServer
+  Driver (XA)</span></p>
+  </td>
+ </tr>
+</table>
+
+<ol start=6 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><br>
+     Click the Next button. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Class path text field, enter the absolute path to the sqljdbc.jar
+     file. This is usually </span><span style='font-family:"Courier New"'>$ITIM_HOME/lib/sqljdbc.jar</span><span
+     style='font-family:"Arial","sans-serif"'>.<br>
+     Click the Next button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Review
+     your choice to make sure they are correct, and press Finish.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to </span><span style='font-family:"Courier New"'>Resources</span><span
+     style='font-family:"Arial","sans-serif"'> &gt; </span><span
+     style='font-family:"Courier New"'>JDBC</span><span style='font-family:
+     "Arial","sans-serif"'> &gt; </span><span style='font-family:"Courier New"'>Data
+     sources (WebSphere Application Server V4)</span><span style='font-family:
+     "Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     the same scope as before, and click the New buton.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+     the values in the following table to fill out the form:</span></li>
+</ol>
+
+<table  border=1 cellpadding=0 style='margin-left:.5in'>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Name</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Value</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Provider</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>JNetDirect</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Name</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>MSSQLServer</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>JNDI name</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>MSSQLServerDataSource</span></p>
+  </td>
+ </tr>
+</table>
+
+<ol start=12 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><br>
+     Fill in your correct values for the </span><span style='font-family:"Courier New"'>Database
+     name</span><span style='font-family:"Arial","sans-serif"'>, </span><span
+     style='font-family:"Courier New"'>Default user ID</span><span
+     style='font-family:"Arial","sans-serif"'>, and </span><span
+     style='font-family:"Courier New"'>Default password</span><span
+     style='font-family:"Arial","sans-serif"'>. You can omit values for </span><span
+     style='font-family:"Courier New"'>Description</span><span
+     style='font-family:"Arial","sans-serif"'> and </span><span
+     style='font-family:"Courier New"'>Category</span><span style='font-family:
+     "Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     Apply.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on the </span><span style='font-family:"Courier New"'>Custom properties</span><span
+     style='font-family:"Arial","sans-serif"'> hyperlink at the top right of
+     the page.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     a new property named </span><span style='font-family:"Courier New"'>serverName</span><span
+     style='font-family:"Arial","sans-serif"'> with the value of the database
+     hast name. The type of the property should be </span><span
+     style='font-family:"Courier New"'>java.lang.String</span><span
+     style='font-family:"Arial","sans-serif"'>.&nbsp;</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Save
+     the configuration and logout of the console.</span></li>
+</ol>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>More information on the
+JNetDirect driver can be found at <a href="http://www.jnetdirect.com">www.jnetdirect.com</a>.</span></p>
+
+<h2>Service Setup</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Below are some
+sample values that may be entered when create a new Relational Database
+service.</span></p>
+
+<h3>General</h3>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Service Attribute</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Example Value</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Service Name</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Used for display in the
+  user interface.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>DB2 Custom App</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Data Source Name</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The name of the JDBC
+  resource in the application server. To use a value other than the ISIM
+  database, a JDBC resource needs to be configured in the application server.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>enroleDataSource</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Reconciliation
+  Transactional</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Whether to execute
+  reconciliation within a transaction. Although account management operations,
+  such as provision, change password, and so on are executed within
+  transactions, reconciliation is not normally executed within a transaction.
+  However, some databases, in particular, Oracle, may require reconciliation to
+  be executed within a transaction.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>false (unchecked)</span></p>
+  </td>
+ </tr>
+</table>
+
+<h3>SQL</h3>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Service Attribute</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Example Value</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Add Account SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to add
+  an account. Macros have been added to make it easier to specify the
+  attributes names and values since only the values entered by the user will be
+  sent to the service provider.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>INSERT INTO ACCOUNTS
+  (#all_attributes) VALUES (#all_values)</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Change Password SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  change passwords. A macro syntax with '#' followed by the name of the ISIM
+  attribute is used to substitute the value in </span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>UPDATE ACCOUNTS SET
+  PASSWORD='#erpassword' WHERE LOGIN = '#eruid'</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Delete SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  delete an account.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>DELETE FROM ACCOUNTS WHERE
+  LOGIN = '#eruid'</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Modify SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  modify an account.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>UPDATE ACCOUNTS SET
+  #all_changes WHERE LOGIN = '#eruid'</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Restore SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  restore an account.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>UPDATE ACCOUNTS SET
+  STATUS='ENABLED' WHERE LOGIN = '#eruid'</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Search SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  search for account data.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>SELECT * FROM ACCOUNTS</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Suspend SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  suspend an account.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>UPDATE ACCOUNTS SET
+  STATUS='DISABLED' WHERE LOGIN = '#eruid'</span></p>
+  </td>
+ </tr>
+</table>
+
+<h3>Attribute Map</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The attribute
+Attribute Map is used to map account and group data field names in the database
+to names used within ISIM. The syntax is similar to a properties file: </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>eruid=LOGIN</span></pre><pre><span
+style='color:black'>erpassword=PASSWORD</span></pre><pre><span
+style='color:black'>erAccountStatus=STATUS</span></pre><pre><span
+style='color:black'>mail=EMAIL</span></pre><pre><span style='color:black'>erRDBMSHUID=HRID</span></pre><pre><span
+style='color:black'>givenname=FIRST_NAME</span></pre><pre><span
+style='color:black'>initials=MIDDLE_NAME</span></pre><pre><span
+style='color:black'>sn=LAST_NAME</span></pre><pre><span style='color:black'>erRDBMSGroupMembership=ROLE</span></pre><pre><span
+style='color:black'>erRDBMSGroupName=ROLE_NAME</span></pre>
+
+<h3>Value Map</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The value map is
+to map values on the database to values with an equivalent meaning in ISIM. In
+this example, status is an attribute where this is needed because the
+relational database knows a value of ENABLED as active but ISIM knows a value
+of 0 as active. The value map for this example is:</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>erAccountStatus.0=ENABLED</span></pre><pre><span
+style='color:black'>erAccountStatus.1=DISABLED</span></pre>
+
+<h3>Group Data</h3>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Service Attribute</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Example Value</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Group Search SQL</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An SQL statement to
+  search for group data.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>SELECT * FROM ROLES</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Group DN Attribute</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The field in the group
+  table that should be used to identify the group. Usually, the primary key.</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Courier New";color:black'>ROLE_NAME</span></p>
+  </td>
+ </tr>
+</table>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+The test button on the service form will return true if a connection can be
+established to the database.</span></p>
+
+<h2>Testing</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The service provider
+may be tested by doing reconciliation, provisioning, deleting, and other
+account operations. However, the first thing to do should be to test
+connectivity to the database using the test button on the service form. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After a
+reconciliation has been run the groups will be returned and may be viewed from
+the Manage Services &gt; Manage Groups drop down menu item.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=510 height=219 src="images/rdbms_manage_groups.gif"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=727 height=263 src="images/rdbms_groups.gif"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The service
+provider has been tested with:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Standard
+     SQL&nbsp;- Stored procedures have not been tried yet. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>WebSphere
+     6.1</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>DB2</span></li>
+</ul>
+
+<h2>Features not Implemented</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For a more
+complete implementation these functions would be included: </span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Event
+     notification mechanism.&nbsp; There is no way in the current implentation
+     to send back account and group changes to the server except via a
+     reconciliation.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Section
+     of existing data sources and creation of new data sources.&nbsp; In the
+     present implementation the data source name is an application server JNDI
+     name.&nbsp; Someone without access to the application server
+     administrative console would not know the value to enter here or create a
+     new data source to connect to their database.&nbsp; This information would
+     have to be communicated specifically to them.&nbsp; To implement this the
+     subform interface may be used and then JMX used to communicate to the
+     application server to query and configure data sources.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Communication
+     to databases is normally in plain text embedded within a binary
+     protocol.&nbsp; A JDBC cryptographic should be able to be substituted,
+     however, this has not been tried.</span></li>
+</ul>
+
+<h2>Reviewing the code</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The code is in
+the files shown below.</span></p>
+
+<table  border=1 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>File</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/RDBMSConnector.java">RDBMSConnector.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The main class
+  demonstrating connection from ISIM to a database for management of&nbsp;
+  accounts. ISIM will call methods add, changePassword, delete, modify,
+  restore, suspend, search, and test when driven by user actions within ISIM.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/RDBMSConnectorFactory.java">RDBMSConnectorFactory.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Factory class to create
+  an instance of a RDBMSConnector class.&nbsp;ISIM will call the method
+  getServiceProvider every time it needs to communicate to the database for
+  account management.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/CompositeSearchResults.java">CompositeSearchResults.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Performs SQL search
+  execution for multiple queries and construction of a composite result
+  set.&nbsp; Adapts the results returned from the database to a form
+  understandable by ISIM.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/NoSearchResults.java">NoSearchResults.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>In case an error
+  occurred executing a select statement for a reconciliation, this&nbsp; class
+  encapsulates an empty set of results and the error that led to it.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/QueryMetaData.java">QueryMetaData.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Encapsulates meta data
+  about the SQL query and the rows in the associated data set.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/AccountQueryMetaDataFactory.java">AccountQueryMetaDataFactory.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Gathers query metadata
+  for searching for accounts.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/GroupQueryMetaDataFactory.java">GroupQueryMetaDataFactory.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Gathers query metadata
+  for searching for group data.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/RDBMSAttributeMap.java">RDBMSAttributeMap.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Encapsulates the
+  attribute map to translate from ISIM attribute names to remote names and in
+  the opposite direction.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/RDBMSSQLException.java">RDBMSSQLException.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Encapsulates an
+  exception generated because the SQL statement entered in the service form.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/SQLStatement.java">SQLStatement.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Encapsulates an SQL
+  statement entered by the service owner.&nbsp; It is parsed to determine the
+  input parameters so at execution time the parameter values can be substituted
+  in.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/parser/SQLSubstitutionLexer.java">SQLSubstitutionLexer.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Lexer for SQL
+  substitution language used in service forms.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/parser/sql_substitution.g">sql_substitution.g</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Antlr grammar file for
+  the lexer.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/parser/SQLSubstitutionLexerTokenTypes.java">SQLSubstitutionLexerTokenTypes.java</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Tokens in the SQL
+  substitution language.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="../src/examples/serviceprovider/rdbms/parser/SQLSubstitutionLexerTokenTypes.txt">SQLSubstitutionLexerTokenTypes.txt</a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Generated by Antlr.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+Antlr is used to perform the macro scanning in the SQL substitution
+language.&nbsp; Details on the use of Antlr can be found at <a
+href="http://www.antlr.org">www.antlr.org</a>.</span></p>
+
+</div>
+
+</body>
+
+</html>

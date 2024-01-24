@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Bulk Loading Tool for Roles</TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR>
+</P>
+<H1 ALIGN=CENTER>Bulk Loading Tool for Roles</H1>
+<P></P>
+<P ALIGN=CENTER>IBM Security</P>
+<P>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2009, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR><A HREF="#overview">Overview</A><BR><A HREF="#apiDescription">API
+Description</A><BR><A HREF="#apiExample">API Example</A></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>This document describes the role data services application programming interface and its use to add a number of roles into Identity Manager in a bulk operation from a comma separated variable  file.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>In managing organization roles an enterprise may have a number of roles already defined from some other source. It will not be convenient to use the Identity Manager user interface to add those roles into Identity Manager if the number is very large. The alternative way is to use the Identity Manager Java application programming interface to programmatically add them. However, that is a programming task that requires some development expertise. This documents aims to reduce the difficulty in doing that by providing a head start with an example program that loads files into Identity Manager from a text file.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The main APIs for this creating roles are com.ibm.itim.dataservices.model.domain.Role and com.ibm.itim.dataservices.model.domain.RoleFactory. The class Role is used to populate the role attributes and class RoleFactory creates the role object in the Identity Manager data store. The method RoleFactory.create() returns a com.ibm.itim.dataservices.model.domain.RoleEntity, which can be used to set relations, such as member role relations and owner relations. The class com.ibm.itim.dataservices.model.domain.RoleSearch can be used to determine whether a role exists or not and locate the RoleEntity representing an existing role object in order to update it.</P>
+<p>There are several other related data services API's that are needed to set ownership and organizational chart data for roles. For role owner relations the com.ibm.itim.dataservices.model.domain.PersonSearch and com.ibm.itim.dataservices.model.domain.PersonEntity classes will most likely be needed. For containing organizational chart data the com.ibm.itim.dataservices.model.domain.OrganizationalContainerSearch and com.ibm.itim.dataservices.model.domain.OrganizationalContainerEntity classes will likely be needed.</p>
+<p>To run the role dataservices API's from the command line you must diable the role hierarchy cache. To do this edit the enRole.properties file and set the property enrole.roleengine.cache.enabled to false.</p>
+<p>enrole.roleengine.cache.enabled=false</p>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P>The example class examples.dataservices.RoleLoader in the dataservices examples folder demostrates the use of the role data services API's. It reads a comma separate text file containing the names and attribues of roles to create in the Identity Manager data store. Example text files are given as <a href='roles.csv'>roles.csv</a> and <a href='roles1300.csv'>roles1300.csv</a>.</P>
+<p>This example file includes names of containing organizational
+unit data for the parent organizational units of the roles. Those
+organization units should be added in advance. The example class
+examples.dataservices.BusinessUnitLoader loads business units based on
+the data in a comma separate variable file containing the names of
+organizational units. The file <a href='business_units.csv'>business_units.csv</a>, which matches the names of the organizational units in roles.csv, is provided for this purpose.</p>
+<p>The roles.csv file also contains the names of role owners, which should exist in the Identity Manager data store before loading the roles. The identity feed file <a href='role_owners.csv'>role_owners.csv</a> is provided for this purpose. These people can be loaded into Identity Manager using a comma separated variable file identity feed.</p>
+<p>The program settings can be configured via the properties file bulk_roles.properties in the examples directory. The </p></BODY>
+</HTML>

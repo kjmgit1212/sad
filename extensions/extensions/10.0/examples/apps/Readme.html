@@ -1,0 +1,1138 @@
+<html>
+
+<head>
+
+<title>Running the Application API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Running the Application API Examples</h1>
+
+<h2>Overview</h2>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><a name=Overview></a><span style='font-family:"Arial","sans-serif";
+color:black'>The following are working examples that use the Applications API.
+This API allows direct access to various objects within the provisioning system
+but all access is still subject to the rules and policies of the provisioning
+system. For example, when deprovisioning an account, the provisioning system is
+configured to either delete or suspend an account that has been deprovisioned.
+This system configuration will have the same effect on accounts deprovisioned
+via this API.<br>
+<br>
+When working with the Application API, it is highly recommended that any
+operations to be performed are first tested manually via the standard ISIM UI. </span></p>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'>Before
+you begin, <a href="../Download_extensions.html">Download the extensions.zip</a>.
+Extract the file.<br>
+<br>
+The source code for the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/apps/src</span></dfn>
+directory. The scripts to run the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/apps/bin/win</span></dfn>
+directory for Windows and <dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/apps/bin/unix</span></dfn>
+directory for UNIX.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Building the Examples</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><a name=build></a><span
+style='font-family:"Arial","sans-serif";color:black'>To build the examples
+follow the instructions given in <a href="../Building.html">Building the
+Examples</a>.</span></p>
+
+<h2>Installing the Examples on WebSphere</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><a
+name="install_was"></a><span style='font-family:"Arial","sans-serif";
+color:black'>The examples must be configured to run with the WebSphere
+Application Client on a separate system. Refer to the instructions given in the
+API Packaging Guide to configure the ISIM APIs with the WebSphere Application
+Client.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Running the Examples</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><a href="#build">Build
+the Examples</a> before running them. Make sure the ISIM server is running.
+Also verify that the values entered for the environment variables <var><span
+style='font-family:"Arial","sans-serif"'>ITIM_USER</span></var> and <var><span
+style='font-family:"Arial","sans-serif"'>ITIM_PSWD</span></var> in the <dfn><span
+style='font-family:"Arial","sans-serif"'>bin/[win/setEnv.bat|unix/setEnv.sh]</span></dfn>
+files have a valid ISIM user and password respectively. </span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Creating a new
+Person</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The CreatePerson.java source file demonstrates how to create a new Person.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Execute the
+accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createPerson.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createPerson.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage: </span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createPerson -[argument] ? &quot;[value]&quot;</span></p>
+<p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Profile name of the new Person to create</span><span style='font-family:"Arial","sans-serif";
+  color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createPerson -profile?&quot;Person&quot; -attribute?&quot;cn=Jenny
+  Brown&quot; -attribute?&quot;sn=Brown&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The command line
+syntax is a list of name/value pairs in the format &#8211;[argument] ? &#8220;[value]&#8221;. The
+list of attributes must include all of the required attributes for a Person.
+The default required attributes are sn and cn.<br>
+</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Changing a
+Person&#8217;s Attributes</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangePerson.java</span></dfn>
+source file demonstrates how to modify a Person&#8217;s attributes.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changePerson.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changePerson.bat</span></dfn>
+file using the following command syntax:<br>
+<br>
+Windows usage: <br>
+<br>
+</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changePerson -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-personfilter&nbsp;&nbsp;
+  Ldap Filter to search for the Person to change</span><span style='font-family:
+  "Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Attribute name and new value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changePerson -personfilter?&quot;(cn=Jenny Brown)&quot;
+  -attribute?&quot;cn=Jenny Green&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The command line
+arguments are an LDAP search filter, followed by a list of name/value pairs in
+the form &#8211;[argument] ? &#8220;[value]&#8221;. The Search Filter argument is used to
+identify the person being modified. In most instances, the &#8216;cn&#8217; attribute will
+be used to identify a person.</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Deleting a
+Person</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>DeletePerson.java</span></dfn>
+source file demonstrates how to Delete a Person.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>deletePerson.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>deletePerson.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  deletePerson -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-personfilter&nbsp;&nbsp;
+  Ldap Filter to search for the Person to delete</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  deletePerson -personfilter?&quot;(cn=Jenny Brown)&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line argument is a Search Filter used to identify the person being
+deleted. In most instances, the &#8216;cn&#8217; attribute will be used to identify a
+person.<br>
+<br>
+Note that when a person is deleted, all of his accounts will be deprovisioned. <br>
+<br>
+<b>Provisioning an Account</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ProvisionAccount.java</span></dfn>
+source file demonstrates how to Provision an Account.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>provisionAccount.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>provisionAccount.bat</span></dfn>
+file using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  provisionAccount -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Object Profile Name for the Account to provision (e.g., NT40Account)<br>
+  -serviceprofile &nbsp;&nbsp;&nbsp;Object Profile Name for the Service</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-uid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  UserId to assign to the new Account</span><span style='font-family:"Arial","sans-serif";
+  color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Password to assign to the new Account</span><span style='font-family:"Arial","sans-serif";
+  color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Any attribute name/value pair (e.g., description=NT Account)</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-servicefilter&nbsp;&nbsp;&nbsp;&nbsp;
+  Ldap Filter to search for a Service instance on which to provision the
+  Account</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-ownerfiler&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;Ldap Filter to search for a Person to own the Account</span><span
+  style='font-family:"Arial","sans-serif";color:black'> <br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[category]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Category for Person to own the Account(e.g., BPPerson). Default value is
+  &quot;Person&quot;<br>
+  -[categoryprofile] Category profile name for Person to own the Account <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;(e.g., MyPerson(custom class)). Default value is
+  &quot;Person&quot;<br>
+  <br>
+  Arguments enclosed in [] are optional</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  provisionAccount -profile?NT40Account -serviceprofile?NT40Profile -uid?JSmith
+  <br>
+  -password?secret -servicefilter?&quot;(erservicename=NT Service)&quot;
+  -ownerfilter?&quot;(cn=John Smith)&quot; <br>
+  -category?Person -categoryprofile?MyPerson </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+Note that the list of attributes must include at least all the required
+attributes to create the type of account.</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Changing an
+Account</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeAccount.java</span></dfn>
+source file demonstrates how to change an account&#8217;s attributes.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeAccount.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeAccount.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeAccount -[argument] ? &quot;[value]&quot;</span><span style='font-family:
+  "Arial","sans-serif";color:black'> </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Object Profile Name for the Account to change (e.g., NT40Account)</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accountfilter&nbsp;
+  Ldap Filter to search for the Account to change</span><span style='font-family:
+  "Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Attribute name and new value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeAccount -profile?NT40Account -accountfilter?&quot;(eruid=JSmith)&quot; <br>
+  -attribute?&quot;description=NT Account&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line arguments are the profile name of the Account, an LDAP search
+filter to lookup the account to be changed, and a list of attribute name? value
+pairs defining the attributes to change.<br>
+  <br>
+<b>Changing an Account Password</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangePassword.java</span></dfn>
+source file demonstrates how to change an account&#8217;s password.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changePassword.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changePassword.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changePassword -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Object Profile Name for the Account to change password (e.g., ITIMAccount)</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accountfilter&nbsp;
+  Ldap Filter to search for the Account to change password</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  New password</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changePassword -profile?ITIMAccount -accountfilter?&quot;(eruid=JSmith)&quot;
+  -password?&quot;secret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line arguments are the profile name of the Account, an LDAP search
+filter to lookup the account, and a password value. <br>
+<br>
+<b>Deprovisioning an Account</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>DeprovisionAccount.java</span></dfn>
+source file demonstrates how to deprovision an Account.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>deprovisionAccount.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>deprovisionAccount.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  deprovisionAccount -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Object Profile Name for the Account to deprovision (e.g., NT40Account)</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accountfilter&nbsp;
+  Ldap Filter to search for the Account to deprovision</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  deprovisionAccount -profile?NT40Account
+  -accountfilter?&quot;(eruid=JSmith)&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line arguments are the profile name of the Account, and an LDAP
+search filter to to lookup the account to be removed (deprovisioned). <br>
+<br>
+<b>Synchronizing all of a Person&#8217;s Account Passwords</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>SynchPasswords.java</span></dfn>
+source file demonstrates how to set all of the passwords for a person&#8217;s
+accounts.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>synchPassword.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>synchPassword.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  synchPassword -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-ownerfilter&nbsp;&nbsp;&nbsp;
+  Ldap Filter to search for a Person whose account passwords are to be
+  synchronized</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  New password</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  synchPassword -ownerfilter?&quot;(cn=Joe Smith)&quot;
+  -password?&quot;secret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line arguments are an LDAP search filter to lookup a Person, and a
+new password for all accounts the Person owns. In most instances, the &#8216;cn&#8217;
+attribute will be used to identify a person.<br>
+<br>
+<b>Retrieving Assignments of a Person Account</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>PersonAssignments.java</span></dfn>
+source file demonstrates how to get all assignments for a person account.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>personAssignments.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>personAssignments.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  personAssignments -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accountfilter&nbsp;&nbsp;&nbsp;
+  Ldap Filter to search for an account whose assignments are to be retrieved</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  personAssignments -accountfilter?&quot;(eruid=JSmith)&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line arguments are an LDAP search filter to lookup an Account. In
+most instances, the &#8216;eruid&#8217; attribute will be used to identify an account. <br>
+<br>
+<b>Changing an account password by invoking the operation through Lifecycle
+Management APIs</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangePasswordOperation.java</span></dfn>
+source file demonstrates how to invoke change account&#8217;s password operation.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changePasswordOperation.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changePasswordOperation.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changePasswordOperation -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Object Profile Name for the Account to change password (e.g., ITIMAccount)</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accountfilter&nbsp;
+  Ldap Filter to search for the Account to change password</span><span
+  style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  New password</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-notify&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Optional flag to identify whether to send email notification or not. Valid
+  values are true or false, defaults to false.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changePasswordOperation -profile?ITIMAccount
+  -accountfilter?&quot;(eruid=JSmith)&quot; -password?&quot;secret&quot;
+  -notify?&quot;true&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Creating a new
+Provisioning Policy</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The CreateProvisioningPolicy.java source file demonstrates how to create a new
+Provisioning Policy in the default organization container with ALL membership
+and service type entitlement target.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Execute the
+accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createProvisioningPolicy.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createProvisioningPolicy.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage: </span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createProvisioningPolicy -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Name of the new Provisioning Policy to create</span><span style='font-family:
+  "Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-serviceProfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Profile name of the entitlement service type to create</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createProvisioningPolicy -name?&quot;Test Policy Example&quot; -serviceProfile?&quot;LdapProfile&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The command line
+syntax is a list of name/value pairs in the format &#8211;[argument] ? &#8220;[value]&#8221;. The
+default required argument are name and serviceProfile.<br>
+</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Changing a
+Provisioning Policy&#8217;s Attributes</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeProvisioningPolicy.java</span></dfn>
+source file demonstrates how to modify a Provisioning Policy&#8217;s attributes.
+Changing name and priority of policy is available in this example.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeProvisioningPolicy.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeProvisioningPolicy.bat</span></dfn>
+file using the following command syntax:<br>
+<br>
+Windows usage: <br>
+<br>
+</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeProvisioningPolicy -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-name&nbsp;&nbsp; 
+  the name of the Provisioning Policy to change</span><span style='font-family:
+  "Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-newname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  the new name of the Provisioning Policy</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-priority&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  the new priority of the Provisioning Policy</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeProvisioningPolicy -name?&quot;Default provisioning policy for
+  ITIM&quot; -newname?&quot;Modified provisioning policy for ITIM&quot;
+  -priority?&quot;1001&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The command line
+arguments are name of an existing Provisioning Policy, followed by a a new name
+and priority for the policy</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Deleting a
+Provisioning Policy</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>DeleteProvisioningPolicy.java</span></dfn>
+source file demonstrates how to Delete a Provisioning Policy.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>deleteProvisioningPolicy.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>deleteProvisioningPolicy.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  deleteProvisioningPolicy -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-name&nbsp;&nbsp;
+  The name of the provisioning policy to remove</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  deleteProvisioningPolicy -name?&quot;Default provisioning policy for
+  ITIM&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+The command line argument is a name of the policy identified to be deleted.<br>
+Note that when a policy is deleted, it may cause accounts to be deprovisioned. </span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Retrieve a
+user's ChallengeResponse Questions</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>RetrieveChallengeResponseQuestions.java</span></dfn>
+source file demonstrates how to retrieve a user's challenge response questions.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>retrieveChallengeResponseQuestions.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>retrieveChallengeResponseQuestions.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  retrieveChallengeResponseQuestions -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-username&nbsp;&nbsp;
+  Name of the user to retrieve questions for</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  retrieveChallengeResponseQuestions -username?&quot;jhill&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Change/Reset a
+user's password through ChallengeResponse</span></b><span style='font-family:
+"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeOrResetPasswordUsingChallengeResponse.java</span></dfn>
+source file demonstrates how to change/reset a user's password using challenge
+response.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeOrResetPasswordUsingChallengeResponse.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeOrResetPasswordUsingChallengeResponse.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeOrResetPasswordUsingChallengeResponse -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-username&nbsp;&nbsp;
+  Name of the user whose password is to be modfied</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-password&nbsp;&nbsp;
+  New password for the user (ignored if changepassword is false)</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-changepassword&nbsp;&nbsp;
+  If true then change password else reset password</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-question&nbsp;&nbsp;
+  Question and answer for challenge response authentication</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeOrResetPasswordUsingChallengeResponse -username?&quot;jhill&quot;
+  -password?&quot;secretpass&quot; -changepassword?&quot;true&quot;
+  -question?&quot;How do you spell secret?=secret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create a
+Service specifying the Connection Mode</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>CreateServiceWithConnectionMode.java</span></dfn>
+source file demonstrates how to create a service in the default organization
+container.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createServiceWithConnectionMode.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createServiceWithConnectionMode.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createServiceWithConnectionMode -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the new service</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-connectionmode
+  Connection Mode of the new service</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createServiceWithConnectionMode -profile?&quot;WinLocalProfile&quot;
+  -connectionmode?&quot;MANUAL&quot;
+  -attribute?&quot;erservicename=WinLocal&quot;
+  -attribute?&quot;erurl=http:\\localhost:45580&quot;
+  -attribute?&quot;eruid=agent&quot; -attribute?&quot;erpassword=agent&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Change a
+Service updating the Connection Mode</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeServiceWithConnectionMode.java</span></dfn>
+source file demonstrates how to modify an existing service's connection mode.
+The supported values for connection mode are AUTOMATIC and MANUAL.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeServiceWithConnectionMode.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeServiceWithConnectionMode.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeServiceWithConnectionMode -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Name of the service to update</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-connectionmode
+  Connection Mode of the service</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeServiceWithConnectionMode -service?&quot;WinLocal&quot;
+  -connectionmode?&quot;MANUAL&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Switch a
+service to Connection Mode Manual</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>SwitchServiceToConnectionModeManual.java</span></dfn>
+source file demonstrates how to change the connection mode of an existing
+service to MANUAL.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>switchServiceToConnectionModeManual.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>switchServiceToConnectionModeManual.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  switchServiceToConnectionModeManual -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Name of the service to update</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  switchServiceToConnectionModeManual -service?&quot;WinLocal&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create an ISIM
+Group</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>CreateItimGroup.java</span></dfn>
+source file demonstrates how to create an ISIM Group in the default
+organization container.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createItimGroup.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createItimGroup.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createItimGroup -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-name&nbsp;&nbsp;
+  ISIM group name of the new group to create</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-category&nbsp;&nbsp;
+  ISIM group level of 1=End User, 2=Supervisor, 3=System Admin, 4=Helpdesk,
+  5=Service Owner, 6=Auditor</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createItimGroup -name?&quot;ISIM Group example&quot; -category?&quot;1&quot;
+  -attribute?&quot;description=This is test ISIM group created through
+  example.&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create a
+Service Group</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>CreateGroup.java</span></dfn>
+source file demonstrates how to create a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createGroup.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createGroup.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createGroup -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name the group is to be created under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the new group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createGroup -service?&quot;AIX Service&quot;
+  -profile?&quot;PosAixGroupProfile&quot;
+  -attribute?&quot;erPosixGroupName=test&quot;
+  -attribute?&quot;erPosixGroupId=121&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Change a
+Service Group</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeGroup.java</span></dfn>
+source file demonstrates how to change a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeGroup.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeGroup.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeGroup -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name which the group is under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-groupname&nbsp;&nbsp;
+  Name of the group to be changed</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeGroup -service?&quot;AIX Service&quot;
+  -profile?&quot;PosAixGroupProfile&quot; -groupname?&quot;test&quot;
+  -attribute?&quot;erPosixGroupIsAdmGrp=true&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Delete a
+Service Group</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>DeleteGroup.java</span></dfn>
+source file demonstrates how to delete a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>deleteGroup.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>deleteGroup.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  deleteGroup -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name which the group is under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-groupname&nbsp;&nbsp;
+  Name of the group to be deleted</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  deleteGroup -service?&quot;AIX Service&quot;
+  -profile?&quot;PosAixGroupProfile&quot; -groupname?&quot;test&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create an
+Access</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>CreateAccess.java</span></dfn>
+source file demonstrates how to create an access for a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createAccess.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createAccess.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createAccess -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name which the group is under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-groupname&nbsp;&nbsp;
+  Name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accessname&nbsp;&nbsp;
+  Name of the access</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accesstype&nbsp;&nbsp;
+  Type of the access</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-accessoption&nbsp;&nbsp;
+  Status of the access</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createAccess -service?&quot;AIX Service&quot; -profile?&quot;PosAixGroupProfile&quot;
+  -groupname?&quot;test&quot; -accessname?&quot;Test Access&quot;
+  -accesstype?&quot;Application&quot; -accessoption?&quot;ACCESS_ENABLED&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Change an
+Access</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>ChangeAccess.java</span></dfn>
+source file demonstrates how to create an access for a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>changeAccess.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>changeAccess.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  changeAccess -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name which the group is under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-groupname&nbsp;&nbsp;
+  Name of the group to be deleted</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-attribute&nbsp;&nbsp;
+  An attribute name and value</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  changeAccess -service?&quot;AIX Service&quot;
+  -profile?&quot;PosAixGroupProfile&quot; -groupname?&quot;test&quot;
+  -attribute?&quot;accessoption=COMMON_ACCESS&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Delete an
+Access</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>DeleteAccess.java</span></dfn>
+source file demonstrates how to create an access for a group on a service.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>deleteAccess.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>deleteAccess.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  deleteAccess -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-service&nbsp;&nbsp;
+  Service name which the group is under</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-profile&nbsp;&nbsp;
+  Profile name of the group</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-groupname&nbsp;&nbsp;
+  Name of the group to be deleted</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  deleteAccess -service?&quot;AIX Service&quot;
+  -profile?&quot;PosAixGroupProfile&quot; -groupname?&quot;test&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create an
+Access Control Item</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>CreateAccessControl.java</span></dfn>
+source file demonstrates how to create an Access Control Item in the default
+organization container.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>createAccessControl.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>createAccessControl.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  createAccessControl -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-target&nbsp;&nbsp;
+  The name of an LDAP objectclass </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-scope&nbsp;&nbsp;
+  One of single or subtree</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;
+  One of self, supervisor, or administrator</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  createAccessControl -target?&quot;erAccountItem&quot;
+  -scope?&quot;subtree&quot; -principal?&quot;supervisor&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Add a
+Reconciliation Unit</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>AddReconUnit.java</span></dfn>
+source file demonstrates how to create and add a reconciliation unit to a given
+service. A customized recon callback class that implements
+com.ibm.itim.remoteservices.ejb.mediation.IReconCompleteCallback can be passed
+in for a customized handling when this addition process is complete. This
+callback is useful when coding to trigger a reconciliation to run.
+ReconCompleteCallback.java is a simple implementation or this callback
+mechanism to be used with the examples.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>addReconUnit.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>addReconUnit.bat</span></dfn>
+file using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  addReconUnit -[argument] ? &quot;[value]&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-serviceprofile&nbsp;&nbsp;
+  Profile name of the service (e.g., WinLocalProfile)</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-servicefilter&nbsp;&nbsp;
+  Ldap filter to search for a service instance</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-name&nbsp;&nbsp;
+  Name of the reconciliation unit -required</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-month&nbsp;&nbsp;
+  month of recon. Valid values 1-12, -1 indicates Monthly, 0 to ignore</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-day
+  day of recon. Valid values 1-31, -1 indicates Daily, 0 to ignore</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-dayofweek&nbsp;&nbsp;
+  day of week. Valid values 1-7.(1 = Sunday, 2 = Monday,..), 0 to ignore. NOTE:
+  Either day or dayofweek is mandatory. If specified both, then dayofweek will
+  be ignored</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-hour&nbsp;&nbsp;
+  hour of recon. Valid values 0-23, -1 indicates Hourly.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-minute&nbsp;&nbsp;
+  minute of recon. Valid values are 0-59.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[description]&nbsp;&nbsp;
+  name of description.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[querymode]&nbsp;&nbsp;
+  0 for normal recon, 1 for supporting data only recon.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[reconfilter]&nbsp;&nbsp;
+  Ldap filter to reconcile accounts.  Not honored for supporting data only recon.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[excludeattributes]&nbsp;&nbsp;
+  Attribute(s) separated by comma to be excluded during reconciliation.  Not honored for supporting data only recon.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[lockservice]&nbsp;&nbsp;
+  Specify if the service needs to be locked during reconciliation. Default
+  value is &quot;true&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[maxduration]&nbsp;&nbsp;
+  Maximum duration(in minutes) for reconciliation process to run. Default value
+  600 minutes.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-[reconcallback]&nbsp;&nbsp;
+  If the recon completion details needs to be logged in SystemOut.log. Default
+  value &quot;false&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  addReconUnit -serviceprofile?WinLocalProfile
+  -servicefilter?&quot;(erservicename=WinLocal)&quot;
+  -reconfilter?&quot;(eruid=a*)&quot; -name?&quot;ADServiceRecon&quot;
+  -description?&quot;ADService recon unit&quot; -querymode?0 
+  -excludeattributes?&quot;erntpasswordneverexpires,description&quot;
+  -maxduration?10 -month?10 -day?26 -hour?10 -minute?10
+  -reconcallback?&quot;true&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>NOTE:
+  If negative value -1 needs to be entered for month,day or hour, then change
+  the StringTokenizer to '+' instead of '-' in function AddReconUnit.parseArgs()
+  to identify the arguments prefixed with '+' </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Other
+Reconciliation Examples</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>RemoveReconUnit.java</span></dfn>
+source file demonstrates how to remove a given reconciliation unit. <br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>removeReconUnit.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>removeReconUnit.bat</span></dfn>
+with &quot;?&quot; for command usage syntax. <br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>RunRecon.java</span></dfn>
+source file demonstrates how to trigger a given reconciliation unit to run. <br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>runRecon.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>runRecon.bat</span></dfn>
+with &quot;?&quot; for command usage syntax. <br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>RunManualRecon.java</span></dfn>
+source file demonstrates how to trigger a reconciliation for a manual service
+or connected manual service. <br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>runManualRecon.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>runManualRecon.bat</span></dfn>
+with &quot;?&quot; for command usage syntax. <br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>GetAvailableReconAttributes.java</span></dfn>
+source file demonstrates how to get all available reconciliation attributes for
+a given service. <br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>getAvailableReconAttributes.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>getAvailableReconAttributes.bat</span></dfn>
+with &quot;?&quot; for command usage syntax. <br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>GetReconUnits.java</span></dfn>
+source file demonstrates how to get all reconciliation unit for a given
+service. <br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>getReconUnits.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>getReconUnits.bat</span></dfn>
+with &quot;?&quot; for command syntax. <br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>IsFilterSupported.java</span></dfn>
+source file demonstrates how to inquire if the service supports filtered
+reconciliation, that is, the ability to reconcile only a certain set of
+accounts from the resource.<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>isFilterSupported.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>isFilterSupported.bat</span></dfn>
+with &quot;?&quot; for command usage syntax. </span></p>
+
+</div>
+
+</body>
+
+</html>

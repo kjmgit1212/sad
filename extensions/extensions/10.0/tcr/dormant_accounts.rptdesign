@@ -1,0 +1,1859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chris Hemp</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_dormant_accounts">Dormant Accounts</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "dormant_accounts_0.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_dormant_accounts");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_dormant_accounts">Dormant Accounts</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Dormant Period" id="1650" extends="itim.Dormant Period"/>
+        <scalar-parameter name="Service Dn" id="1651" extends="itim.Service Dn"/>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Dormant Account Table" id="1588">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Service Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Dormant Period</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">getDormantPeriodDateString(params["Dormant Period"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT  NAAccount."ERLASTACCESSDATE", 
+        NAAccount."ERUID", 
+        NAPerson."CN", 
+        NAAccount."ERACCOUNTSTATUS", 
+        NAService."ERSERVICENAME",
+        NAService."SERVICETYPE"
+FROM 
+        (SELECT Account.erlastaccessdate , 
+                Account.eruid , 
+                Account.eraccountstatus , 
+                Account_owner.owner , 
+                Account.DN , 
+                Account.erservice 
+        FROM    Account , 
+                Account_owner 
+        WHERE ( Account.DN   = Account_owner.DN ) 
+            AND ( Account.DN = Account_owner.DN ) 
+        ) 
+        NAACCOUNT , 
+        (SELECT Person_cn.cn , 
+                Person.DN 
+        FROM    Person_cn , 
+                Person 
+        WHERE ( Person.DN = Person_cn.DN ) 
+        ) 
+        NAPERSON , ( SELECT Service.erservicename , Service.servicetype, Service.DN FROM Service ) 
+        NASERVICE 
+WHERE   NAAccount.erservice         = NAService.DN 
+    AND NAAccount.owner             = NAPerson.DN 
+    AND NAAccount.erlastaccessdate &lt;> ' ' 
+    AND NAAccount.erlastaccessdate &lt;> '0000-00-00 00:00:00.000 GMT' 
+    AND NAService.DN LIKE ? 
+    AND NAAccount.erlastaccessdate &lt; ? 
+ORDER BY NAAccount.erlastaccessdate asc, 
+        NAAccount.eruid asc, 
+        NAPerson.cn asc, 
+        NAAccount.eraccountstatus asc, 
+        NAService.erservicename asc  </property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Dormant Account Chart" id="1592">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ERLASTACCESSDATE</property>
+                    <property name="displayName">ERLASTACCESSDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERUID</property>
+                    <property name="displayName">ERUID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERACCOUNTSTATUS</property>
+                    <property name="displayName">ERACCOUNTSTATUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERLASTACCESSDATE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERUID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ERACCOUNTSTATUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Service Dn"]);</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Dormant Period</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">getDormantPeriodDateString(params["Dormant Period"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERLASTACCESSDATE</property>
+                    <property name="nativeName">ERLASTACCESSDATE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERUID</property>
+                    <property name="nativeName">ERUID</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ERACCOUNTSTATUS</property>
+                    <property name="nativeName">ERACCOUNTSTATUS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT  NAAccount."ERLASTACCESSDATE", 
+        NAAccount."ERUID", 
+        NAPerson."CN", 
+        NAAccount."ERACCOUNTSTATUS", 
+        NAService."ERSERVICENAME"
+FROM 
+        (SELECT Account.erlastaccessdate , 
+                Account.eruid , 
+                Account.eraccountstatus , 
+                Account_owner.owner , 
+                Account.DN , 
+                Account.erservice 
+        FROM    Account , 
+                Account_owner 
+        WHERE ( Account.DN   = Account_owner.DN ) 
+            AND ( Account.DN = Account_owner.DN ) 
+        ) 
+        NAACCOUNT , 
+        (SELECT Person_cn.cn , 
+                Person.DN 
+        FROM    Person_cn , 
+                Person 
+        WHERE ( Person.DN = Person_cn.DN ) 
+        ) 
+        NAPERSON , ( SELECT Service.erservicename , Service.DN FROM Service ) 
+        NASERVICE 
+WHERE   NAAccount.erservice         = NAService.DN 
+    AND NAAccount.owner             = NAPerson.DN 
+    AND NAAccount.erlastaccessdate &lt;> ' ' 
+    AND NAAccount.erlastaccessdate &lt;> '0000-00-00 00:00:00.000 GMT' 
+    AND NAService.DN LIKE ? 
+    AND NAAccount.erlastaccessdate &lt; ? 
+ORDER BY NAAccount.erlastaccessdate asc, 
+        NAAccount.eruid asc, 
+        NAPerson.cn asc, 
+        NAAccount.eraccountstatus asc, 
+        NAService.erservicename asc  </property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServiceNameBasedOnServicesParameter" id="1649"
+ extends="itim.ServiceNameBasedOnServicesParameter"/>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="37" id="37"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <text name="Report Title" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="title_dormant_accounts"><![CDATA[Report Title]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232">
+                    <grid name="Parameter Table" id="95">
+                        <property name="style">parameter-table</property>
+                        <property name="width">100%</property>
+                        <expression name="bookmark">getNLS("title_report_criteria");</expression>
+                        <structure name="toc">
+                            <expression name="expressionValue">getNLS("title_report_criteria");</expression>
+                        </structure>
+                        <column id="96">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="97">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="1655">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="1659">
+                            <property name="width">16%</property>
+                        </column>
+                        <row id="100">
+                            <cell id="101">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 1" id="214">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_service");</VALUE-OF>"><VALUE-OF>getNLS("parameter_service");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="102">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 1" id="312">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">ServiceNameBasedOnServicesParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">Service Dn</property>
+                                            <expression name="expression">params["Service Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">ERSERVICENAME</property>
+                                            <expression name="expression">convertAnyToNLS(params["Service Dn"], dataSetRow["ERSERVICENAME"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">ERSERVICENAME</property>
+                                </data>
+                            </cell>
+                            <cell id="1652">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <text name="Parameter Name 2" id="1609">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_dormant_period");</VALUE-OF>"><VALUE-OF>getNLS("parameter_dormant_period");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1656">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 2" id="1608">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Dormant Period Parameter</property>
+                                            <expression name="expression">getDormantPeriodString(params["Dormant Period"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Dormant Period Parameter</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="1698">
+                            <cell id="1699">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 3" id="126">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_dormant_period_start_date");</VALUE-OF>"><VALUE-OF>getNLS("parameter_dormant_period_start_date");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1700">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <text id="1736">
+                                    <property name="style">parameter-value</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getDormantPeriodDate(params["Dormant Period"])</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1701">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                            </cell>
+                            <cell id="1702">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="1593">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="1594"/>
+            <row id="1595">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">isNotAny(params["Service Dn"])</expression>
+                    </structure>
+                </list-property>
+                <cell id="1596">
+                    <property name="paddingTop">10pt</property>
+                    <text name="Section Heading Sub-title" id="1597">
+                        <property name="style">section-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="sub_title_section_1_dormant_accounts"><![CDATA[Section 1 Sub-Title Text]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="1598">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">isNotAny(params["Service Dn"])</expression>
+                    </structure>
+                </list-property>
+                <cell id="1599">
+                    <property name="paddingTop">10pt</property>
+                    <property name="textAlign">left</property>
+                    <extended-item extensionName="Chart" name="Orphan Accounts on Services" id="273">
+                        <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value>description_dormant_accounts=&lt;Value of key 'description_dormant_accounts'></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Size>16.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Triggers>
+        <Condition>onmouseover</Condition>
+        <Action>
+          <Type>Highlight</Type>
+          <Value xsi:type="attribute:SeriesValue">
+            <Name></Name>
+          </Value>
+        </Action>
+      </Triggers>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>9.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Series</ItemType>
+      <Title>
+        <Caption>
+          <Value>heading_account_status=Account Status</Value>
+          <Font>
+            <Size>9.0</Size>
+            <Bold>true</Bold>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <ShowValue>false</ShowValue>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>396.0</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>false</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>A, B, C</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>10.0,8.0,24.0</DataSetRepresentation>
+      <SeriesDefinitionIndex>1</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <LegendBehavior>None</LegendBehavior>
+  </Interactivity>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value>Productline</Value>
+        <Font>
+          <Size>9.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Below</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>total_orders=Total Orders</Value>
+          <Font>
+            <Size>9.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>144</Red>
+            <Green>213</Green>
+            <Blue>0</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>183</Red>
+            <Green>68</Green>
+            <Blue>61</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>35</Red>
+            <Green>89</Green>
+            <Blue>115</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>228</Red>
+            <Green>184</Green>
+            <Blue>88</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>229</Red>
+            <Green>237</Green>
+            <Blue>129</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>182</Red>
+            <Green>146</Green>
+            <Blue>182</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>73</Red>
+            <Green>137</Green>
+            <Blue>120</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>146</Red>
+            <Green>194</Green>
+            <Blue>198</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>9.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>true</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>if (row[&quot;ERACCOUNTSTATUS&quot;] == '0') {&#xD;
+	1;&#xD;
+} else {&#xD;
+	0;&#xD;
+}</Definition>
+          </DataDefinition>
+          <SeriesIdentifier>active=Active Count</SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>URL_Redirect</Type>
+              <Value xsi:type="attribute:URLValue">
+                <BaseUrl>&lt;structure name=&quot;action&quot;>
+    &lt;property name=&quot;linkType&quot;>bookmark-link&lt;/property>
+    &lt;expression name=&quot;targetBookmark&quot;>row[&quot;ERSERVICENAME&quot;]&lt;/expression>
+&lt;/structure>
+</BaseUrl>
+                <BaseParameterName></BaseParameterName>
+                <ValueParameterName></ValueParameterName>
+                <SeriesParameterName></SeriesParameterName>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>true</Enabled>
+          <GroupingInterval>2</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>183</Red>
+            <Green>68</Green>
+            <Blue>61</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>144</Red>
+            <Green>213</Green>
+            <Blue>0</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>183</Red>
+            <Green>68</Green>
+            <Blue>61</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>228</Red>
+            <Green>184</Green>
+            <Blue>88</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>229</Red>
+            <Green>237</Green>
+            <Blue>129</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>182</Red>
+            <Green>146</Green>
+            <Blue>182</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>73</Red>
+            <Green>137</Green>
+            <Blue>120</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>9.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>true</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>if (row[&quot;ERACCOUNTSTATUS&quot;] == '1') 1; else 0;</Definition>
+          </DataDefinition>
+          <SeriesIdentifier>inactive=Inactive Count</SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>URL_Redirect</Type>
+              <Value xsi:type="attribute:URLValue">
+                <BaseUrl>&lt;structure name=&quot;action&quot;>
+    &lt;property name=&quot;linkType&quot;>bookmark-link&lt;/property>
+    &lt;expression name=&quot;targetBookmark&quot;>row[&quot;ERSERVICENAME&quot;]&lt;/expression>
+&lt;/structure>
+</BaseUrl>
+                <BaseParameterName></BaseParameterName>
+                <ValueParameterName></ValueParameterName>
+                <SeriesParameterName></SeriesParameterName>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>true</Enabled>
+          <GroupingInterval>2</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>9.0</Size>
+            <Alignment/>
+            <Rotation>0.0</Rotation>
+          </Font>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <LabelPosition>Left</LabelPosition>
+      <Interval>1</Interval>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>240</Red>
+            <Green>240</Green>
+            <Blue>240</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Min</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>144</Red>
+          <Green>213</Green>
+          <Blue>0</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>183</Red>
+          <Green>68</Green>
+          <Blue>61</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>35</Red>
+          <Green>89</Green>
+          <Blue>115</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>228</Red>
+          <Green>184</Green>
+          <Blue>88</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>229</Red>
+          <Green>237</Green>
+          <Blue>129</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>182</Red>
+          <Green>146</Green>
+          <Blue>182</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>73</Red>
+          <Green>137</Green>
+          <Blue>120</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>146</Red>
+          <Green>194</Green>
+          <Blue>198</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;ERSERVICENAME&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier>Service</SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>true</Enabled>
+        <GroupingInterval>0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Min</AggregateExpression>
+      </Grouping>
+      <Sorting>Ascending</Sorting>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>9.0</Size>
+          <Alignment/>
+          <Rotation>0.0</Rotation>
+        </Font>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <Interval>1</Interval>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>240</Red>
+          <Green>240</Green>
+          <Blue>240</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Min</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Horizontal</Orientation>
+  <UnitSpacing>10.0</UnitSpacing>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                        <property name="outputFormat">SVG</property>
+                        <structure name="action">
+                            <property name="linkType">bookmark-link</property>
+                            <expression name="targetBookmark">row["ERSERVICENAME"]</expression>
+                        </structure>
+                        <property name="marginTop">15px</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="dataSet">Dormant Account Chart</property>
+                        <property name="height">3.5in</property>
+                        <property name="width">5.5in</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ERLASTACCESSDATE</property>
+                                <expression name="expression">dataSetRow["ERLASTACCESSDATE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERUID</property>
+                                <expression name="expression">dataSetRow["ERUID"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CN</property>
+                                <expression name="expression">dataSetRow["CN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERACCOUNTSTATUS</property>
+                                <expression name="expression">dataSetRow["ERACCOUNTSTATUS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERSERVICENAME</property>
+                                <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="style">chart</property>
+                    </extended-item>
+                </cell>
+            </row>
+            <row id="396">
+                <cell id="397">
+                    <property name="paddingTop">10pt</property>
+                    <table name="Dormant accounts grouped by Service" id="1281">
+                        <property name="style">group-table-with-section</property>
+                        <property name="marginTop">0px</property>
+                        <property name="marginLeft">0px</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">Dormant Account Table</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ERUID</property>
+                                <expression name="expression">dataSetRow["ERUID"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Days Since Last Use</property>
+                                <expression name="expression">getDaysFromDate(row["ERLASTACCESSDATE"])</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERACCOUNTSTATUS</property>
+                                <expression name="expression">convertAccountStatusToNLS(row["STATUS_COLUMN"]);</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERSERVICENAME</property>
+                                <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CN</property>
+                                <expression name="expression">dataSetRow["CN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERLASTACCESSDATE</property>
+                                <expression name="expression">getDateFromString(dataSetRow["ERLASTACCESSDATE"])</expression>
+                                <property name="dataType">date-time</property>
+                            </structure>
+                            <structure>
+                                <property name="name">STATUS_COLUMN</property>
+                                <expression name="expression">dataSetRow["ERACCOUNTSTATUS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICETYPE</property>
+                                <expression name="expression">dataSetRow["SERVICETYPE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key">convertEmptyName(row["ERSERVICENAME"])</expression>
+                                <property name="direction">asc</property>
+                            </structure>
+                        </list-property>
+                        <column id="1414">
+                            <property name="width">15px</property>
+                        </column>
+                        <column id="1343"/>
+                        <column id="1344"/>
+                        <column id="1634"/>
+                        <column id="1345"/>
+                        <column id="1643"/>
+                        <group id="1288">
+                            <property name="groupName">Service</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["ERSERVICENAME"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["ERSERVICENAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="1289">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1407">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">15px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">15px</property>
+                                        <text id="1471">
+                                            <property name="style">section-title</property>
+                                            <expression name="bookmark">row["ERSERVICENAME"]</expression>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service");</VALUE-OF>"><VALUE-OF>convertEmptyName(row["ERSERVICENAME"])</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                        <grid id="1724">
+                                            <property name="width">100%</property>
+                                            <column id="1725">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="1726"/>
+                                            <row id="1727">
+                                                <cell id="1728">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <text id="1731">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="paddingTop">1pt</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service_type");</VALUE-OF>"><VALUE-OF>getNLS("heading_service_type");</VALUE-OF> : <div>]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1729">
+                                                    <property name="style">parameter-value</property>
+                                                    <text-data id="1723">
+                                                        <property name="paddingTop">1pt</property>
+                                                        <property name="paddingLeft">1pt</property>
+                                                        <property name="paddingBottom">1pt</property>
+                                                        <expression name="valueExpr">getNLS(row["SERVICETYPE"]);</expression>
+                                                        <property name="contentType">html</property>
+                                                    </text-data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="1544">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1545">
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1547">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1473">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_account_user_id");</VALUE-OF>"><VALUE-OF>getNLS("heading_account_user_id");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1548">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1474">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_account_owner");</VALUE-OF>"><VALUE-OF>getNLS("heading_account_owner");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1630">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1636">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_days_dormant");</VALUE-OF>"><VALUE-OF>getNLS("heading_days_dormant");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1549">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1475">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_last_access_date");</VALUE-OF>"><VALUE-OF>getNLS("heading_last_access_date");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1639">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1644">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_account_status");</VALUE-OF>"><VALUE-OF>getNLS("heading_account_status");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1691">
+                                    <cell id="1692">
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1693">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1694">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1695">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1696">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1697">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="1326">
+                                <cell id="1410">
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">15px</property>
+                                    <property name="paddingBottom">0pt</property>
+                                </cell>
+                                <cell id="1327">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1626">
+                                        <property name="resultSetColumn">ERUID</property>
+                                    </data>
+                                </cell>
+                                <cell id="1329">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="390">
+                                        <property name="resultSetColumn">CN</property>
+                                    </data>
+                                </cell>
+                                <cell id="1631">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1635">
+                                        <property name="resultSetColumn">Days Since Last Use</property>
+                                    </data>
+                                </cell>
+                                <cell id="1331">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <text id="1735">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF>row["ERLASTACCESSDATE"]</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="1640">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <grid id="1669">
+                                        <property name="width">100%</property>
+                                        <column id="1670">
+                                            <property name="width">25px</property>
+                                        </column>
+                                        <column id="1671"/>
+                                        <row id="1672">
+                                            <cell id="1673">
+                                                <image name="Normal Icon" id="1452" extends="TivoliCommonReporting_v1.Normal Icon">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr">!isAccountActive(row["STATUS_COLUMN"]);</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                                                                    <text-property name="altText">getNLS("active");</text-property>
+                                                </image>
+                                                <image name="Critical Icon" id="1453" extends="TivoliCommonReporting_v1.Critical Icon">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr">isAccountActive(row["STATUS_COLUMN"]);</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                                                                    <text-property name="altText">getNLS("inactive");</text-property>
+                                                </image>
+                                            </cell>
+                                            <cell id="1674">
+                                                <data id="1645">
+                                                    <property name="resultSetColumn">ERACCOUNTSTATUS</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1733" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1734"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_dormant_accounts"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

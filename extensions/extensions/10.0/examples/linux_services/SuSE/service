@@ -1,0 +1,64 @@
+#!/bin/sh
+#/******************************************************************************
+# *
+# * Licensed Materials - Property of IBM
+# *
+# * Source File Name = service
+# *
+# * (C) COPYRIGHT IBM Corp. 2006, 2008 All Rights Reserved
+# *
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# *
+# *****************************************************************************/
+
+#*****************************************************************************************************
+#
+#  This file contains sample code. IBM provides this code on an 'AS IS' basis without
+#  warranty of any kind, either expressed or implied, including but not limited to,
+#  the implied warranties of merchantability or
+#  fitness for a particular purpose.
+#
+#*****************************************************************************************************
+#  Controls a Linux Service on SUSE - start|stop|restart|status
+#
+#  This command "mimics" the service command on RedHat Linux
+#
+#   Examples:
+#
+#      1. To start the service named websphere
+#         service websphere start
+#
+#      2. To stop the service named ibmdir
+#         service ibmdir stop
+#
+#      3. To display the status of the service named websphere
+#         service websphere status
+#   
+#*****************************************************************************************************
+#
+# To "install" this script
+#
+#   1. Put this script in the directory /root/bin
+#   2. Run this command from the directory /root/bin to format the script text to unix
+#      dos2unix service
+#   3. Run this command to change the script permissions so it is executable
+#      chmod  ug+rx service
+#
+#*****************************************************************************************************
+
+usage() {
+
+  echo "Controls a service on Linux"
+  echo
+  echo "Syntax: service service_name action"
+  echo
+
+  exit 0;
+}
+
+if [ $# -lt 2 ]; then
+   usage
+fi
+
+/etc/rc.d/$1 $2

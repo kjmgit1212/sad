@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chris Hemp</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_accesses">Accesses</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "accesses_0.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_accesses");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_accesses">Accesses</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Access Type" id="1757">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_access_type"></text-property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Access Dn" id="1742" extends="itim.Access Dn"/>
+        <scalar-parameter name="Service Dn" id="1651" extends="itim.Service No ITIM Dn">
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">ServiceNameNoITIMFeedServices</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["ERSERVICENAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="User Dn" id="1650" extends="itim.User Dn">
+            <text-property name="promptText" key="heading_access_owner"></text-property>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UserNameBasedOnUsersParameter" id="1699"
+ extends="itim.UserNameBasedOnUsersParameter"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="AccessNameBasedOnAccessesParameter" id="1746"
+ extends="itim.AccessNameBasedOnAccessesParameter">
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERACCESSNAME</property>
+                    <property name="nativeName">ERACCESSNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERACCESSNAME</property>
+                    <property name="nativeName">ERACCESSNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Accesses Table" id="1741">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">SERVICETYPE</property>
+                    <property name="displayName">SERVICETYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACCESSTYPE</property>
+                    <property name="displayName">ACCESSTYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERACCESSNAME</property>
+                    <property name="displayName">ERACCESSNAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">SERVICETYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ACCESSTYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ERACCESSNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Access Type</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">params["Access Type"]</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Access Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Access Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Service Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Owner Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">4</property>
+                    <expression name="defaultValue">convertAnyToSql(params["User Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">SERVICETYPE</property>
+                    <property name="nativeName">SERVICETYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ACCESSTYPE</property>
+                    <property name="nativeName">ACCESSTYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ERACCESSNAME</property>
+                    <property name="nativeName">ERACCESSNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT  NAService."SERVICETYPE", 
+        NAService."ERSERVICENAME", 
+        ACCESSVIEW."ACCESSTYPE", 
+        ACCESSVIEW."ERACCESSNAME", 
+        NAPerson."CN" 
+FROM ( SELECT Groupz.ACCESSTYPE , Groupz.ERACCESSNAME , Groupz.dn FROM Groupz ) 
+        NAGROUPZ , 
+        (SELECT Service.servicetype , 
+                Service.erservicename , 
+                Service.DN 
+        FROM    Service 
+        ) 
+        NASERVICE , 
+        (SELECT Person_cn.cn , 
+                Person.DN 
+        FROM    Person_cn , 
+                Person 
+        WHERE ( Person.DN = Person_cn.DN ) 
+        ) 
+        NAPERSON , 
+        ACCESSVIEW
+WHERE   ACCESSVIEW.OWNER     = NAPerson.DN 
+    AND ACCESSVIEW.SERVICEDN = NAService.DN 
+    AND ACCESSVIEW.ACCESSTYPE LIKE ? 
+    AND ACCESSVIEW.DN LIKE ? 
+    AND NAService.servicetype LIKE '%' 
+    AND NAService.DN LIKE ? 
+    AND NAPerson.DN LIKE ? 
+    AND AccessVIEW.dn = NAGroupz.dn 
+ORDER BY NAService.servicetype asc, 
+        NAService.erservicename asc, 
+        accessview.accesstype asc, 
+        accessview.eraccessname asc, 
+        NAPerson.cn asc</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServiceNameNoITIMFeedServices" id="1758">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select s.DN, s.ERSERVICENAME from service s where (s.SERVICETYPE &lt;> 'DSMLInfo' and s.SERVICETYPE &lt;> 'ITIMService' and s.SERVICETYPE &lt;> 'ADFeed' 
+and s.SERVICETYPE &lt;> 'CSVFeed' and s.SERVICETYPE &lt;> 'DSML2Service' and s.SERVICETYPE &lt;> 'RFC2798Feed' )
+and s.DN like ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>DN</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>DN</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>DN</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ERSERVICENAME</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>ERSERVICENAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ERSERVICENAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SERVICETYPE</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SERVICETYPE</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SERVICETYPE</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServiceNameBasedOnServicesParameter" id="1760"
+ extends="itim.ServiceNameBasedOnServicesParameter">
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <text name="Report Title" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="title_accesses"><![CDATA[Report Title]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232">
+                    <grid name="Parameter Table" id="95">
+                        <property name="style">parameter-table</property>
+                        <property name="width">100%</property>
+                        <expression name="bookmark">getNLS("title_report_criteria");</expression>
+                        <structure name="toc">
+                            <expression name="expressionValue">getNLS("title_report_criteria");</expression>
+                        </structure>
+                        <column id="96">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="97">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="1655">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="1659">
+                            <property name="width">25%</property>
+                        </column>
+                        <row id="100">
+                            <cell id="101">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 1" id="214">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_access_type");</VALUE-OF>"><VALUE-OF>getNLS("parameter_access_type");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="102">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 1" id="1744">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Access Type Parameter</property>
+                                            <expression name="expression">convertSplatToNLS(params["Access Type"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Access Type Parameter</property>
+                                </data>
+                            </cell>
+                            <cell id="1652">
+                                <property name="style">parameter-value</property>
+                                <text name="Parameter Name 2" id="1609">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_access");</VALUE-OF>"><VALUE-OF>getNLS("parameter_access");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1656">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 2" id="1745">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">AccessNameBasedOnAccessesParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">Access Dn</property>
+                                            <expression name="expression">params["Access Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">ERACCESSNAME</property>
+                                            <expression name="expression">dataSetRow["ERACCESSNAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Access Parameter</property>
+                                            <expression name="expression">convertAnyToNLS(params["Access Dn"], dataSetRow["ERACCESSNAME"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Access Parameter</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="1710">
+                            <cell id="1711">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 3" id="126">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_service");</VALUE-OF>"><VALUE-OF>getNLS("parameter_service");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1712">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 3" id="1721">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">ServiceNameBasedOnServicesParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">Service Dn</property>
+                                            <expression name="expression">params["Service Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">ERSERVICENAME</property>
+                                            <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Service Parameter</property>
+                                            <expression name="expression">convertAnyToNLS(params["Service Dn"], dataSetRow["ERSERVICENAME"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Service Parameter</property>
+                                </data>
+                            </cell>
+                            <cell id="1713">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <text name="Parameter Name 4" id="1717">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_access_owner");</VALUE-OF>"><VALUE-OF>getNLS("heading_access_owner");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1714">
+                                <property name="style">parameter-value</property>
+                                <property name="paddingTop">3pt</property>
+                                <property name="paddingBottom">3px</property>
+                                <data name="Parameter Value 4" id="1720">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">UserNameBasedOnUsersParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">User Dn</property>
+                                            <expression name="expression">params["User Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">CN</property>
+                                            <expression name="expression">dataSetRow["CN"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">DN</property>
+                                            <expression name="expression">dataSetRow["DN"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">User Parameter</property>
+                                            <expression name="expression">convertAnyToNLS(params["User Dn"], dataSetRow["CN"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User Parameter</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="1593">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="1594"/>
+            <row id="1595">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">isNotAny(params["Service Dn"])</expression>
+                    </structure>
+                </list-property>
+                <cell id="1596">
+                    <property name="paddingTop">10pt</property>
+                    <text name="Section Heading Sub-title" id="1597">
+                        <property name="style">section-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="sub_title_section_1_accesses"><![CDATA[Section 1 Sub-Title Text]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="1598">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">isNotAny(params["Service Dn"])</expression>
+                    </structure>
+                </list-property>
+                <cell id="1599">
+                    <property name="paddingTop">10pt</property>
+                    <property name="textAlign">center</property>
+                </cell>
+            </row>
+            <row id="396">
+                <cell id="397">
+                    <property name="paddingTop">10pt</property>
+                    <table name="Dormant accounts grouped by Service" id="1281">
+                        <property name="style">group-table-with-section</property>
+                        <property name="marginTop">0px</property>
+                        <property name="marginLeft">0px</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">Accesses Table</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">SERVICETYPE</property>
+                                <expression name="expression">dataSetRow["SERVICETYPE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERSERVICENAME</property>
+                                <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ACCESSTYPE</property>
+                                <expression name="expression">dataSetRow["ACCESSTYPE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERACCESSNAME</property>
+                                <expression name="expression">dataSetRow["ERACCESSNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CN</property>
+                                <expression name="expression">dataSetRow["CN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key">convertEmptyName(row["ERSERVICENAME"])</expression>
+                                <property name="direction">asc</property>
+                            </structure>
+                        </list-property>
+                        <column id="1414">
+                            <property name="width">15px</property>
+                        </column>
+                        <column id="1343"/>
+                        <column id="1344"/>
+                        <column id="1345"/>
+                        <group id="1288">
+                            <property name="groupName">Service</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["ERSERVICENAME"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["ERSERVICENAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="1289">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1407">
+                                        <property name="colSpan">4</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">15px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">15px</property>
+                                        <text id="1471">
+                                            <property name="style">section-title</property>
+                                            <expression name="bookmark">row["ERSERVICENAME"]</expression>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service");</VALUE-OF>"><VALUE-OF>convertEmptyName(row["ERSERVICENAME"])</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                        <grid id="1724">
+                                            <property name="width">100%</property>
+                                            <column id="1725">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="1726"/>
+                                            <row id="1727">
+                                                <cell id="1728">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <text id="1731">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="paddingTop">1pt</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service_type");</VALUE-OF>"><VALUE-OF>getNLS("heading_service_type");</VALUE-OF> : <div>]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1729">
+                                                    <property name="style">parameter-value</property>
+                                                    <text-data id="1723">
+                                                        <property name="paddingTop">1pt</property>
+                                                        <property name="paddingLeft">1pt</property>
+                                                        <property name="paddingBottom">1pt</property>
+                                                        <expression name="valueExpr">getNLS(row["SERVICETYPE"]);</expression>
+                                                        <property name="contentType">html</property>
+                                                    </text-data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="1544">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1545">
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1547">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1473">
+                                            <property name="paddingTop">1pt</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_access_name");</VALUE-OF>"><VALUE-OF>getNLS("heading_access_name");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1548">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1474">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_access_owner");</VALUE-OF>"><VALUE-OF>getNLS("heading_access_owner");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1549">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1475">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_access_type");</VALUE-OF>"><VALUE-OF>getNLS("heading_access_type");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1691">
+                                    <cell id="1692">
+                                        <property name="style">table-details</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1693">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1694">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1696">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="1326">
+                                <cell id="1410">
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">15px</property>
+                                    <property name="paddingBottom">0pt</property>
+                                </cell>
+                                <cell id="1327">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1626">
+                                        <property name="resultSetColumn">ERACCESSNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="1329">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="390">
+                                        <property name="resultSetColumn">CN</property>
+                                    </data>
+                                </cell>
+                                <cell id="1331">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1709">
+                                        <property name="resultSetColumn">ACCESSTYPE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1748" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1749"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_accesses"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

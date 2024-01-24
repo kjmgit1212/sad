@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>README for Single Sign-On (SSO)</title>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<META name="GENERATOR"
+	content="IBM WebSphere Studio Homepage Builder V6.0.2 for Windows">
+<META http-equiv="Content-Style-Type" content="text/css">
+<link href="../../examples.css" type="text/css" rel="stylesheet">
+</head>
+<BODY text="#ff0000">
+<table cellPadding="0" cellSpacing="0" border="0" width="100%">
+	<tr>
+		<td align="left"><img border="0" src="../../ibm_banner.gif"></td>
+		<td align="right"><img src="../../tivolilogo.gif"></td>
+	</tr>
+</table>
+<h1>README for Single Sign-On (SSO) Application</h1>
+<a href="#Overview">Overview</a>
+<br>
+<a href="#Build">Building the SSO Application</a>
+<br>
+<a href="#WASInstall">Installing the SSO Application on the IBM WebSphere Application Server</a><br>
+<a href="#WASInstall_Methods_1">Installing on a system where the IBM Security Identity Manager is installed</a><br>
+<a href="#WASInstall_Methods_2">Installing on a separate system</a>
+<br>
+<a href="#StartApp">Starting the SSO Application</a>
+<br>
+<a href="#TestApp">Testing the SSO Application</a>
+<br>
+<a href="#Detail">Detailed working of the SSO Application</a>
+<br>
+
+
+<h2><a name="Overview"></a>Overview</h2>The SSO application demonstrates single sign on by using the IBM® Security Identity Manager (ISIM) Web services. The SSO 
+application fetches the Lightweight Third Party Authentication (LTPA) token from the Hypertext Transfer Protocol (HTTP) header. The SSO application inserts this token into the SOAP header and then makes a web service call.<h2><a name="Build"></a>Building the SSO Application</h2>You can 
+create the <b>itim_ws.war</b> file by using the build scripts in the <i>/examples</i> directory.
+ For information about how to build the examples, see <a href="../Building.html">Building the Examples</a>. In order to build only the SSO application, specify <code>sso_sample</code> as the target when building the examples. 
+For example, when you issue the &quot;<i>build sso_sample</i>&quot; command on 
+Windows operating systems, or the &quot;<i>./build.sh sso_sample</i>&quot; command on UNIX operating systems,
+ it creates the <b>itim_ws.war</b> file. Follow these <a href="#WASInstall">instructions</a> to install the <b>itim_ws.war</b> file on the IBM® WebSphere Application Server. You must re-create the <b>itim_ws.war</b> file if you make any changes to the source of the SSO application.  Login as a user existing in the IBM Security Identity Manager.<h2><a name="WASInstall"></a>Installing the SSO Application on the IBM WebSphere Application Server</h2>Familiarize yourself with
+ the SSO application  details and installation requirements 
+before you install it.
+	<br><br>You must install the IBM WebSphere Application Server fixes that are specified 
+in the IBM Security Identity Manager Release Notes. Use the installation 
+instructions in the Release Notes to install the fixes. Install the SSO application on the IBM WebSphere Application Server where the IBM Security Identity Manager is installed.<h2><a name="WASInstall_Methods_1"></a>Installing on a system 
+where the IBM Security Identity Manager is installed</h2><P>Follow these steps to install the SSO application:</P>
+<ul>
+	<li><a href="#Build">Build</a> the 
+	SSO application to create the <b>itim_ws.war</b> file.</li>
+	<li>Log on to the IBM WebSphere Application Server Administrative Console. For example,
+	<code>http://localhost:9060/ibm/console</code>.</li>
+	<li>Under <b>Applications</b><i> -&gt; </i><b>New Application</b><i></i>,<b>
+	</b> click<b> New Enterprise Application.</b></li>
+	<li>In the <b>Path to the new application</b> area, select <b>Local file system</b>. Click <b>Browse</b> to set <b>Full path</b> to the location of the <b>itim_ws.war</b> file.</li>
+	<li>In the <b>How do you want to install the application</b> area, select <b>Detailed - Show all installation options and parameters</b>.</li>
+	<li>Click the <b>Map context roots for Web modules</b> step and specify the context root value as <i>/itim_ws</i>.</li>
+	<li>Click the <b>Map security roles to users or groups</b> step. Select the <b>ITIM_CLIENT</b> role. Then, click <b>Map Special Subjects</b> and select <b>All Authenticated in Trusted Realms</b>.</li><li>Click <b>Next</b> until the Summary window appears.</li>
+	<li>On the Summary window, click <b>Finish</b>.</li>
+	<li>Click <b>Save</b> to save your changes directly to the master
+	configuration.</li>
+	<li>Under <b>Applications -&gt; Application Types -&gt; WebSphere
+	enterprise applications</b>, select <b>itim_ws_war.</b></li>
+	<li>Under <b>Detailed Properties </b>-&gt; <b>Class
+	loading and update detection</b>, select <b>Classes loaded
+	with local class loader first (parent last) </b>for Class loader order. Then select <b>Single
+	class loader for application</b> for WAR class loader policy.</li>
+	<li>Click <b>OK</b> to apply the changes.</li>
+	<li>Click <b>Save</b> to save the changes to the master
+	configuration.</li></ul><p>
+		
+			<p>At this point, the SSO application only works with its own
+				authentication using IBM Security Identity Manager's user registry.
+				To enable authentication using WebSEAL:</p>
+<ul>
+	<li><a href="#Build"></a>Use the steps in IBM Security Identity Manager Knowledge Center <a
+			href="javascript:;"
+			widgetid="bc_SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing_toc.xml/0@E06323B191"
+			dir="ltr"
+			id="bc_SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing_toc.xml/0@E06323B191"
+			class="idxLinkDerived idxLink"
+			dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0"
+			alt="" role="link" wairole="link"><b>Security</b></a><span class="arrow">&gt;</span><span
+			dir="ltr" tabindex="0"><b>Configuration of single sign-on</b></span> to configure single sign-on
+		</li>
+	<li>Create an ACL requiring authenticated access to associate with the WebSEAL junction. For example,<ul> <code>pdadmin> acl create SSOAPP-ACL</code></ul></li>
+	<li>Granting access to the ACL. For example,<ul><li><code>pdadmin> acl modify SSOAPP-ACL set group ITIM-Group Trx</code></li>
+	<li><code>acl modify SSOAPP-ACL set any-other T</code></li>
+	<li><code>acl modify SSOAPP-ACL set unauthenticated T</code></li>
+	</ul></li>
+	<li>Associating the WebSEAL junction to the ACLs. For example,<ul><code>acl attach /WebSEAL/tam60-server-default/itimserver/itim_ws SSOAPP-ACL</code></ul></li>
+</ul>
+	<p>
+		If 
+	you are installed the SSO application on a ISIM cluster, there's a limitation that LTPA token has to be enabled at the WebSEAL junction. Enable LTPA token at  the junction to the SSO application   by:</p><ol type="1">
+			<li>Provide the location of the key file used to encrypt the
+				identity information.</li>
+			<li>Provide the password to this key file.</li>
+		</ol>
+		<p>
+			These three configuration requirements are specified in three
+			additional options to the junction <span class="bold">create</span>
+			command.
+		</p>
+		<ul>
+			<li>The <span class="bold">-A</span> option enables LTPA
+				cookies.</li>
+			<li>The <span class="bold">-F "</span><span class="bold-italic">keyfile</span><span
+				class="bold">" </span> option and argument specifies the full path
+				name location (on the WebSEAL server) of the key file used to
+				encrypt the identity information contained in the cookie. The shared
+				key is originally created on the WebSphere server and copied
+				securely to the WebSEAL server. Refer to the appropriate WebSphere
+				documentation for specific details regarding this task.</li>
+			<li>The <span class="bold">-Z "</span><span class="bold-italic">keyfile-password</span><span
+				class="bold">" </span> specifies the password required to open the
+				key file.
+				<p>The password appears as encrypted text in the junction XML
+					file.</p>
+			</li>
+		</ul>
+		<p>Use these options in addition to other required junction
+			options when you create the junction between WebSEAL and the back-end
+			WebSphere server. For example:</p>
+
+<code>server task default-webseald-tam60-server create -b supply -t tcp -s -j 
+-e utf8_uri -c iv-creds -A -F "/abc/xyz/key.file" -Z &quot;abcdefg&quot; -p 9080 -h ITIMServer.ondemandinc.com /isimserver</code></pre>
+
+
+	<h2><a name="WASInstall_Methods_2"></a>Installing on a separate system </h2><P>Follow these steps to install the SSO application on a different Websphere Application Server than IBM Security Identity Manager:</P>
+<ul>
+	<li>Prepare the Websphere Application Server using steps 1-10 from <a href="http://www-01.ibm.com/support/docview.wss?uid=swg21698565">How to install self-care on a system where IBM Security Identity Manager is not installed</a>. 
+	Pay attention to the security domain name and security realm name, instead of <code>ISIMSecurityDomain</code>, give it a different name, for example
+	<code>APPSecurityDomain</code>; instead of <code>itimCustomRealm</code>, use <code>appCustomRealm</code>.
+	<ul>Note that the user registry configuration is for the specific scenario when accessing the SSO application without going through WebSEAL. In this case, the login requires a user registry for authentication. If you are planning
+	to only access the SSO application through WebSEAL, the user registry is not required.</ul></li>
+		<li><a href="#Build">Build</a> the 
+	SSO application to create the <b>itim_ws.war</b> file on ITIM server.</li>
+	<li>FTP <b>itim_ws.war</b> and place it in a location in the system where SSO application will be deployed.</li>
+	<li>Log on to the IBM WebSphere Application Server Administrative Console where SSO application will be deployed. For example,
+	<code>http://localhost:9060/ibm/console</code>.</li>
+	<li>Under <b>Applications</b><i> -&gt; </i><b>New Application</b><i></i>,<b>
+	</b> click<b> New Enterprise Application.</b></li>
+	<li>In the <b>Path to the new application</b> area, select <b>Local file system</b>. Click <b>Browse</b> to set <b>Full path</b> to the location of the <b>itim_ws.war</b> file.</li>
+	<li>In the <b>How do you want to install the application</b> area, select <b>Detailed - Show all installation options and parameters</b>.</li>
+	<li>Click the <b>Map context roots for Web modules</b> step and specify the context root value as <i>/itim_ws</i>.</li>
+	<li>Click the <b>Map security roles to users or groups</b> step. Select the <b>ITIM_CLIENT</b> role. Then, click <b>Map Special Subjects</b> and select <b>All Authenticated in Trusted Realms</b>.</li><li>Click <b>Next</b> until the Summary window appears.</li>
+	<li>On the Summary window, click <b>Finish</b>.</li>
+	<li>Click <b>Save</b> to save your changes directly to the master
+	configuration.</li>
+	<li>Under <b>Applications -&gt; Application Types -&gt; WebSphere
+	enterprise applications</b>, select <b>itim_ws_war.</b></li>
+	<li>Under <b>Detailed Properties </b>-&gt; <b>Class
+	loading and update detection</b>, select <b>Classes loaded
+	with local class loader first (parent last) </b>for Class loader order. Then select <b>Single
+	class loader for application</b> for WAR class loader policy.</li>
+	<li>Click <b>OK</b> to apply the changes.</li>
+	<li>Click <b>Save</b> to save the changes to the master
+	configuration.</li>
+	<li>Ensure that you  properly export and import the LTPA keys for correct encryption and decryption of the identity tokens (LTPA). See the IBM WebSphere Application Server documentation for setting up SSO using LTPA with multiple servers.</li>
+	<li>Make the security realm that the sample SSO application is deployed a trusted realm of ISIM server.
+	On the WebSphere Application Server that Identity Manager is installed:<ul><li>Under <b>Security -&gt; Security domains -&gt; ISIMSecurityDomain -&gt; itimCustomRealm  -&gt; Trusted authentication realms - inbound</li>
+	<li>Click <b>Add External Realm...</b> and type in the security realm of SSO application, for example, <code>appCustomRealm</code>.</li>
+	</li>
+	<li>Change <code>enrole.authentication.idmapper</code> in <code>enRoleAuthentication.properties</code> located in &lt;ISIM_HOME&gt;/data to <code>com.ibm.itim.authentication.mapping.SSOIDMapper</code> and restart IBM Security Identity Manager server.</li>
+</ul>	
+	<p>At this point, the SSO application only works with its own
+				authentication using IBM Security Identity Manager's user registry.
+				To enable authentication using WebSEAL:</p>
+<ul>
+	<li><a href="#Build"></a>Use the steps in IBM Security Identity Manager Knowledge Center <a
+			href="javascript:;"
+			widgetid="bc_SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing_toc.xml/0@E06323B191"
+			dir="ltr"
+			id="bc_SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing_toc.xml/0@E06323B191"
+			class="idxLinkDerived idxLink"
+			dojoattachpoint="containerNode, linkNode, focusNode" tabindex="0"
+			alt="" role="link" wairole="link"><b>Security</b></a><span class="arrow">&gt;</span><span
+			dir="ltr" tabindex="0"><b>Configuration of single sign-on</b></span> to configure single sign-on</li>
+				<li><a href="http://www-01.ibm.com/support/knowledgecenter/SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing/tsk/tsk_ic_security_sing_tai_ws2tam.htm">Configure WebSphere Application Server to point to IBM Security Access Manager</a> using the step in Identity Manager knowledge center on the server where the SSO application is installed.</li>
+	<li><a href="http://www-01.ibm.com/support/knowledgecenter/SSRMWJ_6.0.0.5/com.ibm.isim.doc_6.0.0.5/securing/tsk/tsk_ic_security_sing_tai_config.htm">Configure the Trust Association Interceptor</a> for the application security domain, for example <code>APPSecurityDomain</code>, using the steps in Identity Manager knowledge center on the server where the SSO application is installed.</li>
+			<li>Define a junction that points to SSO application. For example,<ul><code>server task default-webseald-tam60-server create -b supply -t tcp -s -j 
+-e utf8_uri -c iv_creds -p 9080 -h AppServer.ondemandinc.com /appserver</code></ul></li>
+		<li>Create an ACL requiring authenticated access to associate with the WebSEAL junction. For example,<ul> <code>pdadmin> acl create SSOAPP-ACL</code></ul></li>
+	<li>Granting access to the ACL. For example,<ul><li><code>pdadmin> acl modify SSOAPP-ACL set group ITIM-Group Trx</code></li>
+	<li><code>acl modify SSOAPP-ACL set any-other T</code></li>
+	<li><code>acl modify SSOAPP-ACL set unauthenticated T</code></li>
+	</ul></li>
+	<li>Associating the WebSEAL junction to the ACLs. For example,<ul><code>acl attach /WebSEAL/tam60-server-default/appserver/itim_ws SSOAPP-ACL</code></ul></li>
+</ul>
+		
+	<h2><a name="StartApp"></a>Starting the SSO Application</h2>
+Start the SSO application, which is running on the IBM WebSphere 
+Application Server: 
+<ul>
+	<li>Log on to the IBM WebSphere Application Server Administrative Console running on the
+	system where the SSO application is installed. For example, <code>http://localhost:9060/ibm/console</code>.</li>
+	<li>Navigate to <i><b>Applications &gt; Enterprise Applications</b></i>.</li>
+	<li>If <b>itim_ws_war</b> is not already started, then select the <b>itim_ws_war </b>check box and click <b>Start</b>.
+</ul>
+	<h2><a name="TestApp"></a>Testing the SSO Application</h2>
+	<b>WS-Security Header</b>
+	<p>
+		You can access the SSO application by using the URL
+		<code>
+			http://<i>hostname</i>:9080/itim_ws/jsp/Home.jsp
+		</code>
+		in a Web browser. If you enable SSL, then enter the URL
+		<code>
+			https://<i>hostname</i>:9443/itim_ws/jsp/Home.jsp
+		</code>
+		(<i>hostname</i> is the name of the host where the SSO application is
+		installed). Login as a user existing in the IBM Security Identity
+		Manager to display the
+		<i>Webservice Call </i>page. The 
+<b>WS-Security</b> header type option is the default selection on the
+	<i>Webservice Call </i>page. Specify the server host and port on which the IBM Security Identity Manager Web services are deployed.	</p><ul>
+			<li><i>WS Host: </i> The host name or IP address of the server on which the IBM Security Identity Manager is deployed. For example, <i>localhost</i>. 
+			<li><i>WS Port: </i> The server port on which the IBM Security Identity Manager web services are available. For example, <i>9080</i>.</li>
+		</ul>
+		Click <b>Get Principal User</b> to invoke the web service in order to fetch information about the logged in user.
+	<!-- 
+	<p>
+		<b>2. WebSEAL</b></p>
+	<p>Install and configure WebSEAL with an LTPA junction to protect
+		the IBM Security Identity Manager web services and the sample application.
+		The LTPA junction can be same or different. For ease, use the same
+		junction for protecting the IBM Security Identity Manager Web services and the sample SSO
+		application.</p>
+	<p>You can access the sample application by using the WebSEAL junction URL. For example, if the junction name is
+		<i>isimjunction</i>, 
+then		the URL is
+		<i>http://websealHost/isimjunction/itim_ws/jsp/Home.jsp</i>. <i></i> Enter this URL in a Web browser to display the login page. Enter the WebSEAL user credentials to display the		<i>Webservice Call</i> page. Select the 	<i>WebSEAL</i> option. Specify the WebSEAL server host, port, and junction details. </p>
+		<ul>
+			<li><i>WebSEAL Host: </i> The host name or IP address of the system on which WebSEAL is installed.</li>
+		<li><i>WebSEAL Port: </i> The port number on which
+			WebSEAL is available. By default, the port number is 80. If the port is <i>80</i>, then leave the port field blank.</li>
+		<li><i>WebSEAL Junction Name: </i> The name of the junction which protects the IBM Security Identity Manager Web services. For example, <i>isimservice</i>.</li>
+	</ul>
+	Click <b>Get Principal User</b> to invoke the web service to fetch information about the logged in user.
+	 -->
+	<h2><a name="Detail"></a>Detailed working of the SSO Application</h2><p>The aim of the SSO sample application is to demonstrate SSO authentication with the IBM Security Identity Manager by using the IBM Security Identity Manager Web services. You can achieve this aim through the Lightweight Third Party Authentication (LTPA) tokens.
+
+ The IBM WebSphere Application Server returns an LTPA token when you authenticate with the IBM WebSphere Application Server. The LTPA token serves as an identity token for using and maintaining the authenticated user information. The token enables the user to access the resources without requiring to log into the IBM WebSphere Application Server again. IBM Security Identity Manager installation configures <i>ISIMSecurityDomain</i> as its security domain that scopes to the IBM WebSphere Application Server where the IBM Security Identity Manager is deployed. Therefore, any application running on the same IBM WebSphere Application Server uses the
+		<i>ISIMSecurityDomain</i>. </p>
+	<p>
+		The SSO application uses form-based login.
+		The IBM Security Identity Manager
+		users can log in to the sample application by using the same credentials as that of the IBM Security Identity Manager account. Upon successful authentication, the SSO application
+		receives an LTPA cookie in the response header from the IBM WebSphere Application Server. The sample application extracts the
+		<i>LtpaToken2</i> cookie from the
+		Hypertext Transfer Protocol (HTTP) header and sets it in the session.  The
+		<i>WebServiceCall</i> servlet invokes the <i>getPrincipalPerson </i>web service API. </p>
+	<p>You can achieve SSO authentication with the IBM Security Identity Manager web services by using the <b>WS-Security</b> header. Modify the SOAP message to add the <b>WS-Security</b> header namely,
+		<i>BinarySecurityToken</i>. The <i>BinarySecurityToken </i> element has the identity token (in our case the LTPA token) embedded. Provide the <b>WS-Security</b> header with the actor attribute, namely <i>
+http://services.itim.com/60/actor</i>, to enable the IBM Security Identity Manager Web services
+	for processing the security header. Modify the SOAP message with the outgoing request of the
+		<i>ClientHandler.</i></p>
+</BODY>
+</html>

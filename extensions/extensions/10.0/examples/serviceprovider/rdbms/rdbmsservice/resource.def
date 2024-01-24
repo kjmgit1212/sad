@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Resource definition for relational database connector -->
+<Resource>
+  <SystemProfile>
+    <Name>JNDISample</Name>   
+    <Description>Sample JNDI service.</Description>
+    <BehaviorProperties>
+      <Property Name = "com.ibm.itim.remoteservices.ResourceProperties.SERVICE_PROVIDER_FACTORY"
+                Value = "examples.serviceprovider.rdbms.RDBMSConnectorFactory"/>
+      <Property Name = "groupObjectClass"
+                Value = "erRDBMSGroup"/>
+    </BehaviorProperties>
+
+    <ProtocolProperties>
+      <Property Name  = "erRDBMSDataSource"
+                LDAPName = "erRDBMSDataSource"/>
+      <Property Name  = "erRDBMSAddSQL"
+                LDAPName = "erRDBMSAddSQL"/>
+      <Property Name  = "erRDBMSChangePasswordSQL"
+                LDAPName = "erRDBMSChangePasswordSQL"/>
+      <Property Name  = "erRDBMSDeleteSQL"
+                LDAPName = "erRDBMSDeleteSQL" />
+      <Property Name  = "erRDBMSModifySQL"
+                LDAPName = "erRDBMSModifySQL" />
+      <Property Name  = "erRDBMSRestoreSQL"
+                LDAPName = "erRDBMSRestoreSQL" />
+      <Property Name  = "erRDBMSSearchSQL"
+                LDAPName = "erRDBMSSearchSQL" />
+      <Property Name  = "erRDBMSSearchSQL"
+                LDAPName = "erRDBMSSearchSQL" />
+      <Property Name  = "erRDBMSSearchGroupSQL"
+                LDAPName = "erRDBMSSearchGroupSQL" />
+      <Property Name  = "erRDBMSSuspendSQL"
+                LDAPName = "erRDBMSSuspendSQL" />
+      <Property Name  = "erRDBMSAttributeMap"
+                LDAPName = "erRDBMSAttributeMap" />
+      <Property Name  = "erRDBMSGroupDNAttr"
+                LDAPName = "erRDBMSGroupDNAttr" />
+      <Property Name  = "erRDBMSValueMap"
+                LDAPName = "erRDBMSValueMap" />
+      <Property Name  = "erRDBMSReconTransactional"
+                LDAPName = "erRDBMSReconTransactional" />
+
+    </ProtocolProperties>
+  </SystemProfile>
+
+  <AccountDefinition ClassName = "erRDBMSAccount" 
+                     Description = "Class representing the RDBMS connector account">
+  </AccountDefinition>
+
+  <ServiceDefinition ServiceProfileName = "rdbmsservice" 
+			   ServiceClass = "erRDBMSService"
+                     AttributeName = "erServiceName"
+                     AccountClass = "erRDBMSAccount"
+                     AccountProfileName = "rdbmsaccount" 
+                     Description = "Class representing the RDBMS connector service">
+  </ServiceDefinition>
+  
+  <ServiceGroups>
+    <GroupDefinition ProfileName="RDBMSGroupProfile"
+                     ClassName = "erRDBMSGroup"
+                     RdnAttribute = "erRDBMSGroupName"
+                     AccountAttribute = "erRDBMSGroup">
+      <AttributeMap>
+        <Attribute Name="erGroupId" Value="erRDBMSGroupName"/>
+        <Attribute Name="erGroupName"  Value="erRDBMSGroupName"/>
+        <Attribute Name="erGroupDescription" Value="erGroupDescription"/>
+      </AttributeMap>
+    </GroupDefinition>
+  </ServiceGroups>
+</Resource>

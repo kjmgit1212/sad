@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<PROCESSDEFINITION AUTHOR="Corey Williams" CLASSIFICATION="EO"
+    COUNTRY_KEY="US" CREATED="04-March-2003"
+    DESCRIPTION="personModifyProcessDesc" DURATION_UNIT="m"
+    LIMIT="43200000" NAME="personModifyProcessName"
+    VALID_FROM="04-March-2003" VALID_TO="04-March-2004" VERSION="1.0" WORKFLOWID="UC">
+    <PARAMETERS>
+        <IN_PARAMETERS EXTENDED_ATTRIBUTE="Entity" PARAM_ID="Entity"
+            RELEVANT_DATA_ID="Entity" TYPE="Person"/>
+    </PARAMETERS>
+    <ACTIVITY ACTIVITYID="MODIFYPERSON" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <APPLICATION APPLICATIONID="MODIFYPERSON"
+                CLASS_NAME="com.ibm.itim.workflowextensions.PersonExtensions" METHOD_NAME="modifyPerson"/>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION SPLIT="XOR"/>
+        <PARAMETERS>
+            <IN_PARAMETERS PARAM_ID="personIn" RELEVANT_DATA_ID="Entity" TYPE="Person"/>
+            <OUT_PARAMETERS PARAM_ID="personOut" RELEVANT_DATA_ID="Entity" TYPE="Person"/>
+        </PARAMETERS>
+    </ACTIVITY>
+    <ACTIVITY ACTIVITYID="ENFORCEPOLICYFORPERSON" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <APPLICATION APPLICATIONID="ENFORCEPOLICYFORPERSON"
+                CLASS_NAME="com.ibm.itim.workflowextensions.PersonExtensions" METHOD_NAME="enforcePolicyForPerson"/>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION SPLIT="XOR"/>
+        <PARAMETERS>
+            <IN_PARAMETERS PARAM_ID="person" RELEVANT_DATA_ID="Entity" TYPE="Person"/>
+        </PARAMETERS>
+    </ACTIVITY>
+    <ACTIVITY ACTIVITYID="END" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <ROUTE/>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION JOIN="XOR"/>
+    </ACTIVITY>
+    <ACTIVITY ACTIVITYID="SUSPEND_PERSON" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <OPERATION OPERATION_NAME="suspend">
+                <ENTITY_OPERATION ENTITY_REF="Entity"/>
+            </OPERATION>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION JOIN="AND" SPLIT="AND"/>
+        <PARAMETERS>
+            <IN_PARAMETERS EXTENDED_ATTRIBUTE="accountSuspend"
+                PARAM_ID="accountSuspend" RELEVANT_DATA_ID="CONST_TRUE" TYPE="String"/>
+        </PARAMETERS>
+    </ACTIVITY>
+    <ACTIVITY ACTIVITYID="RESTORE_PERSON" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <OPERATION OPERATION_NAME="restore">
+                <ENTITY_OPERATION ENTITY_REF="Entity"/>
+            </OPERATION>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION JOIN="AND" SPLIT="AND"/>
+        <PARAMETERS>
+            <IN_PARAMETERS EXTENDED_ATTRIBUTE="accountRestore"
+                PARAM_ID="accountRestore" RELEVANT_DATA_ID="CONST_TRUE" TYPE="String"/>
+        </PARAMETERS>
+    </ACTIVITY>
+    <ACTIVITY ACTIVITYID="START" LIMIT="0" PRIORITY="NORMAL">
+        <IMPLEMENTATION_TYPE>
+            <ROUTE/>
+        </IMPLEMENTATION_TYPE>
+        <TRANSITION_RESTRICTION JOIN="AND" SPLIT="AND"/>
+<SCRIPT EVENT="onComplete"><![CDATA[var person  = Entity.get();
+var changes = person.getChanges();
+action.set("none")
+
+if(changes != null && changes.length > 0) {
+    for (i =0 ; i < changes.length ; i++) {
+        var op = changes[i].op;
+        if(op == 1 || op == 3) {
+            var name = changes[i].attr;
+
+            if(name == "erpersonstatus") {
+                var values = changes[i].values
+                if(values[0] == "1") {
+                    action.set("suspend");
+                } else {
+                    action.set("restore");
+                }
+            }
+        }
+    }
+}]]></SCRIPT>
+    </ACTIVITY>
+    <TRANSITION TRANSITIONID="TRANSTART">
+        <TRANSITION_KIND>
+            <REGULAR FROM="START" TO="MODIFYPERSON"/>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="ON_FAILMODIFYPERSON">
+        <TRANSITION_KIND>
+            <REGULAR FROM="MODIFYPERSON" TO="END">
+                <SCRIPT><![CDATA[WorkflowRuntimeContext.getActivityResult()=="SF"]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="ON_SUCCESSMODIFYPERSON">
+        <TRANSITION_KIND>
+            <REGULAR FROM="MODIFYPERSON" TO="ENFORCEPOLICYFORPERSON">
+                <SCRIPT><![CDATA[WorkflowRuntimeContext.getActivityResult()!="SF"]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="id151068960617545212">
+        <TRANSITION_KIND>
+            <REGULAR FROM="SUSPEND_PERSON" TO="END">
+                <SCRIPT><![CDATA[true]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="id151103054241951216">
+        <TRANSITION_KIND>
+            <REGULAR FROM="RESTORE_PERSON" TO="END">
+                <SCRIPT><![CDATA[true]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="id151062516951358699">
+        <TRANSITION_KIND>
+            <REGULAR FROM="ENFORCEPOLICYFORPERSON" TO="SUSPEND_PERSON">
+                <SCRIPT><![CDATA[action.get()=="suspend"]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="COMPLETE">
+        <TRANSITION_KIND>
+            <REGULAR FROM="ENFORCEPOLICYFORPERSON" TO="END">
+                <SCRIPT><![CDATA[action.get()=="none"]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <TRANSITION TRANSITIONID="id151095400455758803">
+        <TRANSITION_KIND>
+            <REGULAR FROM="ENFORCEPOLICYFORPERSON" TO="RESTORE_PERSON">
+                <SCRIPT><![CDATA[action.get()=="restore"]]></SCRIPT>
+            </REGULAR>
+        </TRANSITION_KIND>
+    </TRANSITION>
+    <RELEVANT_DATA CONTEXT="REQUESTEE"
+        DESCRIPTION="A directory object containing attributes of modified user."
+        NAME="Entity" RELEVANT_DATA_ID="Entity" TYPE="Person"/>
+    <RELEVANT_DATA RELEVANT_DATA_ID="CONST_TRUE" TYPE="String" VALUE="true"/>
+    <RELEVANT_DATA RELEVANT_DATA_ID="action" TYPE="String"/>
+</PROCESSDEFINITION>

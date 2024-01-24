@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<MetamergeConfig created="Tue Feb 07 12:44:51 PST 2006" createdBy="Danny" modified="Tue Feb 07 12:44:51 PST 2006" modifiedBy="Danny" version="1.1">
+<Folder name="AssemblyLines">
+<AssemblyLine name="HRFeed">
+<LogEnabled>true</LogEnabled>
+<Settings>
+<parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+<parameter name="ScriptEngine">JavaScript</parameter>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="includeGlobalPrologs">true</parameter>
+<parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+</Settings>
+<Hooks/>
+<CheckpointConfig/>
+<SandboxConfig/>
+<LogConfig/>
+<ContainerEF name="EntryFeedContainer">
+<Connector name="CSV File Connector">
+<InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="filePath">C:\Program Files\IBM\itim\extensions\examples\idi_integration\HRFeedCSV\ITDIFeedExpress\People3.csv</parameter>
+</Configuration>
+<ComputeChanges>true</ComputeChanges>
+<DeltaBehavior>0</DeltaBehavior>
+<DeltaStrict>true</DeltaStrict>
+<Parser>
+<InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+<parameter name="characterSet"></parameter>
+<parameter name="csvEnableQuoting">true</parameter>
+<parameter name="csvLogLongLines">0</parameter>
+<parameter name="csvWriteHeader">true</parameter>
+<parameter name="debug">false</parameter>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value="uid=" + conn.getString("Last") + "," + JNDIFeed.getConnectorParam("jndiSearchBase");</Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>Title</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Title</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value = conn.getString("First") + " " + conn.getString("Last");</Script>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>givenname</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>First</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>objectclass</Name>
+<Type>advanced</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value="erexpressperson";</Script>
+<Simple>objectclass</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Last</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Last</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings>
+<Driver>CloudScape</Driver>
+</DeltaSettings>
+<Schema name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>First</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+<SchemaItem>
+<Name>Last</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+<SchemaItem>
+<Name>Title</Name>
+<Syntax>java.lang.String</Syntax>
+<Presence>null</Presence>
+</SchemaItem>
+</Schema>
+<Schema name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+<CheckpointConfig/>
+<SandboxConfig/>
+<Reconnect>
+<parameter name="autoreconnect">true</parameter>
+<parameter name="numberOfRetries">1</parameter>
+<parameter name="retryDelay">10</parameter>
+</Reconnect>
+</Connector>
+</ContainerEF>
+<ContainerDF name="DataFlowContainer">
+<Connector name="JNDIFeed">
+<InheritFrom>system:/Connectors/ibmdi.JNDI</InheritFrom>
+<ConnectorMode>Delete</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="java.naming.factory.initial">com.ibm.dsml2.jndi.DSML2InitialContextFactory</parameter>
+<parameter name="java.naming.provider.url">http://localhost/enrole/dsml2_event_handler</parameter>
+<parameter name="java.naming.referral">follow</parameter>
+<parameter name="java.naming.security.authentication">Simple</parameter>
+<parameter name="java.naming.security.credentials">agent</parameter>
+<parameter name="java.naming.security.principal">agent</parameter>
+<parameter name="jndiSearchBase">dc=HRLoad</parameter>
+<parameter name="jndiSearchFilter">(objectclass=*)</parameter>
+<parameter name="jndiSearchScope">subtree</parameter>
+</Configuration>
+<ComputeChanges>true</ComputeChanges>
+<DeltaBehavior>0</DeltaBehavior>
+<DeltaStrict>true</DeltaStrict>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>false</Modify>
+<Script></Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>Title</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>Title</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>givenname</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>givenname</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>objectclass</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>false</Modify>
+<Script></Script>
+<Simple>objectclass</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>sn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>simple</Type>
+<Enabled>true</Enabled>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script></Script>
+<Simple>uid</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings>
+<Driver>CloudScape</Driver>
+</DeltaSettings>
+<Schema name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<Schema name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>true</AdvancedLinkMode>
+<Script>ret.filter="(uid=" + work.getString("uid") + ")";</Script>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.dumpEntry(error);</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+<CheckpointConfig>
+<parameter name="enabled">true</parameter>
+</CheckpointConfig>
+<SandboxConfig>
+<parameter name="sbRecord">true</parameter>
+</SandboxConfig>
+<Reconnect>
+<parameter name="autoreconnect">true</parameter>
+<parameter name="numberOfRetries">1</parameter>
+<parameter name="retryDelay">10</parameter>
+</Reconnect>
+</Connector>
+</ContainerDF>
+<ThreadOptions/>
+<CallReturn>
+<Schema name="Input"/>
+<Schema name="Output"/>
+<AttributeMap name="Output"/>
+<AttributeMap name="Input"/>
+</CallReturn>
+</AssemblyLine>
+</Folder>
+<Folder name="Connectors"/>
+<Folder name="Parsers"/>
+<Folder name="EventHandlers"/>
+<Folder name="Scripts"/>
+<JavaLibraries/>
+<JavaProperties/>
+<Folder name="Includes"/>
+<Folder name="ExternalProperties">
+<ExternalProperties name=" Default">
+<Encrypted>false</Encrypted>
+</ExternalProperties>
+</Folder>
+<Folder name="Config">
+<LogConfig name="Logging"/>
+<InstanceProperties name="AutoStart">
+<AutoStart/>
+</InstanceProperties>
+</Folder>
+<Folder name="Functions"/>
+<Folder name="AttributeMaps"/>
+</MetamergeConfig>

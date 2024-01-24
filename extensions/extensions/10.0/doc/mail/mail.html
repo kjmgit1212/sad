@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Mail API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR><A HREF="#overview">Overview</A><BR><A HREF="#apiDescription">Client API
+Description</A><br>
+<a href="#providerApi">Provider API Description</a><br>
+<a href="#apiExample">API Example</a></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P CLASS="msonormal">The Identity Manager provisioning platform is
+designed with extensibility as a primary goal. Many of the
+architectural components have been built using frameworks that can
+make use of custom extensions. This document describes the framework
+used within the Mail component of Identity Manager and how it can be
+extended. The part of the framework that will be extended by a client
+will be called the Application Programming Interface (API).</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P CLASS="msonormal">The mail extensible framework and API has been
+developed to satisfy the goal of customizing the content, format, and
+recipients of notifications the platform sends during its execution.</P>
+<P CLASS="msonormal">The java-based framework that satisfies these
+goals is called by the provisioning platform at any time it needs to
+send a notification to a user. The interface used by the platform is
+abstracted so that any custom extensions would be hidden, and
+therefore the presence of these extensions will have no impact on the
+overall design of the platform itself. 
+</P>
+<P CLASS="msonormal">There are two primary audiences, or types of
+clients, that will use this API. One type of client will make
+notification requests to the framework, like the provisioning
+platform. The other type of client will extend the framework to
+customize how the notification messages are constructed. In the
+interest of limiting the amount of education each of these audiences
+may require, the Mail API will be described in two smaller pieces.
+The Mail Client API will focus on making notification requests. The
+Mail Provider API will focus on implementing the notification
+requests. 
+</P>
+<H2><A NAME="apiDescription"></A>Client API Description</H2>
+<P CLASS="msonormal">The Mail Client API is very focused on just
+asking for a notification to be sent, and therefore, is very simple
+in nature. There are two levels of abstraction this API provides for
+clients with different purposes to choose from. One level of
+abstraction is providing the very primitive function of sending a
+pre-constructed message. The message is represented by the
+<A HREF="../../api/com/ibm/itim/mail/NotificationMessage.html">NotificationMessage</A>
+class. The interface for delivering this message is provided by the
+<A HREF="../../api/com/ibm/itim/mail/MailManager.html">MailManager</A>
+class. 
+</P>
+<P CLASS="msonormal">The second level of abstraction enables the
+transparency of what NotificationMessage will be constructed and sent
+based on a category of the notification and some current environment
+context. The interface for doing this is provided by the
+<A HREF="../../api/com/ibm/itim/mail/NotificationManager.html">NotificationManager</A>
+class. How the NotificationManager determines the correct message to
+deliver is determined by the framework described in the Provider
+portion of the API described below.</P>
+<H2><a name="providerApi"></a>Provider API Description</H2>
+<P CLASS="msonormal">The purpose of the Provider API is to allow
+custom extensions to the Mail framework. A client attempting to
+deliver a notification will not use this portion of the API, but
+instead, a client that wishes to override the behavior of the system
+when other clients attempt to deliver notifications will use this
+portion.</P>
+<P CLASS="msonormal">The Mail framework consists of the
+NotificationManager and NotificationMessage mentioned in the Client
+API, as well as the <A HREF="../../api/com/ibm/itim/mail/NotificationFactory.html">NotificationFactory</A>.
+The NotificationFactory is an interface that can be implemented by
+clients who wish to employ their own algorithms for creating
+NotificationMessages based on situational context provided by the
+NotificationManager. This may include formatting, context based
+message content generation, and possibly dynamic recipient
+designation.</P>
+<P CLASS="msonormal">As mentioned previously, the NotificationManager
+shields the notification requestor from how the messages are created.
+This is done by the NotificationManager selecting the correct
+NotificationFactory implementation for a given notification category.
+The NotificationManager bases its selection on properties found in
+the enRole.properties file. The snippet below from the
+enRole.properties file shows an example of the NotificationFactory
+classes registered for workflow-based categories.</P>
+<PRE>enrole.workflow.notification.activitytimeout=com.ibm.itim.workflow.notification.ActivityTimeoutNotification
+enrole.workflow.notification.processtimeout=com.ibm.itim.workflow.notification.ProcessTimeoutNotification
+enrole.workflow.notification.processcomplete=com.ibm.itim.workflow.notification.ProcessCompleteNotification
+enrole.workflow.notification.pendingwork=com.ibm.itim.workflow.notification.PendingWorkNotification
+enrole.workflow.notification.newaccount=com.ibm.itim.workflow.notification.NewAccountNotification
+enrole.workflow.notification.newpassword=com.ibm.itim.workflow.notification.NewPasswordNotification
+enrole.workflow.notification.deprovision=com.ibm.itim.workflow.notification.DeprovisionNotification
+</PRE><P CLASS="msonormal">
+Although this example shows a one-to-one correspondence between
+category and factory class, it is possible to reuse factory classes
+for more than one category.</P>
+<P CLASS="msonormal">For each category, the context object passed
+into the <A HREF="../../api/com/ibm/itim/mail/NotificationFactory.html">NotificationFactory</A>
+object might be different. For example, for workflow-based
+notifications, the following is the list of context object for each
+workflow notification category:</P>
+<P CLASS="msonormal">ActivityTimeOut, ProcessTimeOut,
+ProcessComplete: <A HREF="../../api/com/ibm/itim/mail/workflow/WorkflowNotificationContext.html">WorkflowNotificationContext</A></P>
+<P CLASS="msonormal">PendingWork: <A HREF="../../api/com/ibm/itim/mail/workflow/WorkflowManualActivityContext.html">WorkflowManualActivityContext</A></P>
+<P CLASS="msonormal">NewAccount: <A HREF="../../api/com/ibm/itim/mail/workflow/WorkflowNewAccountContext.html">WorkflowNewAccountContext</A></P>
+<P CLASS="msonormal">NewPassword: <A HREF="../../api/com/ibm/itim/mail/workflow/WorkflowNewPasswordContext.html">WorkflowNewPasswordContext</A></P>
+<P CLASS="msonormal">Deprovision: <A HREF="../../api/com/ibm/itim/mail/workflow/WorkflowDeProvisionContext.html">WorkflowDeProvisionContext</A></P>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P CLASS="msonormal">Please see the accompanying example code with
+this package.</P>
+</BODY>
+</HTML>

@@ -1,0 +1,2146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chaiti Ghatnekar</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_user_recertification_history">User Recertification History</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">8234</property>
+            <expression name="value">var where = Packages.java.lang.StringBuffer();
+var s = Packages.java.lang.StringBuffer();
+s.append("select  userRecertHistory.ID,userRecertHistory.PROCESS_ID ,userRecertHistory.ACTIVITY_ID,  	userRecertHistory.PERSON_DN,userRecertHistory.PERSON_NAME,userRecertHistory.PERSON_EMAIL, 	userRecertHistory.PERSON_STATUS,userRecertHistory.PERSON_CONTAINER_NAME,userRecertHistory.POLICY_NAME, 	userRecertHistory.SUBMITTED_DATE,userRecertHistory.TIMEOUT from USERRECERT_HISTORY userRecertHistory where ");
+var start = getDateGMTString(getStartDateFromGroupNames("Report Period","Begin Date","End Date"));
+var end = getDateGMTString(getEndDateFromGroupNames("Report Period","Begin Date","End Date"));
+s.append(" userRecertHistory.SUBMITTED_DATE > '"+start+"'");
+s.append("  and userRecertHistory.SUBMITTED_DATE &lt; '"+end+"'");
+if(params["Recertification Decision"].value != null &amp;&amp; params["Recertification Decision"].value != "" &amp;&amp; params["Recertification Decision"].value != "%" ) {
+	var decision = convertAnyToSql(params["Recertification Decision"]);
+	where.append(" and (");
+	where.append(" userRecertHistory.ID in (select userRecertAccount.RECERT_ID from USERRECERT_ACCOUNT userRecertAccount where userRecertAccount.DECISION = '"+decision+"')");
+	where.append(" or userRecertHistory.ID in (select userRecertGroup.RECERT_ID from USERRECERT_GROUP userRecertGroup where userRecertGroup.DECISION = '"+decision+"')");
+	where.append(" or userRecertHistory.ID in (select userRecertRole.RECERT_ID from USERRECERT_ROLE userRecertRole where userRecertRole.DECISION = '"+decision+"')");
+	where.append(")");  
+}
+if(params["Business Unit"].value != null &amp;&amp; params["Business Unit"].value != "" &amp;&amp; params["Business Unit"].value != "Any") {
+	var bu = convertAnyToSql(params["Business Unit"]);
+	where.append(" and userRecertHistory.PERSON_CONTAINER_NAME = '"+bu+"'");
+}
+if(params["User"].value != null &amp;&amp; params["User"].value != "" &amp;&amp; params["User"].value != "%" ) {
+	var user = convertAnyToSql(params["User"]);
+	where.append(" and userRecertHistory.PERSON_NAME like '"+user+"'");
+}
+if(params["User Recertification Policy"].value != null &amp;&amp; params["User Recertification Policy"].value != "" &amp;&amp; params["User Recertification Policy"].value != "Any") {
+	var policy = convertAnyToSql(params["User Recertification Policy"]);
+	where.append(" and userRecertHistory.POLICY_NAME = '"+policy+"'");
+}
+if(params["User Status"].value != null &amp;&amp; params["User Status"].value != -1) {
+	var status = params["User Status"].value ;
+	where.append(" and userRecertHistory.PERSON_STATUS = '"+status+"'");
+}
+if (params["Recertifier"].value != null &amp;&amp; params["Recertifier"].value != "" &amp;&amp; params["Recertifier"].value != "Any") {
+    where.append(" and exists (select ID from PROCESSLOG where PROCESS_ID=userRecertHistory.PROCESS_ID and ACTIVITY_ID=userRecertHistory.ACTIVITY_ID and EVENTTYPE='CM' and REQUESTOR='" + params["Recertifier"] + "')");
+}
+s.append(where);
+s.append("order by userRecertHistory.PERSON_NAME, userRecertHistory.SUBMITTED_DATE").toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">8234</property>
+        </structure>
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">5169</property>
+            <expression name="value">var where = Packages.java.lang.StringBuffer();
+var s = Packages.java.lang.StringBuffer();
+s.append("select ROLE_NAME, ROLE_DESCRIPTION,DECISION from USERRECERT_ROLE where RECERT_ID = ?");
+if(!(params["Recertification Decision"].value == null || params["Recertification Decision"].value == "" || params["Recertification Decision"].value == "%")) {
+	where.append(" and DECISION = '"+params["Recertification Decision"]+"'");
+}
+where.append(" order by ROLE_NAME asc");
+s.append(where).toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">5169</property>
+        </structure>
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">7730</property>
+            <expression name="value">var where = Packages.java.lang.StringBuffer();
+var s = Packages.java.lang.StringBuffer();
+s.append("select GROUP_NAME, GROUP_DESCRIPTION, DECISION from USERRECERT_GROUP where RECERT_ID = ? and ACCOUNT_ID = ?");
+if(!(params["Recertification Decision"].value == null || params["Recertification Decision"].value == "" || params["Recertification Decision"].value == "%")) {
+	where.append(" and DECISION = '"+params["Recertification Decision"]+"' ");
+}
+where.append(" order by GROUP_NAME asc");
+s.append(where).toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">7730</property>
+        </structure>
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">8089</property>
+            <expression name="value">var where = Packages.java.lang.StringBuffer();
+var s = Packages.java.lang.StringBuffer();
+s.append("select ID,ACCOUNT_UID, SERVICE_NAME, SERVICE_DESCRIPTION, DECISION from USERRECERT_ACCOUNT A where RECERT_ID=? ");
+if(!(params["Recertification Decision"].value == null || params["Recertification Decision"].value == "" || params["Recertification Decision"].value == "%")) {
+	where.append(" and (	(ID in (select ACCOUNT_ID from USERRECERT_GROUP where A.RECERT_ID=RECERT_ID and DECISION = '"+params["Recertification Decision"]+"')) or DECISION = '"+params["Recertification Decision"]+"'	) ");
+}
+where.append(" order by SERVICE_NAME asc, ACCOUNT_UID asc");
+s.append(where).toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">8089</property>
+        </structure>
+    </list-property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "user_recert_policy_history.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_user_recertification_history");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_user_recertification_history">User Recertification History</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Business Unit" id="3286">
+            <text-property name="helpText" key="parameter_tooltip_business_unit"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_business_unit"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">ContainerNameParameterDataSet</property>
+            <expression name="valueExpr">dataSetRow["PERSON_CONTAINER_NAME"]</expression>
+            <expression name="labelExpr">dataSetRow["PERSON_CONTAINER_NAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="User Recertification Policy" id="3123">
+            <text-property name="helpText" key="parameter_tooltip_recert_policy"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_recert_policy"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">PolicyNameParameterDataSet</property>
+            <expression name="valueExpr">dataSetRow["POLICY_NAME"]</expression>
+            <expression name="labelExpr">dataSetRow["POLICY_NAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="User" id="3195">
+            <text-property name="helpText" key="parameter_tooltip_user_textbox"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_user"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Recertifier" id="2227">
+            <text-property name="helpText" key="parameter_tooltip_recertifier"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_recertifier"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">RecertifierUserNameParameterDataSet</property>
+            <expression name="valueExpr">dataSetRow["REQUESTOR"]</expression>
+            <expression name="labelExpr">dataSetRow["REQUESTOR"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Recertification Decision" id="3818">
+            <text-property name="helpText" key="parameter_tooltip_recert_decision"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_recert_decision"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">AA</property>
+                    <property name="label">Approved</property>
+                    <property name="labelID">approved</property>
+                </structure>
+                <structure>
+                    <property name="value">AR</property>
+                    <property name="label">Rejected</property>
+                    <property name="labelID">rejected</property>
+                </structure>
+                <structure>
+                    <property name="value">%</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <scalar-parameter name="User Status" id="8817">
+            <text-property name="helpText" key="parameter_tooltip_user_status"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_user_status"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">-1</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">value</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">-1</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+                <structure>
+                    <property name="value">0</property>
+                    <property name="label">Active</property>
+                    <property name="labelID">active</property>
+                </structure>
+                <structure>
+                    <property name="value">1</property>
+                    <property name="label">Inactive</property>
+                    <property name="labelID">inactive</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <parameter-group name="Date Range" id="1713" extends="TivoliCommonReporting_v1.Date Range"/>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RecertifierUserNameParameterDataSet" id="3810">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">REQUESTOR</property>
+                    <property name="displayName">REQUESTOR</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">REQUESTOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">REQUESTOR</property>
+                    <property name="nativeName">REQUESTOR</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select 	distinct processlog.REQUESTOR
+from 	ACTIVITY activity, PROCESSLOG processlog
+where 	activity.PROCESS_ID = processlog.PROCESS_ID
+and 	activity.ID = processlog.ACTIVITY_ID
+and     processlog.EVENTTYPE in ('CM', 'AT')
+and     activity.type='M' and activity.subtype='PA'</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RecertifiedUserNameParameterDataSet" id="8822">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSON_NAME</property>
+                    <property name="displayName">PERSON_NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSON_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSON_NAME</property>
+                    <property name="nativeName">PERSON_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct PERSON_NAME
+from userrecert_history</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PERSON_NAME</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>240</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>PERSON_NAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PERSON_NAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>240</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="PolicyNameParameterDataSet" id="8821">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">POLICY_NAME</property>
+                    <property name="displayName">POLICY_NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">POLICY_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">POLICY_NAME</property>
+                    <property name="nativeName">POLICY_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct POLICY_NAME
+from userrecert_history</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ContainerNameParameterDataSet" id="8820">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSON_CONTAINER_NAME</property>
+                    <property name="displayName">PERSON_CONTAINER_NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSON_CONTAINER_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSON_CONTAINER_NAME</property>
+                    <property name="nativeName">PERSON_CONTAINER_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct PERSON_CONTAINER_NAME
+from userrecert_history</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Role" id="5169">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ROLE_NAME</property>
+                    <property name="displayName">ROLE_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ROLE_DESCRIPTION</property>
+                    <property name="displayName">ROLE_DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DECISION</property>
+                    <property name="displayName">DECISION</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ROLE_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ROLE_DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DECISION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ROLE_NAME</property>
+                    <property name="nativeName">ROLE_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ROLE_DESCRIPTION</property>
+                    <property name="nativeName">ROLE_DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DECISION</property>
+                    <property name="nativeName">DECISION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ROLE_NAME, ROLE_DESCRIPTION, DECISION from USERRECERT_ROLE where RECERT_ID = ? order by ROLE_NAME asc</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Group" id="7730">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">GROUP_NAME</property>
+                    <property name="displayName">GROUP_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">GROUP_DESCRIPTION</property>
+                    <property name="displayName">GROUP_DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DECISION</property>
+                    <property name="displayName">DECISION</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">GROUP_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">GROUP_DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DECISION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">accountID</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">GROUP_NAME</property>
+                    <property name="nativeName">GROUP_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">GROUP_DESCRIPTION</property>
+                    <property name="nativeName">GROUP_DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DECISION</property>
+                    <property name="nativeName">DECISION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select GROUP_NAME, GROUP_DESCRIPTION, DECISION from USERRECERT_GROUP
+where RECERT_ID = ? and ACCOUNT_ID = ? order by GROUP_NAME</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Accounts" id="8089">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ID</property>
+                    <property name="displayName">ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACCOUNT_UID</property>
+                    <property name="displayName">ACCOUNT_UID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_NAME</property>
+                    <property name="displayName">SERVICE_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_DESCRIPTION</property>
+                    <property name="displayName">SERVICE_DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DECISION</property>
+                    <property name="displayName">DECISION</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ACCOUNT_UID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">SERVICE_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">SERVICE_DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">DECISION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ID</property>
+                    <property name="nativeName">ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ACCOUNT_UID</property>
+                    <property name="nativeName">ACCOUNT_UID</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">SERVICE_NAME</property>
+                    <property name="nativeName">SERVICE_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">SERVICE_DESCRIPTION</property>
+                    <property name="nativeName">SERVICE_DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">DECISION</property>
+                    <property name="nativeName">DECISION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ID, ACCOUNT_UID, SERVICE_NAME, SERVICE_DESCRIPTION, DECISION from USERRECERT_ACCOUNT
+where RECERT_ID=? order by SERVICE_NAME asc, ACCOUNT_UID asc</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RecertificationHistory" id="8234">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ID</property>
+                    <property name="displayName">ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PROCESS_ID</property>
+                    <property name="displayName">PROCESS_ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACTIVITY_ID</property>
+                    <property name="displayName">ACTIVITY_ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_DN</property>
+                    <property name="displayName">PERSON_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_NAME</property>
+                    <property name="displayName">PERSON_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_EMAIL</property>
+                    <property name="displayName">PERSON_EMAIL</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_STATUS</property>
+                    <property name="displayName">PERSON_STATUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_CONTAINER_NAME</property>
+                    <property name="displayName">PERSON_CONTAINER_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POLICY_NAME</property>
+                    <property name="displayName">POLICY_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SUBMITTED_DATE</property>
+                    <property name="displayName">SUBMITTED_DATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TIMEOUT</property>
+                    <property name="displayName">TIMEOUT</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">PROCESS_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ACTIVITY_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">PERSON_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">PERSON_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">PERSON_EMAIL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">PERSON_STATUS</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">PERSON_CONTAINER_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">POLICY_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">SUBMITTED_DATE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">TIMEOUT</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="rowFetchLimit">10000</property>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ID</property>
+                    <property name="nativeName">ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">PROCESS_ID</property>
+                    <property name="nativeName">PROCESS_ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ACTIVITY_ID</property>
+                    <property name="nativeName">ACTIVITY_ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">PERSON_DN</property>
+                    <property name="nativeName">PERSON_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">PERSON_NAME</property>
+                    <property name="nativeName">PERSON_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">PERSON_EMAIL</property>
+                    <property name="nativeName">PERSON_EMAIL</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">PERSON_STATUS</property>
+                    <property name="nativeName">PERSON_STATUS</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">PERSON_CONTAINER_NAME</property>
+                    <property name="nativeName">PERSON_CONTAINER_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">POLICY_NAME</property>
+                    <property name="nativeName">POLICY_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">SUBMITTED_DATE</property>
+                    <property name="nativeName">SUBMITTED_DATE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">TIMEOUT</property>
+                    <property name="nativeName">TIMEOUT</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">5</property>
+                </structure>
+            </list-property>
+            <property name="queryText"> select userRecertHistory.ID,userRecertHistory.PROCESS_ID ,userRecertHistory.ACTIVITY_ID, 
+		userRecertHistory.PERSON_DN,userRecertHistory.PERSON_NAME,userRecertHistory.PERSON_EMAIL,
+		userRecertHistory.PERSON_STATUS,userRecertHistory.PERSON_CONTAINER_NAME,userRecertHistory.POLICY_NAME,
+		userRecertHistory.SUBMITTED_DATE,userRecertHistory.TIMEOUT
+from 	USERRECERT_HISTORY userRecertHistory</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RecertifierDetails" id="8823">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">DETAIL</property>
+                    <expression name="expression">row["SHORT_DETAIL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">REQUESTOR</property>
+                    <property name="displayName">REQUESTOR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SHORT_DETAIL</property>
+                    <property name="displayName">SHORT_DETAIL</property>
+                </structure>
+                <structure>
+                    <property name="columnName">RESULT_DETAIL</property>
+                    <property name="displayName">RESULT_DETAIL</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">REQUESTOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SHORT_DETAIL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">RESULT_DETAIL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DETAIL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">process_id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">activity_id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">REQUESTOR</property>
+                    <property name="nativeName">REQUESTOR</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SHORT_DETAIL</property>
+                    <property name="nativeName">SHORT_DETAIL</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">RESULT_DETAIL</property>
+                    <property name="nativeName">RESULT_DETAIL</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">2005</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select REQUESTOR,SHORT_DETAIL,RESULT_DETAIL
+	from PROCESSLOG pl, ACTIVITY a
+	where pl.ACTIVITY_ID=a.id and pl.PROCESS_ID=a.PROCESS_ID
+	and a.PROCESS_ID=? and a.ID=? and pl.EVENTTYPE in ('CM', 'AT')
+	</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>0</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>2</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>0</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>REQUESTOR</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>2000</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>REQUESTOR</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>REQUESTOR</design:label>
+            <design:formattingHints>
+              <design:displaySize>2000</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SHORT_DETAIL</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>4000</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>SHORT_DETAIL</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SHORT_DETAIL</design:label>
+            <design:formattingHints>
+              <design:displaySize>4000</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>RESULT_DETAIL</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>2005</design:nativeDataTypeCode>
+            <design:precision>10485760</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>RESULT_DETAIL</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>RESULT_DETAIL</design:label>
+            <design:formattingHints>
+              <design:displaySize>10485760</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="37" id="37"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="marginTop">0pt</property>
+            <property name="marginLeft">0pt</property>
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <property name="paddingTop">1pt</property>
+                    <text name="Report Title 1" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content" key="title_user_recertification_history"><![CDATA[Report Title 1]]></text-property>
+                    </text>
+                    <label name="empty-label" id="1761">
+                        <property name="paddingTop">3px</property>
+                        <property name="paddingLeft">0px</property>
+                        <property name="paddingBottom">3px</property>
+                        <property name="paddingRight">0px</property>
+                        <text-property name="text" key="description_recertification_history"></text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="3985">
+                <cell id="3986">
+                    <grid id="3765">
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="width">100%</property>
+                        <column id="3766"/>
+                        <column id="3767"/>
+                        <column id="3768"/>
+                        <column id="3769"/>
+                        <row id="4600">
+                            <cell id="4601">
+                                <label id="4705">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_date_range">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="4602">
+                                <data id="4614">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Report Period</property>
+                                            <expression name="expression">getNLS(params["Report Period"])</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Report Period</property>
+                                </data>
+                            </cell>
+                            <cell id="4603"/>
+                            <cell id="4604"/>
+                        </row>
+                        <row id="3770">
+                            <cell id="3771">
+                                <label id="3805">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_start_date">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3772">
+                                <text id="8816">
+                                    <property name="style">parameter-value</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getStartDateFromGroupNames("Report Period","Begin Date","End Date")</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3773">
+                                <label id="2475">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_end_date">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3774">
+                                <text id="8815">
+                                    <property name="style">parameter-value</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getEndDateFromGroupNames("Report Period","Begin Date","End Date")</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3775">
+                            <cell id="3776">
+                                <property name="paddingTop">1pt</property>
+                                <text name="BU  Lable" id="1891">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="heading_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3777">
+                                <data id="3978">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Business Unit</property>
+                                            <expression name="expression">convertAnyToNLS(params["Business Unit"],params["Business Unit"])</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Business Unit</property>
+                                </data>
+                            </cell>
+                            <cell id="3778">
+                                <label id="2480">
+                                    <property name="style">parameter-name</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text" key="parameter_recert_policy">Policy name</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3779">
+                                <data id="3979">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">User Recertification Policy</property>
+                                            <expression name="expression">convertAnyToNLS(params["User Recertification Policy"],params["User Recertification Policy"])</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User Recertification Policy</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3780">
+                            <cell id="3781">
+                                <label id="2477">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="user">User...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3782">
+                                <data id="3980">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">User</property>
+                                            <expression name="expression">convertSplatToNLS(params["User"])</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User</property>
+                                </data>
+                            </cell>
+                            <cell id="3783">
+                                <label id="3293">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_user_status">Status</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3784">
+                                <data id="4490">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="mapRules">
+                                        <structure>
+                                            <expression name="testExpr">row["User Status"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">0</expression>
+                                            <text-property name="display" key="active">Active</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["User Status"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">1</expression>
+                                            <text-property name="display" key="inactive">Inactive</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["User Status"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">-1</expression>
+                                            <text-property name="display" key="any">Any</text-property>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">User Status</property>
+                                            <expression name="expression">params["User Status"]</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User Status</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="3785">
+                            <cell id="3786">
+                                <label id="2478">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_recertifier">Recertifier..</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3787">
+                                <data id="3981">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Recertifier</property>
+                                            <expression name="expression">convertAnyToNLS(params["Recertifier"],params["Recertifier"])</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Recertifier</property>
+                                </data>
+                            </cell>
+                            <cell id="3788">
+                                <label id="2479">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_recert_decision">Recertification Decision</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3789">
+                                <data id="3983">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="mapRules">
+                                        <structure>
+                                            <expression name="testExpr">row["Recertification Decision"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">'AA'</expression>
+                                            <text-property name="display" key="approved">Approved</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["Recertification Decision"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">'AR'</expression>
+                                            <text-property name="display" key="rejected">Rejected</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["Recertification Decision"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">'%'</expression>
+                                            <text-property name="display" key="any">Any</text-property>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Recertification Decision</property>
+                                            <expression name="expression">params["Recertification Decision"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Recertification Decision</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="7609">
+                <cell id="7610">
+                    <table id="8508">
+                        <property name="style">table-without-group</property>
+                        <property name="marginTop">0px</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">RecertificationHistory</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ID</property>
+                                <expression name="expression">dataSetRow["ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PROCESS_ID</property>
+                                <expression name="expression">dataSetRow["PROCESS_ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ACTIVITY_ID</property>
+                                <expression name="expression">dataSetRow["ACTIVITY_ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PERSON_DN</property>
+                                <expression name="expression">dataSetRow["PERSON_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PERSON_NAME</property>
+                                <expression name="expression">dataSetRow["PERSON_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PERSON_EMAIL</property>
+                                <expression name="expression">dataSetRow["PERSON_EMAIL"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PERSON_STATUS</property>
+                                <expression name="expression">dataSetRow["PERSON_STATUS"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">PERSON_CONTAINER_NAME</property>
+                                <expression name="expression">dataSetRow["PERSON_CONTAINER_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POLICY_NAME</property>
+                                <expression name="expression">dataSetRow["POLICY_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SUBMITTED_DATE</property>
+                                <expression name="expression">dataSetRow["SUBMITTED_DATE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TIMEOUT</property>
+                                <expression name="expression">dataSetRow["TIMEOUT"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <column id="8575"/>
+                        <column id="8576"/>
+                        <column id="8577"/>
+                        <header>
+                            <row id="8509">
+                                <cell id="8510">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingTop">3px</property>
+                                    <text name="BU  Lable2121" id="8645">
+                                        <property name="style">parameter-name</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content" key="heading_user_details"><![CDATA[User Details]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="8836">
+                                <cell id="8837">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <grid id="8782">
+                                        <property name="width">100%</property>
+                                        <column id="8783"/>
+                                        <column id="8784"/>
+                                        <column id="8785"/>
+                                        <column id="8786"/>
+                                        <row id="8787">
+                                            <cell id="8788">
+                                                <label id="8646">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <text-property name="text" key="user">User...</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="8789">
+                                                <text name="BU  Lable22" id="8647">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <property name="contentType">auto</property>
+                                                    <text-property name="content" key="heading_email"><![CDATA[Bussiness Unit]]></text-property>
+                                                </text>
+                                            </cell>
+                                            <cell id="8790">
+                                                <label id="8648">
+                                                    <property name="style">parameter-name</property>
+                                                    <text-property name="text" key="parameter_user_status">Status</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="8791">
+                                                <text name="BU  Lable11" id="8649">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <property name="contentType">auto</property>
+                                                    <text-property name="content" key="heading_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                                </text>
+                                            </cell>
+                                        </row>
+                                        <row id="8792">
+                                            <cell id="8793">
+                                                <property name="paddingTop">0pt</property>
+                                                <property name="paddingLeft">0pt</property>
+                                                <property name="paddingBottom">0pt</property>
+                                                <property name="paddingRight">0pt</property>
+                                                <data id="8762">
+                                                    <property name="marginTop">10pt</property>
+                                                    <property name="paddingTop">0pt</property>
+                                                    <property name="paddingLeft">0pt</property>
+                                                    <property name="paddingBottom">0pt</property>
+                                                    <property name="paddingRight">0pt</property>
+                                                    <property name="resultSetColumn">PERSON_NAME</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="8794">
+                                                <data id="8655">
+                                                    <property name="marginTop">10pt</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="resultSetColumn">PERSON_EMAIL</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="8795">
+                                                <data id="8656">
+                                                    <property name="marginTop">10pt</property>
+                                                    <list-property name="mapRules">
+                                                        <structure>
+                                                            <expression name="testExpr">row["PERSON_STATUS"]</expression>
+                                                            <property name="operator">eq</property>
+                                                            <expression name="value1">0</expression>
+                                                            <text-property name="display" key="active">Active</text-property>
+                                                        </structure>
+                                                        <structure>
+                                                            <expression name="testExpr">row["PERSON_STATUS"]</expression>
+                                                            <property name="operator">eq</property>
+                                                            <expression name="value1">1</expression>
+                                                            <text-property name="display" key="inactive">Inactive</text-property>
+                                                        </structure>
+                                                    </list-property>
+                                                    <property name="resultSetColumn">PERSON_STATUS</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="8796">
+                                                <data id="8661">
+                                                    <property name="marginTop">10pt</property>
+                                                    <property name="resultSetColumn">PERSON_CONTAINER_NAME</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                            </row>
+                            <row id="8844">
+                                <cell id="8845">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <grid id="8802">
+                                        <property name="marginTop">0pt</property>
+                                        <property name="marginLeft">0pt</property>
+                                        <property name="marginBottom">0pt</property>
+                                        <property name="canShrink">true</property>
+                                        <property name="width">100%</property>
+                                        <column id="8803"/>
+                                        <column id="8804"/>
+                                        <column id="8805"/>
+                                        <row id="8806">
+                                            <cell id="8807">
+                                                <label id="8650">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="paddingTop">3px</property>
+                                                    <text-property name="text" key="parameter_date">Recertification Decision</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="8808">
+                                                <label id="8651">
+                                                    <property name="style">parameter-name</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <text-property name="text" key="parameter_recert_policy">Policy name</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="8809">
+                                                <label id="8652">
+                                                    <property name="style">parameter-name</property>
+                                                    <text-property name="text" key="parameter_recertifier">Recertifier..</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                        <row id="8810">
+                                            <cell id="8811">
+                                                <text id="8858">
+                                                    <property name="contentType">html</property>
+                                                    <text-property name="content"><![CDATA[<VALUE-OF>getDateFromString(row["SUBMITTED_DATE"])</VALUE-OF>]]></text-property>
+                                                </text>
+                                            </cell>
+                                            <cell id="8812">
+                                                <data id="8658">
+                                                    <property name="resultSetColumn">POLICY_NAME</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="8813">
+                                                <data id="8659">
+                                                    <property name="dataSet">RecertifierDetails</property>
+                                                    <list-property name="paramBindings">
+                                                        <structure>
+                                                            <property name="paramName">process_id</property>
+                                                            <expression name="expression">row["PROCESS_ID"]</expression>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">activity_id</property>
+                                                            <expression name="expression">row["ACTIVITY_ID"]</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                    <list-property name="boundDataColumns">
+                                                        <structure>
+                                                            <property name="name">REQUESTOR</property>
+                                                            <expression name="expression">rtn = dataSetRow["REQUESTOR"];
+if (row._outer["TIMEOUT"] == 1) {
+rtn = getNLS('workflow_system');
+}
+rtn;</expression>
+                                                            <property name="dataType">string</property>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="name">SHORT_DETAIL</property>
+                                                            <expression name="expression">dataSetRow["SHORT_DETAIL"]</expression>
+                                                            <property name="dataType">string</property>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="name">RESULT_DETAIL</property>
+                                                            <expression name="expression">dataSetRow["RESULT_DETAIL"]</expression>
+                                                            <property name="dataType">string</property>
+                                                        </structure>
+                                                    </list-property>
+                                                    <property name="resultSetColumn">REQUESTOR</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                            </row>
+                            <row id="8848">
+                                <cell id="8849">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="8852">
+                                        <property name="style">parameter-name</property>
+                                        <property name="marginTop">0pt</property>
+                                        <text-property name="text" key="comments">Recertification Decision</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="8514">
+                                <cell id="8516">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <data id="8859">
+                                        <property name="dataSet">RecertifierDetails</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">process_id</property>
+                                                <expression name="expression">row["PROCESS_ID"]</expression>
+                                            </structure>
+                                            <structure>
+                                                <property name="paramName">activity_id</property>
+                                                <expression name="expression">row["ACTIVITY_ID"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">REQUESTOR</property>
+                                                <expression name="expression">dataSetRow["REQUESTOR"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">SHORT_DETAIL</property>
+                                                <expression name="expression">dataSetRow["SHORT_DETAIL"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">RESULT_DETAIL</property>
+                                                <expression name="expression">dataSetRow["RESULT_DETAIL"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DETAIL</property>
+                                                <expression name="expression">dataSetRow["DETAIL"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">DETAIL</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="8524">
+                                <cell id="8526">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">0.25in</property>
+                                    <table id="8667">
+                                        <property name="style">table-without-group</property>
+                                        <property name="marginTop">15px</property>
+                                        <property name="marginLeft">0px</property>
+                                        <property name="canShrink">true</property>
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">Role</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["count_role"]&lt;=0</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">id</property>
+                                                <expression name="expression">row["ID"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">ROLE_NAME</property>
+                                                <expression name="expression">dataSetRow["ROLE_NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">ROLE_DESCRIPTION</property>
+                                                <expression name="expression">dataSetRow["ROLE_DESCRIPTION"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DECISION</property>
+                                                <expression name="expression">dataSetRow["DECISION"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">count_role</property>
+                                                <expression name="expression">dataSetRow["ROLE_NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="aggregateFunction">COUNT</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="8689"/>
+                                        <column id="8690"/>
+                                        <column id="8691"/>
+                                        <header>
+                                            <row id="8668">
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">all</property>
+                                                        <expression name="valueExpr">row["count_role"]&lt;=0</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <cell id="8669">
+                                                    <property name="colSpan">3</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <text name="BU  Lable213" id="8670">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="description_role_recert_hitory"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                            <row id="8671">
+                                                <list-property name="visibility">
+                                                    <structure>
+                                                        <property name="format">all</property>
+                                                        <expression name="valueExpr">row["count_role"]&lt;=0</expression>
+                                                    </structure>
+                                                </list-property>
+                                                <cell id="8672">
+                                                    <label id="8673">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="heading_role">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="8674">
+                                                    <label id="8675">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="heading_description">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="8676">
+                                                    <label id="8677">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="parameter_recert_decision">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                            </row>
+                                        </header>
+                                        <detail>
+                                            <row id="8682">
+                                                <cell id="8683">
+                                                    <data id="8684">
+                                                        <property name="style">parameter-value</property>
+                                                        <property name="resultSetColumn">ROLE_NAME</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="8685">
+                                                    <data id="8686">
+                                                        <property name="style">parameter-value</property>
+                                                        <property name="resultSetColumn">ROLE_DESCRIPTION</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="8687">
+                                                    <data id="8688">
+                                                        <property name="style">parameter-value</property>
+                                                        <list-property name="mapRules">
+                                                            <structure>
+                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="value1">'AA'</expression>
+                                                                <text-property name="display" key="approved">Approved</text-property>
+                                                            </structure>
+                                                            <structure>
+                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="value1">'AR'</expression>
+                                                                <text-property name="display" key="rejected">Rejected</text-property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="resultSetColumn">DECISION</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                            </row>
+                            <row id="8554">
+                                <cell id="8556">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">0.25in</property>
+                                    <table id="8692">
+                                        <property name="style">table-without-group</property>
+                                        <property name="marginTop">15px</property>
+                                        <property name="marginLeft">0px</property>
+                                        <property name="canShrink">true</property>
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">Accounts</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["acc_count"]&lt;=0</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">id</property>
+                                                <expression name="expression">row["ID"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">ID</property>
+                                                <expression name="expression">dataSetRow["ID"]</expression>
+                                                <property name="dataType">decimal</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">ACCOUNT_UID</property>
+                                                <expression name="expression">dataSetRow["ACCOUNT_UID"] + " on " + dataSetRow["SERVICE_NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">SERVICE_NAME</property>
+                                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">SERVICE_DESCRIPTION</property>
+                                                <expression name="expression">dataSetRow["SERVICE_DESCRIPTION"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DECISION</property>
+                                                <expression name="expression">dataSetRow["DECISION"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">acc_count</property>
+                                                <expression name="expression">dataSetRow["ID"]</expression>
+                                                <property name="dataType">any</property>
+                                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="8731"/>
+                                        <column id="8732">
+                                            <property name="width">50%</property>
+                                        </column>
+                                        <column id="8733">
+                                            <property name="width">2in</property>
+                                        </column>
+                                        <header>
+                                            <row id="8693">
+                                                <cell id="8694">
+                                                    <property name="colSpan">3</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <text name="BU  Lable2111" id="8695">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="description_accGroup_recert_hitory"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                            <row id="8696">
+                                                <cell id="8697">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <label id="8698">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="heading_accounts_and_groups">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="8699">
+                                                    <label id="8700">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="heading_description">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="8701">
+                                                    <label id="8702">
+                                                        <property name="style">parameter-name</property>
+                                                        <text-property name="text" key="parameter_recert_decision">Recertification Decision</text-property>
+                                                    </label>
+                                                </cell>
+                                            </row>
+                                        </header>
+                                        <detail>
+                                            <row id="8864">
+                                                <cell id="8865">
+                                                    <data id="8706">
+                                                        <property name="marginTop">5pt</property>
+                                                        <property name="paddingTop">1pt</property>
+                                                        <property name="paddingBottom">1pt</property>
+                                                        <property name="resultSetColumn">ACCOUNT_UID</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="8866">
+                                                    <data id="8708">
+                                                        <property name="marginTop">5pt</property>
+                                                        <property name="resultSetColumn">SERVICE_DESCRIPTION</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="8867">
+                                                    <data id="8710">
+                                                        <property name="marginTop">5pt</property>
+                                                        <list-property name="mapRules">
+                                                            <structure>
+                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="value1">'AA'</expression>
+                                                                <text-property name="display" key="approved">Approved</text-property>
+                                                            </structure>
+                                                            <structure>
+                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="value1">'AR'</expression>
+                                                                <text-property name="display" key="rejected">Rejected</text-property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="resultSetColumn">DECISION</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="8712">
+                                                <cell id="8713">
+                                                    <property name="colSpan">3</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="paddingTop">0pt</property>
+                                                    <property name="paddingLeft">0pt</property>
+                                                    <property name="paddingBottom">0pt</property>
+                                                    <property name="paddingRight">0pt</property>
+                                                    <table id="8714">
+                                                        <property name="style">parameter-table</property>
+                                                        <property name="marginTop">0px</property>
+                                                        <property name="marginLeft">15px</property>
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">Group</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">id</property>
+                                                                <expression name="expression">row._outer["ID"]</expression>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="paramName">accountID</property>
+                                                                <expression name="expression">row["ID"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">GROUP_NAME</property>
+                                                                <expression name="expression">dataSetRow["GROUP_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">GROUP_DESCRIPTION</property>
+                                                                <expression name="expression">dataSetRow["GROUP_DESCRIPTION"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DECISION</property>
+                                                                <expression name="expression">dataSetRow["DECISION"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="8723"/>
+                                                        <column id="8725">
+                                                            <property name="width">50%</property>
+                                                        </column>
+                                                        <column id="8726">
+                                                            <property name="width">2in</property>
+                                                        </column>
+                                                        <detail>
+                                                            <row id="8715">
+                                                                <cell id="8716">
+                                                                    <data id="8717">
+                                                                        <property name="resultSetColumn">GROUP_NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="8719">
+                                                                    <data id="8720">
+                                                                        <property name="resultSetColumn">GROUP_DESCRIPTION</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="8721">
+                                                                    <data id="8763">
+                                                                        <list-property name="mapRules">
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">'AA'</expression>
+                                                                                <text-property name="display" key="approved">Approved</text-property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["DECISION"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">'AR'</expression>
+                                                                                <text-property name="display" key="rejected">Rejected</text-property>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <property name="resultSetColumn">DECISION</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1752" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1753"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                    <grid name="Information Message Dialog Max Rows Reached" id="8868" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">getRowCount()&lt;10000</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="8869"/>
+                            <ref-entry baseId="43" id="8870"/>
+                            <ref-entry baseId="44" id="8871"/>
+                            <ref-entry baseId="45" id="8872"/>
+                            <ref-entry baseId="46" name="NewImage21" id="8873"/>
+                            <ref-entry baseId="47" id="8874"/>
+                            <ref-entry baseId="52" name="NewText21" id="8875">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_report_data_limit");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_report_data_limit");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

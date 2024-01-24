@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta name="copyright" content="© Copyright IBM Corporation 2015" />
+<meta name="DC.Rights.Owner" content="© Copyright IBM Corporation 2015" />
+<meta name="security" content="public" />
+<meta name="Robots" content="index,follow" />
+<meta name="DC.Type" content="concept" />
+<meta name="DC.Title" content="Steps to run the REST API examples" />
+<meta name="DC.Date" scheme="iso8601" content="2015-11-05" />
+<meta name="DC.Format" content="XHTML" />
+<meta name="DC.Identifier" content="run_rest_api_examples" />
+<meta name="DC.Language" content="en-us" />
+<meta name="IBM.Country" content="ZZ" />
+<!-- Licensed Materials - Property of IBM -->
+<!-- US Government Users Restricted Rights -->
+<!-- Use, duplication or disclosure restricted by -->
+<!-- GSA ADP Schedule Contract with IBM Corp. -->
+<link rel="stylesheet" type="text/css" href="./ibmdita.css" />
+<title>Steps to run the REST API examples</title>
+</head>
+<body id="run_rest_api_examples"><div role="main">
+<h1 class="title topictitle1">Steps to run the REST API examples</h1>
+<div class="body conbody"><div class="section"><ol class="ol"><li class="li">Create a directory structure as shown in the following table. <div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" class="table" rules="all" frame="border" border="1"><caption><span class="tablecap">Table 1. Directory structure to run the REST API examples</span></caption><thead class="thead" align="left"><tr class="row" valign="bottom"><th class="entry" valign="bottom" width="27.55102040816326%" id="d67e19">Directory</th>
+<th class="entry" valign="bottom" width="72.44897959183673%" id="d67e21">Contents</th>
+</tr>
+</thead>
+<tbody class="tbody"><tr class="row"><td class="entry" valign="top" width="27.55102040816326%" headers="d67e19 "><span class="ph filepath">Sample</span></td>
+<td class="entry" valign="top" width="72.44897959183673%" headers="d67e21 ">The base directory that contains the <span class="ph filepath">/lib</span> and <span class="ph filepath">/out</span> directories.</td>
+</tr>
+<tr class="row"><td class="entry" valign="top" width="27.55102040816326%" headers="d67e19 "><span class="ph filepath">Sample/lib</span></td>
+<td class="entry" valign="top" width="72.44897959183673%" headers="d67e21 ">Contains libraries that are required to run
+the REST API examples.</td>
+</tr>
+<tr class="row"><td class="entry" valign="top" width="27.55102040816326%" headers="d67e19 "><span class="ph filepath">Sample/out</span></td>
+<td class="entry" valign="top" width="72.44897959183673%" headers="d67e21 ">Contains the compiled code.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+<li class="li">Add the following JAR files to the <span class="ph filepath">Sample/lib</span> directory.<ul class="ul"><li class="li"><span class="ph filepath">wink.1.x.jar</span>. You can download the JAR file
+from <span class="ph filepath">https://wink.apache.org/</span></li>
+<li class="li"><span class="ph filepath">com.ibm.jaxrs.thinclient_8.5.0.jar </span>. This
+JAR file is in the WebSphere Application Server installation directory <span class="ph filepath"><var class="keyword varname">WAS_HOME</var>/runtimes</span></li>
+</ul>
+</li>
+<li class="li">Copy the <span class="ph filepath"><var class="keyword varname">ISIM_HOME</var>/extensions/6.0/examples/rest_example_config.properties</span> file
+to the <span class="ph filepath">Sample/out</span> directory.</li>
+<li class="li">Compile the code. Run the command from the <span class="ph filepath">Sample/out</span> directory.<dl class="dl"><dt class="dt dlterm">Windows operating systems</dt>
+<dd class="dd"><pre class="pre codeblock"><code>javac -classpath ../lib/com.ibm.jaxrs.thinclient_8.5.0.jar;../lib/wink-1.x.jar
+<span class="ph filepath"><var class="keyword varname">ISIM_HOME</var>/extensions/6.0/examples/restapi/examples/api/*.java
+ISIM_HOME/extensions/6.0/examples/restapi/examples/util/*.java -d .</span></code></pre>
+</dd>
+<dt class="dt dlterm">UNIX or Linux operating systems</dt>
+<dd class="dd"><pre class="pre codeblock"><code>javac -classpath ../lib/com.ibm.jaxrs.thinclient_8.5.0.jar:../lib/wink-1.x.jar 
+<span class="ph filepath"><var class="keyword varname">ISIM_HOME</var>/extensions/6.0/examples/restapi/examples/*/*.java -d</span></code></pre>
+</dd>
+</dl>
+ </li>
+<li class="li">Run the code. <dl class="dl"><dt class="dt dlterm">Windows operating systems</dt>
+<dd class="dd"><pre class="pre codeblock"><code>java -classpath ../lib/com.ibm.jaxrs.thinclient_8.5.0.jar;../lib/wink-1.x.jar;./ examples.api.SearchPeople</code></pre>
+</dd>
+<dt class="dt dlterm">UNIX or Linux operating systems</dt>
+<dd class="dd"><pre class="pre codeblock"><code>java -classpath ../lib/com.ibm.jaxrs.thinclient_8.5.0.jar:../lib/wink-1.x.jar:./ examples.api.SearchPeople</code></pre>
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+</div>
+</div></body>
+</html>

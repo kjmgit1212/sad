@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resource>
+  <SystemProfile>
+    <Name>fileserviceprovider</Name>   
+    <Description>Example service provider that logs to a file.</Description>
+    <BehaviorProperties>
+      <Property Name = "com.ibm.itim.remoteservices.ResourceProperties.SERVICE_PROVIDER_FACTORY"
+                Value = "examples.serviceprovider.file.FileServiceProviderFactory"/>
+    </BehaviorProperties>
+  </SystemProfile>
+
+  <AccountDefinition ClassName = "erFileUserAccount" 
+                     Description = "Sample file user account.">
+  </AccountDefinition>
+
+  <ServiceDefinition ServiceProfileName = "fileserviceprofile" 
+			   ServiceClass = "erFileService"
+                     AttributeName = "erServiceName"
+                     AccountClass = "erFileUserAccount"
+                     AccountProfileName = "FileAccount" 
+                     Description = "Sample file service.">
+  </ServiceDefinition>
+  
+</Resource>

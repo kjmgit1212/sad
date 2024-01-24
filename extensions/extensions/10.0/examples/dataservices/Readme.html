@@ -1,0 +1,211 @@
+<html>
+
+<head>
+<title>Running the Data Services API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Running the Data Services API Examples</h1>
+
+<h3>Loading an Organizational Chart</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>BusinessUnitLoader.java</span></dfn>
+source file demonstrates how to load organization chart data into the ISIM data
+store.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Edit the properties
+file <a href="../bulk_org_chart.properties">bulk_org_chart.properties</a> file.
+Change directories to the <i>extensions/{RELEASE_VERSION}/examples</i> directory
+and execute the accompanying .sh or .cmd file using the following shell
+commands</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/OrgChartLoader.sh</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\OrgChartLoader</span></samp></p>
+
+<h3>Loading Organizational Roles</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>RoleLoader.java</span></dfn> source
+file demonstrates how to load role data into the ISIM data store.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Edit the properties
+file <a href="../bulk_role.properties">bulk_role.properties</a> file. Change
+directories to the <i>extensions/{RELEASE_VERSION}/examples</i> directory and
+execute the accompanying .sh or .cmd file using the following shell commands</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/RoleLoader.sh</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\RoleLoader</span></samp></p>
+
+<h3>Finding an ISIM User</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>FindEnroleUser.java</span></dfn> source
+file demonstrates how to retrieve an ISIM user account from the ISIM data
+model.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Make sure the ISIM
+server is running. Then execute the accompanying .sh or .cmd file using the
+following shell commands</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/FindEnroleUser.sh
+&lt;user id&gt;</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\FindEnroleUser
+&lt;user id&gt;</span></samp></p>
+
+<h3>Printing a Person's Accounts</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>PrintAccounts.java</span></dfn> source
+file demonstrates how to retrieve the accounts a person owns.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Make sure the ISIM
+server is running. Then execute the accompanying .sh or .cmd file using the
+following shell commands:</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/PrintAccounts.sh
+“&lt;person dn&gt;”</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\PrintAccounts
+“&lt;person dn&gt;”</span></samp></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Note:</span></b><span
+style='font-family:"Arial","sans-serif";color:black'> You will need to be
+familiar with the directory tree structure in order to pass a valid person's distinguished
+name on the command line.</span></p>
+
+<h3>Finding All Accounts Hosted by a Service</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>GetAllServiceAccounts.java</span></dfn>
+source file demonstrates how to retrieve all accounts hosted by a service.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Make sure the ISIM
+server is running. Then execute the accompanying .sh or .cmd file using the
+following shell commands:</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/GetAllServiceAccounts.sh
+&lt;service name&gt;</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\GetAllServiceAccounts
+&lt;service name&gt;</span></samp></p>
+
+<h3>Printing the System Administrator</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>PrintSystemAdmin.java</span></dfn>
+source file demonstrates how to retrieve a person, its attributes, roles, and
+accounts and its location in the organization chart. Most all classes and many
+of their methods in the Data Services API are used in this example.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+(see <a href="../Building.html">Building the Examples</a>). Make sure the ISIM
+server is running. Then execute the accompanying .sh or .cmd file using the
+following shell commands:</span></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>UNIX</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices/bin/unix/PrintSystemAdmin.sh</span></samp></p>
+
+<p><b><u><span style='font-family:"Arial","sans-serif";color:black'>Windows</span></u></b><span
+style='font-family:"Arial","sans-serif";color:black'> <br>
+<br>
+</span><samp><span style='color:black'>dataservices\bin\win\PrintSystemAdmin</span></samp></p>
+
+<h3>Setting a Person's Image URI with a Custom Plug-in</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <dfn><span
+style='font-family:"Arial","sans-serif"'>CustomPersonPlugin.java</span></dfn>
+source file demonstrates how to dynamically generate the value for a person's
+image URI from existing attributes in the Person's profile.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Build the example
+and place it in the classpath (see <a href="../Building.html">Building the
+Examples</a>). </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Update the
+attribute extension property file (see <a href="../Updating_property_files.html">Updating
+the property files</a>) as shown below and restart the ISIM server. Run a
+request to retrieve all the person's attributes. The person's image URI should
+be included in the returned result.</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>enroleExtensionAttributes.properties<br>
+</span></b><samp><span style='color:black'>person.extension.classname =
+examples.dataservices.extensions.CustomPersonPlugin</span></samp><span
+style='font-family:"Courier New";color:black'><br>
+<samp>person.extension.attributes = erImageURI </samp></span></p>
+
+</div>
+
+</body>
+
+</html>

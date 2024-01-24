@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Provisioning Connector API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P>
+<A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><BR>
+<A HREF="#apiDescription">API Description</A><BR>
+<A HREF="#apiExample">API Example</A><BR>
+<a href="#connectorReg">Connector Registration</a><BR>
+<a href="#appendixA">Appendix A – Resource Definition</a></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is
+designed with extensibility as a primary goal. Its primary strength
+is its ability to provision many diverse types of resources and
+services. To enable this strength, the ability to plug custom
+connectors into the platform without altering the core platform
+itself has been provided through the use of a defined application
+programming interface (API). This document describes this API, named
+the Provisioning Connector API, and how it interacts with the
+Identity Manager provisioning platform.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The Provisioning Connector API has been
+developed to provide the developers of custom connectors that can be
+used from the Identity Manager provisioning platform, or any other
+java-based provisioning platform that supports the same interface. It
+is expected that the provisioning platform itself will perform all of
+the operations needed to determine the operations and their
+parameters that are to be executed against resources. The connector
+itself will be responsible for executing those operations on the
+resource in whatever resource specific manner required. The interface
+between the platform and the connector used to implement this
+procedure is defined with this API.</P>
+<P>There are eight operations that make up the
+interface between the provisioning platform and the connector, add,
+modify, delete, suspend, restore, change password, search, and test.
+Each of these operations, with the exception of suspend, restore, and
+change password, are defined in such a manner as to support the
+provisioning of any object supported on the resource, but typically
+provisioning systems today only focus on provisioning users. Because
+of the initial focus on user provisioning, the suspend, restore, and
+change password operations are key user-focused operations that
+provide convenience.</P>
+<P>When performing these eight provisioning
+operations, some resources will require either asynchronous or
+synchronous communications. The Provisioning Connector API supports
+both modes of operation, but the custom connector implementation will
+be responsible for performing the communication with the resource
+itself.</P>
+<div align="center">
+<img width=478 height=199 src="images/image004.gif"><br>
+<b>Figure 1: Provisioning Platform to Connector</b>
+</div>
+<P>The API consists of a set of java classes that
+provide the signatures that a connector must meet to be successfully
+integrated with a provisioning platform. These classes are focused on
+the interactions needed to communicate between the connector and the
+platform for the execution and confirmation of provisioning actions.
+These classes are designed to loosely couple the connector with the
+provisioning platform for possible portability between platforms.
+When implementing these actions, however, the use of additional
+platform specific API’s may become more valuable to provide a
+complete solution than the need of portability. For making use of the
+additional services provided by the Identity Manager provisioning
+platform, please reference the <A HREF="../../api/index.html">Identity
+Manager provisioning API reference documentation</A>.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The Provisioning Connector API consists of a set
+of classes that define the interface between the provisioning
+platform and the provisioning connector. All of these classes can be
+found in the <A HREF="../../api/com/ibm/itim/remoteservices/provider/package-summary.html">com.ibm.itim.remoteservices.provider</A>
+and <A HREF="../../api/com/ibm/itim/remoteservices/exception/package-summary.html">com.ibm.itim.remoteservices.exception</A>
+packages. The <A HREF="../../api/com/ibm/itim/common/package-summary.html">com.ibm.itim.common
+package</A> is also referenced for its definition of classes to
+represent attributes.</P>
+<P>The focal class in the API is the
+<A HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">ServiceProvider</A>.
+The ServiceProvider holds the interface for the eight standard
+operations, and for all intent and purposes, represents the connector
+to the provisioning platform. Most of these operation interfaces can
+support both synchronous and asynchronous calls. 
+</P>
+<P>The choice of whether to operate synchronously
+or asynchronously is determined by the ServiceProvider
+implementation. The platform is made aware of this behavior by
+passing back a pending status (see the <A HREF="../../api/com/ibm/itim/remoteservices/provider/RequestStatus.html">RequestStatus</A>
+class) at the time of the call. The ServiceProvider will then inform
+the platform of the completion of the operation by using a <A HREF="../../api/com/ibm/itim/remoteservices/provider/Notifier.html">Notifier</A>.
+The Notifier is just one interface that can be used to communicate
+directly from the connector to the provisioning platform. The
+Notifier, and other platform interfaces, can be retrieved by using
+the <A HREF="../../api/com/ibm/itim/remoteservices/provider/InitialPlatformContext.html">InitialPlatformContext</A>
+class.</P>
+<P>The InitialPlatformContext provides
+ServiceProvider implementations an interface to obtain provisioning
+platform specific services in a platform independent manner. This
+will help enable portability between provisioning platforms. Besides
+the Notifier already mentioned, a DirContext instance can be obtained
+from the InitialPlatformContext which can be used by the connector to
+store and retrieve information in the provisioning platform’s
+directory (note: The term directory usually implies an LDAP directory
+to most people, but a given platform may implement the directory
+interface with any backend data store). Please see the Java
+Development Kit v1.3.1 API documentation for a more detailed
+description of the DirContext.</P>
+<P>In addition to the InitialPlatformContext, when
+building a connector that is tailored for the Identity Manager
+provisioning platform, all other API’s listed in the <A HREF="../../api/index.html">Identity
+Manager API documentation</A> may be used. These API’s may help a
+connector implementation to better integrate its capabilities with
+Identity Manager’s other services.</P>
+<P>One of the prime functions of a connector is to
+provide the provisioning platform the ability to retrieve information
+from the managed resource or service. A search interface is provided
+by ServiceProvider to do this. The interface takes a <A HREF="../../api/com/ibm/itim/remoteservices/provider/SearchCriteria.html">SearchCriteria</A>
+to direct the ServiceProvider as to what information the platform
+needs. This SearchCriteria will contain an LDAP search filter in RFC
+2256 format and a search base to identify which entries should be
+returned. The matching results are returned in a <A HREF="../../api/com/ibm/itim/remoteservices/provider/SearchResults.html">SearchResults</A>
+object, which is implemented as part of the ServiceProvider
+implementation. The ability to cancel a currently executing search is
+provided through the SearchResults interface. By defining only an
+interface for SearchResults, a connector implementation can provide
+for lazy retrieval and abort capabilities in a resource specific
+manner, if available.</P>
+<P>Due to the diverse capabilities of some
+resources and services, some operations may not be supportable by
+some connectors. In situations where an operation cannot be
+implemented, the expected behavior of the ServiceProvider is to throw
+an UnsupportedOperationException. This exception can be
+found in the Java Development Kit v1.3.1 API documentation.</P>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P>Please see the accompanying example code with
+this package.</P>
+<H2><a name="connectorReg"></a>Connector Registration</H2>
+<P>To completely integrate the connector with the
+provisioning platform, that connector must somehow be registered with
+the platform so it knows when to invoke it. The integrate a connector
+with Identity Manager, the integration process has three main steps,
+register ServiceProvider implementation with the application server,
+define and register an LDAP schema to represent services and users
+associated with the connector, and define the behavioral properties
+of the connector.</P>
+<P>To register the ServiceProvider implementation
+with the application server, all java classes that have been
+developed in the implementation must be placed in the application
+server’s classpath. Modifying the application server environment shared library for Identity Manager Lib can accomplish this.</P>
+<P>In the Identity Manager platform, the resource
+or service that needs to be provisioned must first be instantiated
+and configured so that the platform can pass along resource instance
+specific properties to the connector to implement the provisioning
+operations. When users are provisioned on to this “service”, the
+user’s settings are represented as a user account object within the
+platform. For the platform to store and display the correct set of
+parameters for both the service and the user account instances, a
+proper LDAP schema must be defined for them. So, for example, to
+provision an NT domain server with a DAML based connector, an NT
+domain service class is defined in LDAP to hold the DAML protocol
+parameters and the domain name to be provisioned. Another LDAP class
+is defined to hold the NT user account information, such as groups
+and password. In addition to these base set of classes, any other
+information that can be retrieved from the connector, such as the
+existing groups on the NT domain server, must have a defined schema
+as well, so that Identity Manager can store them in its local
+directory once retrieved. 
+</P>
+<P>The final step in the registration process is to
+create and install a resource definition. This definition is an XML
+file that specifies the relationships between the connector and the
+schema classes defined, along with behavioral properties that are
+common to all instances of the connector. The behavioral properties
+can be properties that the platform uses to configure or communicate
+with the connector, such as the ServiceProviderFactory class name.
+They can also be properties that are used within the connector
+implementation and may be connector specific. The DTD for this file
+is listed in Appendix A. The platform behavioral properties that can
+be used are listed below.</P>
+<P>The resource definition file should be named
+resource.def. That file, along with the DSML schema file, should be
+placed in a file directory with the same name as the service profile
+name (see the resource definition DTD) under the remoteservices file
+directory in the Identity Manager distribution. With this done, the
+config_remote_services script provided in the distribution can be run
+to register the information with the Identity Manager platform and
+the directory server.</P>
+<p>For the newer ISDI based adapters the resource definition file is named service.def, and the prefered method to register the resource definition is to make a jar file of the directory that contains all of the resource definition files, and use the Identity Manager UI Configure System &gt; Manage Service Types to import the jar file.</p>
+<H2><a name="appendixA"></a>Appendix A – Resource Definition</H2>
+<P>This appendix lists the resource definition DTD
+and the Identity Manager platform specific properties that can be
+used to instruct Identity Manager on how to interact with the
+connector. The DTD can also be found in the resource.dtd file.</P>
+<PRE>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;!-- The Resource describes all the behavior and components that define a --&gt;
+&lt;!-- connector.                                                           --&gt;
+&lt;!ELEMENT Resource (SystemProfile, ServiceDefinition, AccountDefinition?)&gt;
+
+&lt;!-- The SystemProfile describes the behavior of the connector through a set of --&gt; 
+&lt;!-- properties, some that are consumed by the platform and some consumed by    --&gt;
+&lt;!-- the connector.                                                             --&gt;
+&lt;!ELEMENT SystemProfile (Name, Description?, BehaviorProperties?, ProtocolProperties?)&gt;
+
+&lt;!ELEMENT Name (#PCDATA)&gt;
+
+&lt;!ELEMENT Description (#PCDATA)&gt;
+
+&lt;!-- Properties to describe the behavior that can be consumed by the platform and  --&gt;
+&lt;!-- the connector. Note: The name of the ServiceProviderFactory class must be     --&gt;
+&lt;!-- present.                                                                      --&gt;
+&lt;!ELEMENT BehaviorProperties (Property*)&gt;
+
+&lt;!-- Properties to define the protocol parameters common to all instances of the --&gt;
+&lt;!-- connector. Parameters that are specific to each instance (i.e., URLs, IP    --&gt;
+&lt;!-- addresses) are provided in the service schema.                              --&gt;
+&lt;!ELEMENT ProtocolProperties (Property*)&gt;
+
+&lt;!ELEMENT Property&gt;
+&lt;!ATTLIST Property
+       Name  CDATA #REQUIRED
+       Value CDATA #IMPLIED
+&gt;
+
+&lt;!-- The ServiceDefinition describes the representation of a service provisioned --&gt;
+&lt;!-- by this connector. It also identifies the schema classes used to represent  --&gt;
+&lt;!-- the service and a user account on the service.                              --&gt;
+&lt;!ELEMENT ServiceDefinition&gt;
+&lt;!ATTLIST ServiceDefinition
+       ServiceProfileName CDATA #REQUIRED
+       ServiceClass       CDATA #REQUIRED
+       AttributeName      CDATA #REQUIRED
+       AccountClass       CDATA #REQUIRED
+       AccoutProfileName  CDATA #REQUIRED
+       Description        CDATA #IMPLIED
+&gt;
+
+&lt;!-- The AccountDefinition describes the user account and how it integrates --&gt;
+&lt;!-- with the provisioning platform.                                        --&gt;
+&lt;!ELEMENT AccountDefinition&gt;
+&lt;!ATTLIST AccountDefinition
+       ClassName   CDATA #REQUIRED
+       Description CDATA #IMPLIED
+&gt;</PRE><P>
+The Identity Manager platform specific properties that should be
+included in the BehaviorProperties element are listed below. The
+description of each one can be found in the
+<A HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProviderInformation.html">ServiceProviderInformation
+API documentation</A>. Each property can be looked up using its API
+constant. Required properties are marked with an *.</P>
+<div align="center">
+<table border="1" cellpadding="1">
+	<tbody>
+		<tr>
+			<td align="center"><b>Property Name</b></td>
+			<td align="center"><b>API Constant</b></td>
+		</tr>
+		<tr>
+			<td><font face="Monospace">com.ibm.itim.remoteservices.ResourceProperties.PROTOCOL_MODE</font></td>
+			<td><font face="Monospace">PROTOCOL_MODE</font></td>
+		</tr>
+		<tr>
+			<td><font face="Monospace">com.ibm.itim.remoteservices.ResourceProperties.STORE_ACCOUNT_PASSWORD</font></td>
+			<td><font face="Monospace">STORE_ACCOUNT_PASSWORD</font></td>
+		</tr>
+		<tr>
+			<td><font face="Monospace">com.ibm.itim.remoteservices.ResourceProperties.FILTERING_NOT_SUPPORTED</font></td>
+			<td><font face="Monospace">FILTERING_NOT_SUPPORTED</font></td>
+		</tr>
+		<tr>
+			<td><font face="Monospace">*com.ibm.itim.remoteservices.ResourceProperties.SERVICE_PROVIDER_FACTORY</font></td>
+			<td><font face="Monospace">SERVICE_PROVIDER_FACTORY</font></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+</BODY>
+</HTML>

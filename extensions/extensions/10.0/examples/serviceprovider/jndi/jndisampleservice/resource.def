@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resource>
+  <SystemProfile>
+    <Name>JNDISample</Name>   
+    <Description>Sample JNDI service.</Description>
+    <BehaviorProperties>
+      <Property Name = "com.ibm.itim.remoteservices.ResourceProperties.SERVICE_PROVIDER_FACTORY"
+                Value = "examples.serviceprovider.jndi.JNDIServiceProviderFactory"/>
+    </BehaviorProperties>
+  </SystemProfile>
+
+  <AccountDefinition ClassName = "erjndisampleuseraccount" 
+                     Description = "Sample JNDI user account.">
+  </AccountDefinition>
+
+  <ServiceDefinition ServiceProfileName = "JNDISampleService" 
+			   ServiceClass = "erjndisampleservice"
+                     AttributeName = "erServiceName"
+                     AccountClass = "erjndisampleuseraccount"
+                     AccountProfileName = "JNDISampleAccount" 
+                     Description = "Sample JNDI service.">
+  </ServiceDefinition>
+  
+  <ServiceGroups>
+  	  <GroupDefinition ProfileName="JNDISampleGroup"
+  			     ClassName = "erJNDISampleGroup" 
+  			     RdnAttribute = "erJNDIGroupName"
+  			     AccountAttribute = "erJNDIGroupName">
+  	  <AttributeMap>
+  		<Attribute Name = "ergroupid" Value="erJNDIGroupName"/>
+  		<Attribute Name = "ergroupname"  Value = "erJNDIGroupName"/>
+  		<Attribute Name = "ergroupdescription" Value="ergroupdescription"/>
+  	  </AttributeMap>
+  	  </GroupDefinition>	
+  </ServiceGroups>
+  
+</Resource>

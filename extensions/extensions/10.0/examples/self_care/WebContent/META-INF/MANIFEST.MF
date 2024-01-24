@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: JAR_COMMON.jar 
+ JAR_PUBLIC_API.jar 
+ JAR_SERVER.jar 
+ JAR_SERVER_API.jar
+

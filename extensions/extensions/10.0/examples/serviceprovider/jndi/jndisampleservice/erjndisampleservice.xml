@@ -1,0 +1,41 @@
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<page>
+<body>
+<form action="formvalidator0">
+<formElement name="data.erservicename" label="$erservicename" required="false">
+<input name="data.erservicename" size="50" type="text"/>
+</formElement>
+
+<formElement name="data.erjndiproviderurl" label="$erjndiproviderurl" required="true">
+<input name="data.erjndiproviderurl" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+
+<formElement name="data.erjndifactory" label="$erjndifactory" required="true">
+<input name="data.erjndifactory" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+
+<formElement name="data.erjndiprincipal" label="$erjndiprincipal" required="false">
+<input name="data.erjndiprincipal" size="50" type="text"/>
+</formElement>
+
+<formElement name="data.erjndicredentials" label="$erjndicredentials" required="false">
+<input name="data.erjndicredentials" size="50" type="password"/>
+</formElement>
+
+<formElement name="data.erjndiroot" label="$erjndiroot" required="false">
+<input name="data.erjndiroot" size="50" type="text"/>
+</formElement>
+
+</form>
+</body>
+</page>

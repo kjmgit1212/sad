@@ -1,0 +1,380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Application API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P>
+<A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><BR>
+<A HREF="#apiDescription">API Description</A><BR>
+<A HREF="#apiExample">API Example</A><BR>
+<A HREF="#apiMigration">API Migration</A>
+</P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is designed with
+extensibility as a primary goal. The platform architecture has
+defined several applications that perform different provisioning
+specific functions, such as password management, identity management,
+and account management. These applications have well defined external
+interfaces that can be used by clients to trigger their
+functionality. A great example of this would be the user interface
+that is deployed with the Identity Manager product. These interfaces,
+however, can be used by clients that would like a different entry
+point into the platform, such as a more customer specific user
+interface or a different application integrating its capabilities
+with the platform. This document describes the Application
+Programming Interface (API) that is available for interfacing to the
+provisioning applications.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The Application API has been developed to provide the developers
+of custom front-ends to Identity Manager a portable and
+backwards-compatible interface to the Identity Manager
+applications.<BR>The API consists of a set of java classes that
+abstract the more commonly used functions of the provisioning
+platform, such as identity management, password management, and
+account management. The classes that make up this API are the same
+classes the Identity Manager product uses for its out-of-the-box user
+interface. In the platform architecture, the application tier makes
+use of all the lower level services to implement the end-to-end
+business logic involved in a provisioning action. This may require
+workflow processes to execute (see the Workflow API), the data store
+to be updated (see the Data Services API), or resources to be
+provisioned (see the Service Provider API). These implementation
+details of a provisioning action are encapsulated within the
+application module to ensure to the client that the action will be
+implemented correctly and that backwards compatibility with platform
+upgrades will not be an issue.<BR>One aspect of the business logic
+behind a provisioning action is authorizing the caller to perform the
+action by using the security mechanisms put in place the
+Authorization module in the platform architecture. For this reason,
+all Application API calls require user information about the caller
+so that the proper authorization can take place. To make calls in an
+unrestricted manner, the client must act as the administrator and
+pass the administrator’s information into the API calls.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The API consists of a set of java classes that abstract the more
+commonly used functions of the provisioning platform, such as
+identity management, password management, and account management. All
+of these classes can be found in the <A HREF="../../api/com/ibm/itim/apps/package-summary.html">com.ibm.itim.apps
+package</A> and its sub-packages.<BR>The Application API is
+remoteable. This allows clients to communicate with the provisioning
+platform without requiring co-location. To establish communications
+with the provisioning platform, a context must be created. This
+context is established using a set of classes that make up a
+framework that can support connecting to different platform
+deployment configurations easily without changes to the client. The
+<A HREF="../../api/com/ibm/itim/apps/PlatformContext.html">PlatformContext</A>
+class represents the context of a connection to a provisioning
+platform. This class is merely an interface whose implementation may
+be different based on the deployment configuration of the target
+platform. The entry point for the client to establish the a platform
+context is through the <A HREF="../../api/com/ibm/itim/apps/InitialPlatformContext.html">InitialPlatformContext</A>
+class. This class will ensure the proper implementations to the
+context interfaces are constructed for the client by either using the
+<A HREF="../../api/com/ibm/itim/apps/PlatformContextFactory.html">PlatformContextFactory</A>
+passed by name to it at construction time, or by looking up the
+correct PlatformContextFactory class in the Identity
+Manager.properties file.</P>
+<P ALIGN=CENTER><IMG SRC="images/image004.gif" NAME="graphics2" ALIGN=BOTTOM WIDTH=302 HEIGHT=132 BORDER=0>
+<BR><B>Figure 1: Context Class Diagram</B></P>
+<P>The Application API is secure and requires
+clients to authenticate to the platform. This authentication is
+performed through a Java Authentication and Authorization Service
+(JAAS) standard Java Pluggable Authentication Module (PAM) framework
+and API. This framework supports users authenticating to multiple
+applications. The applications might use different authentication mechanisms.
+Identity Manager has provided its own authentication mechanism based
+on its own authentication framework (see the <A HREF="../authentication/authentication.html">Identity
+Manager Authentication API</A> ). This mechanism is configured for
+use in the client environment through a security configuration file.
+The JAAS framework supports the different authentication modules
+through a series of Callbacks and CallbackHandlers. Identity Manager
+supports authentication through the use of standard WebSphere authentication mechanisms. The following snippet illustrates the use of JAAS to
+authenticate to WebSphere and the resulting subject is used throughout Identity Manager to perform tasks.</P>
+<PRE>CallbackHandler handler = new WSCallbackHandlerImpl(&quot;jdoe&quot;, &quot;secret&quot;));
+LoginContext lc = new LoginContext(&quot;WSLogin&quot;, handler);
+lc.login();</PRE><P>
+The preceding snippet is performing a password based authentication to WebSphere.  This snippet assumes that the
+standard WSLogin application is registered as a login module.</P>
+<p>The Application API also supports changing and resetting  user passwords through challenge response. The API uses the ForgotPasswordManager class to perform this task.  This class takes a PlatformContext and enables the retrieval of the challenge response questions.   Before IBM Security Identity Manager 6.0, the PlatformCallbackHandler class was used to perform this task.</p>
+was invoked as an argument (with the â??D option), or the
+<P>
+<BR>Another concept common
+to many of the Application API calls is the asynchronous request.
+Many of the API calls are asynchronous, or non-blocking, and may take
+minutes or even hours if human interaction is required to fulfill the
+request (i.e., through an approval process). The Request class
+represents an asynchronous request. Many calls will return a <A HREF="../../api/com/ibm/itim/apps/Request.html">Request</A>
+object so that the client can check the status of their submission.
+The <A HREF="../../api/com/ibm/itim/apps/RequestManager.html">RequestManager</A>
+class provides the client with a interface for querying, or locating,
+requests they may not have a handle to currently. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image006.gif" NAME="graphics3" ALIGN=BOTTOM WIDTH=271 HEIGHT=45 BORDER=0><BR><B>Figure
+2: Request Class Diagram</B></P>
+<P>The classes that provide interfaces to the identity specific
+capabilities of the platform can be found in the
+<A HREF="../../api/com/ibm/itim/apps/identity/package-summary.html">com.ibm.itim.apps.identity
+package</A> . The pattern followed by this API consists of a managed
+object that represents an entity to manage (i.e., account, role,
+person), a value object holding attribute information data about that
+entity, and a manager that an aggregate of other operations within
+the context of the type of managed object to manage (i.e., creating
+objects, validating objects, etc.). 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image008.gif" NAME="graphics4" ALIGN=BOTTOM WIDTH=448 HEIGHT=45 BORDER=0><BR><B>Figure
+3: Application Pattern Diagram</B></P>
+<P>The use of the value object is key because all API calls are
+fulfilled by the platform with the most up-to-date information
+possible at the time of the call. This means the platform will query
+its data store on every request. If the client wishes to simply get a
+"snapshot" of the managed object’s information, only querying
+the data store once for performance reasons, obtaining the value
+object will best achieve the goal. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image010.gif" NAME="graphics5" ALIGN=BOTTOM WIDTH=612 HEIGHT=289 BORDER=0><BR><B>Figure
+4: Identity Applications Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/identity/PersonMO.html">PersonMO</A>
+class provides the external interfaces for querying and manipulating
+a person, or identity, in the system. The <A HREF="../../api/com/ibm/itim/apps/identity/PersonManager.html">PersonManager</A>
+provides an aggregation of other identity related operations, such as
+identity creation and fast access searches. The
+<A HREF="../../api/com/ibm/itim/apps/identity/SelfRegistrationManager.html">SelfRegistrationManager</A>
+provides the specific operations related to self registration. <BR>The
+<A HREF="../../api/com/ibm/itim/apps/identity/RoleMO.html">RoleMO</A>
+class provides the external interfaces for querying and manipulating
+a role, dynamic or static, in the system. The <A HREF="../../api/com/ibm/itim/apps/identity/RoleManager.html">RoleManager</A>
+provides an aggregation of other role related operations, such as
+role validation. <BR>The <A HREF="../../api/com/ibm/itim/apps/identity/OrganizationalContainerMO.html">OrganizationalContainerMO</A>
+class provides the external interfaces for querying and manipulating
+a node in the organizational tree (org chart) in the system. The
+<A HREF="../../api/com/ibm/itim/apps/identity/ContainerManager.html">ContainerManager</A>
+provides an aggregation of other container related operations, such
+as reorganizations. <BR>The <A HREF="../../api/com/ibm/itim/apps/identity/ChallengeResponseManager.html">ChallengeResponseManager</A>
+provides the capability to self manage the challenge and responses
+that can be used for authentication in lieu of a password. <BR>The
+classes that provide interfaces to the provisioning specific
+capabilities of the platform can be found in the
+<A HREF="../../api/com/ibm/itim/apps/provisioning/package-summary.html">com.ibm.itim.apps.provisioning
+package</A> . This package also follows the managed object pattern
+with managers and value objects. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image014.gif" NAME="graphics6" ALIGN=BOTTOM WIDTH=736 HEIGHT=148 BORDER=0><BR><B>Figure
+5: Provisioning Applications Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/provisioning/ServiceMO.html">ServiceMO</A>
+class provides the external interfaces for querying and manipulating
+a service in the system. This class can also represent a "hosted",
+or leased, service provided by an application service provider (ASP)
+in the system. The <A HREF="../../api/com/ibm/itim/apps/provisioning/ServiceManager.html">ServiceManager</A>
+provides an aggregation of other service related operations, such as
+service communications testing. <BR>The <A HREF="../../api/com/ibm/itim/apps/provisioning/AccountMO.html">AccountMO</A>
+class provides the external interfaces for querying and manipulating
+an account in the system. The <A HREF="../../api/com/ibm/itim/apps/provisioning/AccountManager.html">AccountManager</A>
+provides an aggregation of other account related operations, such as
+account validation and the determination of authorized services. The
+<A HREF="../../api/com/ibm/itim/apps/provisioning/PasswordManager.html">PasswordManager</A>
+provides password validation, generation, and change operations. <BR>The
+<A HREF="../../api/com/ibm/itim/apps/search/package-summary.html">com.ibm.itim.apps.search
+package</A> holds the classes that provide general search utilities
+for managed objects, such as people, services, and accounts. Since
+each of these objects can have extensible schemas associated with
+them, the query interfaces provided in the package are very flexible
+and support extensible filtering. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image016.gif" NAME="graphics7" ALIGN=BOTTOM WIDTH=315 HEIGHT=148 BORDER=0><BR><B>Figure
+6: Search Application Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/search/SearchMO.html">SearchMO</A>
+class represents a managed object search. It provides the interface
+for defining the parameters of the search, such as a flexible
+string-based filter, sorting details, and the scope of the search.
+The <A HREF="../../api/com/ibm/itim/apps/search/SearchResultsMO.html">SearchResultsMO</A>
+holds the results and provides interfaces for retrieving the results
+as a whole or by pages. There are also interfaces for re-sorting the
+results. To reduce overhead of repetitive calls back the platform to
+obtain information about each object returned from a search, the
+results are made up of value objects directly instead of managed
+objects. It is still easy to obtain managed objects if needed by
+simply extracting the distinguished name from the value object. <BR>The
+<A HREF="../../api/com/ibm/itim/apps/workflow/package-summary.html">com.ibm.itim.apps.workflow
+package</A> holds the classes that provide workflow control and
+auditing capabilities. These capabilities include searching for
+pending and historical processes, and retrieving and completing
+participants’ workflow assignments. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image017.gif" NAME="graphics8" ALIGN=BOTTOM WIDTH=612 HEIGHT=289 BORDER=0>
+<BR><B>Figure 7:  Workflow Application Class Diagram</B></P>
+<P>The WorkflowProcessMO class provides the external interfaces for
+querying and manipulating a workflow process in the system. The
+WorkflowManager provides some convenient query operations for
+workflow processes. <BR>The <A HREF="../../api/com/ibm/itim/apps/workflow/WorkflowActivityMO.html">WorkflowActivityMO</A>
+class provides the external interfaces for querying and manipulating
+a workflow activity in the system. These activities are part of a
+workflow process. They can be found by querying the
+WorkflowProcessMO. <BR>The <A HREF="../../api/com/ibm/itim/apps/workflow/WorkflowAssignmentMO.html">WorkflowAssignmentMO</A>
+class provides the external interfaces for querying and manipulating
+a workflow assignment in the system. An assignment provides a link
+between a workflow activity and a workflow resource. The workflow
+resource is "assigned" the workflow activity. These assignments
+can be found by querying either the ActivityMO or the
+<A HREF="../../api/com/ibm/itim/apps/workflow/WorkflowResourceMO.html">WorkflowResourceMO</A>
+. <BR>The WorkflowResourceMO interface provides the external
+interface for querying assignments for a workflow resource. The
+<A HREF="../../api/com/ibm/itim/apps/workflow/HumanResourceMO.html">HumanResourceMO</A>
+represents a human workflow participant that implements this
+interface. <BR>The <A HREF="../../api/com/ibm/itim/apps/workflow/WorkflowSearchMO.html">WorkflowSearchMO</A>
+class represents a workflow process search. It provides the interface
+for defining the parameters of the search through a workflow query
+statement. The <A HREF="../../api/com/ibm/itim/apps/workflow/WorkflowSearchResultsMO.html">WorkflowSearchResultsMO</A>
+holds the results and provides interfaces for retrieving the results
+as a whole or by pages. There are also interfaces for re-sorting the
+results. To reduce overhead of repetitive calls back the platform to
+obtain information about each object returned from a search, the
+results are made up of value objects (WorkflowProcesses) directly
+instead of managed objects (WorkflowProcessMOs). It is still easy to
+obtain managed objects if needed by simply extracting the ID from the
+value object. <BR>The <A HREF="../../api/com/ibm/itim/apps/lifecycle/package-summary.html">com.ibm.itim.apps.lifecycle
+package</A> provides lifecycle management capabilities on supported
+business domain objects, including Person and Account via the
+<A HREF="../../api/com/ibm/itim/apps/lifecycle/LifecycleManager.html">LifecycleManager</A>
+class. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image_provisioning_policy.gif" NAME="graphicsa" ALIGN=BOTTOM WIDTH=825 HEIGHT=400 BORDER=0><BR><B>Figure
+8: Provisioning Policy Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/policy/ProvisioningPolicyManager.html">ProvisioningPolicyManager</A>
+class provides the external interfaces for querying and manipulating
+provisioning policy(ies) in the system. This class should be used to 
+search for provisioning policy in the system rather than using 
+<A HREF="../../api/com/ibm/itim/apps/search/SearchMO.html">SearchMO</A>.
+  The <A HREF="../../api/com/ibm/itim/apps/policy/ProvisioningPolicyMO.html">ProvisioningPolicyMO</A>
+provides an aggregation of other policy related operations, such as
+getting parent container or organization. It also provides the external interfaces for querying and manipulating
+a specific provisioning policy in the system.
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image_system_role.gif" NAME="graphicsb" ALIGN=BOTTOM WIDTH=300 HEIGHT=200 BORDER=0><BR><B>Figure
+9: ITIM Group Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/system/SystemRoleManager.html">SystemRoleManager</A>
+class provides the external interfaces for querying and creating
+ITIM group in the system. This class should be used to 
+search for ITIM group in the system rather than using 
+<A HREF="../../api/com/ibm/itim/apps/search/SearchMO.html">SearchMO</A>.
+  The <A HREF="../../api/com/ibm/itim/apps/system/SystemRoleMO.html">SystemRoleMO</A>
+provides an aggregation of other ITIM group related operations such as adding and removing member, and removing ITIM group.
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image_aci.gif" NAME="graphicsc" ALIGN=BOTTOM WIDTH=200 HEIGHT=150 BORDER=0><BR><B>Figure
+10: Access Control List Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/acl/AccessControlListManager.html">AccessControlListManager</A>
+class provides the external interfaces for querying and manipulating
+access right(s) in the system. This class should be used to 
+list access control list in the system rather than using 
+<A HREF="../../api/com/ibm/itim/apps/search/SearchMO.html">SearchMO</A>.
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image_recon.gif" NAME="graphicsa" ALIGN=BOTTOM WIDTH=300 HEIGHT=150 BORDER=0><BR><B>Figure
+11: Reconciliation Class Diagram</B></P>
+<P>The <A HREF="../../api/com/ibm/itim/apps/recon/ReconManager.html">ReconManager</A>
+class provides the external interfaces for querying and manipulating
+reconciliation data in the system for a referenced service. 
+  The <A HREF="../../api/com/ibm/itim/apps/recon/ReconUnitData.html">ReconUnitData</A>
+is the value object that holds reconciliation unit data.
+</P>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<PRE><B><FONT COLOR="#7f0055">try</FONT></B><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// create platform context</FONT>
+<FONT COLOR="#000000">   Hashtable&lt;String, String&gt; env = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> Hashtable&lt;String, String&gt;();</FONT>
+<FONT COLOR="#000000">   env.put(InitialPlatformContext.</FONT><I><FONT COLOR="#0000c0">CONTEXT_FACTORY</FONT></I><FONT COLOR="#000000">,</FONT>
+<FONT COLOR="#2a00ff"><FONT COLOR="#000000">      </FONT>&quot;com.ibm.itim.apps.impl.websphere.WebSpherePlatformContextFactory&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">   env.put(PlatformContext.</FONT><I><FONT COLOR="#0000c0">PLATFORM_URL</FONT></I><FONT COLOR="#000000">, </FONT><FONT COLOR="#2a00ff">&quot;iiop://localhost&quot;</FONT><FONT COLOR="#000000">);</FONT>
+
+<FONT COLOR="#000000">   PlatformContext platform = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> InitialPlatformContext(env);</FONT>
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// create authentication handler</FONT>
+   CallbackHandler handler = new WSCallbackHandlerImpl(&quot;jdoe&quot;, &quot;secret&quot;));
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// attempt authentication</FONT>
+<FONT COLOR="#000000">   LoginContext lc = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> LoginContext(</FONT><FONT COLOR="#2a00ff">&quot;WSLogin&quot;</FONT><FONT COLOR="#000000">, handler);</FONT>
+   lc.login();
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// create manager</FONT>
+<FONT COLOR="#000000">   PersonManager mgr = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> PersonManager(platform, lc.getSubject());</FONT>
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// find user</FONT>
+<FONT COLOR="#000000">   Collection people = mgr.getPeople(</FONT><FONT COLOR="#2a00ff">&quot;uid&quot;</FONT><FONT COLOR="#000000">, </FONT><FONT COLOR="#2a00ff">&quot;ssmith&quot;</FONT><FONT COLOR="#000000">, </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">);</FONT>
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">   </FONT>// assume only one ssmith for this example</FONT>
+   PersonMO person = (PersonMO) people.iterator().next();
+
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">   </FONT><B>if</FONT></B><FONT COLOR="#000000"> (person != </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">) {</FONT>
+      Person valueObject = person.getData();
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// update email address locally</FONT>
+<FONT COLOR="#000000">      valueObject.setMail(</FONT><FONT COLOR="#2a00ff">&quot;ssmith@acme.com&quot;</FONT><FONT COLOR="#000000">);</FONT>
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// commit change immediately</FONT>
+<FONT COLOR="#000000">      person.update(valueObject, </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> Date());</FONT>
+   }
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (AccountExpiredException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (CredentialExpiredException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (FailedLoginException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (LoginException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (RemoteException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (AuthorizationException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+<FONT COLOR="#000000">} </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (ApplicationException ex) {</FONT>
+<FONT COLOR="#000000">   System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(ex.getMessage());</FONT>
+}
+</PRE>
+<H2><A NAME="apiMigration"></A>API Migration</H2>
+<p>In the supported versions of Identity Manager, the  custom JAAS configuration (ITIM) is not used anymore for authentication.. The WebSphere Application Server application login configuration WSLogin must 
+be used to authenticate the user to the user repository configured in WebSphere Application Server.
+This example shows how to migrate the Tivoli Identity Manager version 5.1 code to latest version of Identity Manager code.</p>
+<pre><code>
+    // In version 5.1,
+    PlatformCallbackHandler handler = new <b>PlatformCallbackHandler</b>(&quot;jdoe&quot;, &quot;secret&quot;);
+    handler.setPlatformContext(platform);
+    LoginContext lc = new LoginContext(&quot;<b>ITIM</b>&quot;, handler);
+    lc.login();
+    PersonManager mgr = new PersonManger(platform, lc.getSubject());
+    
+    // In version 10.0,
+    // if Identity Manager is configured with the separate security domain,
+    // the realm name of the security domain must be passed to the callback handler.
+    // NOTE:  The com.ibm.websphere.security.auth.callback.WSCallbackHandlerImpl class 
+    // is part of WebSphere Application Server runtime library (com.ibm.ws.runtime.jar).  
+    // This jar file must be in the classpath to use WSCallbackHandlerImpl class.  
+    // The com.ibm.ws.runtime.jar is in the <i>WAS_HOME</i>/plugins directory.  
+    // <i>WAS_HOME</i> is the directory where WebSphere Application Server is installed.  
+    // For example,
+    // C:\Program Files\IBM\WebSphere\AppServer is the default <i>WAS_HOME</i> directory 
+    // for Windows operating system.
+    // For more information about WSCallbackHandlerImpl class, see the IBM WebSphere 
+    // Application Server information center documentation at 
+    // http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp.
+    CallbackHandler handler = new <b>WSCallbackHandlerImpl</b>("jdoe", "realmName", "secret");
+    LoginContext lc = new LoginContext("<b>WSLogin</b>", handler);
+    lc.login();
+    PersonManager mgr = new PersonManger(platform, lc.getSubject());
+</code></pre>
+
+</BODY>
+</HTML>

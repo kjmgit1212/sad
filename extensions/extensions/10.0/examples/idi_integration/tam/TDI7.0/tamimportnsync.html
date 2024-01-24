@@ -1,0 +1,509 @@
+<html>
+
+<head>
+<title>IDI Integration TAM Import &amp; Sync Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p ><img width=32 height=32 src="../../ibm_banner.gif"></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='text-align:right'><img width=32
+  height=32 src="../../tivolilogo.gif"></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Example: Using IDI to Import TAM User Data into ISIM and Sync ISIM User
+Attributes with TAM</h1>
+
+<h3>Contents</h3>
+
+<p ><a href="#Example1a">Part (a) Using IDI to Import Single
+Domain TAM User Data into ISIM</a><br>
+<a href="#Example1b">Part (b) Using IDI to Import Multi Domain TAM User Data
+into ISIM</a><br>
+<a href="#Example1c">Part (c) Using IDI to Import Corprate User Data into ISIM</a><br>
+<a href="#Example1d">Part (d) Using IDI to Sync ISIM User Attributes with TAM
+Users' Attributes</a></p>
+
+<h3>Notes:</h3>
+
+<p>These example files can be run using IDI 5.1.2 or later.<br>
+Create a subdirectory called TIMTAMIntegration under IDI root directory and
+copy all the sample files to it. <br>
+Example part (a), (b) and (c) requires IDI Data Feed service created in ISIM
+before these samples can be run. <br>
+When creating the IDI Data Feed service in ISIM, define the User ID, Password,
+naming context. These defines should be used to input to the properties file of
+the examples. <br>
+Example part (a), (b) and (d) requires user ID and password to access TAM
+registry.<br>
+Example part (d) requires also user ID and password to access ISIM registry.<br>
+Example part (c) requires user ID and password to access corporate user
+registry.<br>
+Before running the examples, need to customize the properties file and the exit
+file.</p>
+
+<p>Using IDI admin tool to start IDI and load the configuration file and then
+select the AssemblyLine file to run.</p>
+
+<h3><a name=Example1a></a>Part (a) Using IDI to import single domain TAM User
+Data into ISIM</h3>
+
+<p>The task of this example is to search TAM users in a single domain, import
+the user data to ISIM, and create ISIM persons.</p>
+
+<p>This example includes the following IDI configuration and properties files:<br>
+Configuration file: TAMtoTIMImport.xml<br>
+Properties file: TAMtoTIMImport.properties</p>
+
+<p >Three AssemblyLines are built into the configuration file: </p>
+
+<ol start=1 type=1>
+ <li >AssemblyLine: LDAPImport </li>
+</ol>
+
+<p style='margin-left:.5in'>This AssemblyLine is used to retrieves Access
+Manager user data from LDAP registries, like IBM Directory, Sun One (iPlanet)
+Directory, etc., import them to ISIM, and create ISIM persons.</p>
+
+<p style='margin-left:.5in'>It contains 3 connectors:<br>
+The first connector works in Iterator mode. It searches the cn=users entry
+under secAuthority=Default. The search filter is defined as objectClass=secMap.
+Each returned record contains the secdn attribute which is the user's dn Access
+Manager recognized.</p>
+
+<p style='margin-left:.5in'>With the secdn attribute obtained from the first
+connector, the second connector works in lookup mode and searches the dn
+matching the secdn. If found, it retrieves cn, sn, uid, and other attributes.</p>
+
+<p  style='margin-left:.5in'>In this process, it excludes the
+Security Master in the Java script of &quot;After Lookup&quot; hooks as the
+following:</p>
+
+<pre style='margin-left:.5in'>&nbsp;</pre><pre style='margin-left:.5in'>var tdn=conn.getString(&quot;$dn&quot;);</pre><pre
+style='margin-left:.5in'>if (tdn.indexOf(&quot;SecurityMaster&quot;,0) &gt; 0)</pre><pre
+style='margin-left:.5in'> system.skipEntry();</pre><pre style='margin-left:
+.5in'>else</pre><pre style='margin-left:.5in'> task.logmsg(&quot;---&gt; Access Manager user data is read.&quot; + tdn);</pre>
+
+<p style='margin-left:.5in'>This Java script can be modified to exclude more
+specific users. The reason we want to exclude them is to not allow the
+modification of any of these TAM super users.</p>
+
+<p style='margin-left:.5in'>The third connector, as common in the other
+AssemblyLines, is for Identity Manager importing. This is a JNDI connector and
+works in AddOnly mode. This connector takes the work attributes from the
+previous connectors and maps to the following Identity Manager attributes: cn,
+sn, objectClass, displayName, givenName, uid, erAliases. The first three are
+Identity Manager required attributes. An Identity Manager user can not be
+created if any of them is missed. The Identity Manager / Access Manager
+administrator can also provide customized attributes mapping schema or modify
+the current mapping, which can be done through the Directory Integrator admin
+tool.</p>
+
+<p style='margin-left:.5in'>The erAliases is a multi value variable, which is
+mapped from Access Manager uid and cn. This attribute is for Access Manager
+account reconciliation after the Identity Manager person is created.</p>
+
+<ol start=2 type=1>
+ <li >AssemblyLine: ADImport</li>
+</ol>
+
+<p style='margin-left:.5in'>This AssemblyLine retrieves Access Manager user
+data from the Active Directory registry. Currently, only the Active Directory
+in Windows 2000 server is supported by Access Manager.</p>
+
+<p style='margin-left:.5in'>Similar as the previous AssemblyLine, the first
+connector, FindADTAMUsers, works in Iterator mode and searches all the Access
+Manager users from the Active Directory in the customer domain. The
+administrator needs to provide the active directory domain name for the search
+base. With the domain name as &quot;domain_name&quot;, the search base is:</p>
+
+<pre style='margin-left:.5in'>cn=Users,cn=default,cn=tivoli pd domains,dc=domain_name,dc=com</pre>
+
+<p style='margin-left:.5in'>And the search filter is:</p>
+
+<pre style='margin-left:.5in'>objectCategory=cn=urafuser,cn=schema,cn=configuration,dc=domain_name,dc=com</pre>
+
+<p style='margin-left:.5in'>Each returned record contains the urafregistryUID
+attribute, which is the user's dn in Access Manager.</p>
+
+<p style='margin-left:.5in'>The second connector, GetADTAMUsers, looks up the
+directory to find the dn that equals the urafregistryUID and retrieves the user
+attributes for importing to Identity Manager. Also, if the dn being searched is
+&quot;sec_master&quot; or &quot;ivmgrd-master&quot;, the entry is skipped. The
+third connector in this AssemblyLine is for Identity Manager importing, which
+is the same as in the previous AssemblyLine.</p>
+
+<ol start=3 type=1>
+ <li >AssemblyLine: DominoImport. </li>
+</ol>
+
+<p style='margin-left:.5in'>This AssemblyLine retrieves Access Manager user
+data from the Domino server directory.</p>
+
+<p style='margin-left:.5in'>The first and the second connectors in this
+AssemblyLine are Lotus Notes connectors, which interact with the Domino
+directory through local Notes client.</p>
+
+<p style='margin-left:.5in'>The first connector searches the PDMdata.nsf database
+on the Domino server and the database view is set to URAF User Objects. Each
+returned record contains the UserID attribute, which represents an Access
+Manager user.</p>
+
+<p style='margin-left:.5in'>The second connector looks up the names.nsf
+database in the Domino directory to find the ShortName matching the UserID
+obtained from the previous connector. When found, the connector retrieves the
+First name, Last name, etc., as the input working attributes for the
+AssemblyLine. In order to avoid modification of the Access Manager administrator
+accounts, a Javascript filter is used to excludes the Access Manager
+administrator.</p>
+
+<p style='margin-left:.5in'>The third connector is for Identity Manager
+importing, which is the same as in the previous AssemblyLine.</p>
+
+<p>Define the TAMtoTIMImport.properties</p>
+
+<p>Before running any of the TAMtoTIMImport AssemblyLines, need to define the
+environment values in the properties file.</p>
+
+<p >TAMtoTIMImport.properties is defined as the following:</p>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='text-align:center'><b>Property</b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='text-align:center'><b>Example</b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  align=center style='text-align:center'><b>Description</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >TIM_DSMLv2_URL</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >http://hostname:portname/enrole/dsml2_event_handler/tenant</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >hostname is the host name of the ISIM server. <br>
+  portname is the port name of the ISIM server, the default is 9080.<br>
+  tenant is the domain name of the ISIM server.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >TIM_DSMLv2_Login</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >agent</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >User ID in ISIM IDI Data Feed service.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >TIM_DSMLv2_PW</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >agent</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >User password in ISIM IDI Data Feed service.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >TIM_DSMLv2_SearchBase</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >dc=HRLoad</p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p >The namingContexts defined in the ISIM IDI Data Feed
+  service.</p>
+  </td>
+ </tr>
+</table>
+
+<p>The following parameters required if LDAP is the TAM user registry: </p>
+
+<ul type=disc>
+ <li >TAM_LDAP_URL: The remote ITAM LDAP URL in the format of:
+     //ldap:hostname:portnumber.</li>
+ <li >TAM_LDAP_Login: The remote ITAM LDAP user ID.</li>
+ <li >TAM_LDAP_PW: The remote ITAM LDAP user password.</li>
+</ul>
+
+<p>The following parameters required if Active Directory is the TAM user
+registry: </p>
+
+<ul type=disc>
+ <li >TAM_AD_URL: The remote Active Directory URL in the format
+     of: //ldap:hostname:portnumber.</li>
+ <li >TAM_AD_Username: The remote ITAM Active Directory user ID.</li>
+ <li >TAM_AD_password: The remote ITAM Active Directory
+     password.</li>
+ <li >TAM_AD_SearchBase: The remote ITAM Active Directory domain
+     name In the format of: </li>
+</ul>
+
+<pre style='margin-left:.5in'>cn=Users,cn=default,cn=tivoli pd omains,dc=domainname,dc=com</pre>
+
+<p  style='margin-left:.5in'>Note: The administrator needs only
+to replace the domainname here.</p>
+
+<ul type=disc>
+ <li >TAM_AD_SearchFilter:</li>
+ <li >TAM_AD_RetrieveBase: The remote ITAM Active Directory
+     domain name in the format of: </li>
+</ul>
+
+<pre style='margin-left:.5in'>dc=domainname,dc=com</pre>
+
+<p  style='margin-left:.5in'>Note: The administrator needs only
+to replace the domainname here.</p>
+
+<p>The following parameters required if Domino server is the TAM user registry:
+</p>
+
+<ul type=disc>
+ <li >TAM_Domino_Hostname: The remote Domino server host name.</li>
+ <li >TAM_Domino_UserID: The remote Domino server user id.</li>
+ <li >TAM_Domino_Password: The remote Domino server user
+     password.</li>
+ <li >TAM_Domino_Servername: The remote Domino server name.</li>
+</ul>
+
+<h3><a name=Example1b></a>Part (b) Using IDI to import multi domain TAM User
+Data into ISIM</h3>
+
+<p>The task of this example is to search Access Manager users in multi domains,
+import the searched user data to ISIM, and create ISIM persons.</p>
+
+<p>This example includes the following IDI configuration and properties files: </p>
+
+<ul type=disc>
+ <li >Configuration file: MDTAMtoTIMImport.xml</li>
+ <li >Properties file: MDTAMtoTIMImport.properties</li>
+</ul>
+
+<p>The configuration file contains only one AssemblyLine to support retrieving
+multi domains TAM users from LDAP registry (currently supported in TAM) and
+import them to Identity Manager.</p>
+
+<p>The first connector searches the cn=Subdomains under secauthority=default.
+The search filter is secmap. The cn=Users is further checked from each returned
+object dn. If &quot;cn=Users&quot; is not found, the entry is skipped. Also, if
+the dn is the Security Master, the record is skipped. The final returned
+records from this connector includes the Access Manager users from all the
+domains. If you do not want to import from all the domains, the Java Script
+under hooks can be modified to exclude those unwanted domains. After searching
+in multi domains, the second and third connectors works the same way as in the
+single domain AssemblyLine.</p>
+
+<p>Define the DirectorytoTIMImport.properties</p>
+
+<p>It contains the Following settings. The definition of these settings are the
+same as in the previous properties file. </p>
+
+<ul type=disc>
+ <li >TIM_DSMLv2_URL;</li>
+ <li >TIM_DSMLv2_Login;</li>
+ <li >TIM_DSMLv2_PW;</li>
+ <li >TIM_DSMLv2_SearchBase.</li>
+</ul>
+
+<p >The following parameters required if LDAP is the Directory
+user registry: </p>
+
+<ul type=disc>
+ <li >LDAP_URL;</li>
+ <li >LDAP_Login;</li>
+ <li >LDAP_PW;</li>
+ <li >LDAP_SearchBase.</li>
+</ul>
+
+<p >The following parameters required if Active Directory is the
+Directory user registry: </p>
+
+<ul type=disc>
+ <li >AD_URL;</li>
+ <li >AD_Username;</li>
+ <li >AD_password;</li>
+ <li >AD_SearchBase.</li>
+</ul>
+
+<h3><a name=Example1c></a>Part (c) Using IDI to import corporate LDAP User Data
+into ISIM</h3>
+
+<p>The task of this example is to search users in corporate directory, by the
+search vase defined, import the searched user data to ISIM, and create ISIM
+persons.</p>
+
+<p>This example includes the following IDI configuration and properties files: </p>
+
+<ul type=disc>
+ <li >Configuration file: DirectorytoTIMImport.xml</li>
+ <li >Properties file: DirectorytoTIMImport.properties</li>
+</ul>
+
+<p>This configuration file contains two AssemblyLines: LDAPUserstoTIM and
+ADUserstoTIM. The first one retrieves the user data from the corporate LDAP
+directory while the second one retrieves user data from the Active directory.
+The user attributes in each corporate directory may be very different, the
+provided sample is just the basic. It retrieves only cn, sn and uid attributes,
+maps to the correspondent Identity Manager user attributes for Identity Manager
+user creation. More attributes can be easily added by modifying the Input Map
+and Output Map of the connectors in the AssemblyLine. The connectors in each
+AssemblyLine are very similar as the TAMtoTIMImport.xml. However, the search
+base has to be manually defined.</p>
+
+<h3><a name=Example1d></a>Part (d) Using IDI to synchronize ISIM user
+attributes with TAM user attributes</h3>
+
+<p>The synchronization is designed for those Access Manager users who have
+Identity Manager accounts. Two AssemblyLines are built in to this configuration
+file. The first AssemblyLine is for unconditional synchronization and the
+second AssemblyLine is to monitor the LDAP changelog and start the
+synchronization dynamically.</p>
+
+<p>This example includes the following files: </p>
+
+<ul type=disc>
+ <li >Configuration file: TIMtoTAMSync.xml</li>
+ <li >Properties file: TIMtoTAMsync.properties</li>
+ <li >Exit file: TIMtoTAMsyncexit</li>
+</ul>
+
+<p >Two AssemblyLines are included in this configuration file. </p>
+
+<ol start=1 type=1>
+ <li >AssemblyLine:synchtamdirect </li>
+</ol>
+
+<p style='margin-left:.5in'>This AssemblyLine finds all the ISIM users who are
+the TAM account owners and retrieves all the defined attribute from them. The
+retrieved attributes are then used to update the matched TAM user attributes.</p>
+
+<ol start=1 type=1>
+ <ul type=circle>
+  <li >The first connector searches all the TAM accounts under
+      the ISIM registry so to find those ISIM users who own the TAM accounts.</li>
+  <li >The second connector retrieve defined user attributes,
+      like postal address, telephone number, etcfrom those ISIM users.</li>
+  <li >The last connector works in Update mode. It looks up the
+      Access Manager dn in TAM registry that matches the &quot;ertamdn&quot;
+      attribute found in the first connector.</li>
+ </ul>
+</ol>
+
+<p style='margin-left:.5in'>The connector also defines the attributes mapping
+between the ISIM attributes and TAM ones. So all the defined TAM attributes are
+updated in TAM registry.</p>
+
+<ol start=2 type=1>
+ <li >AssemblyLine: synctambychangelog </li>
+</ol>
+
+<p style='margin-left:.5in'>To use the AssemblyLine, the LDAP changelog must be
+enabled.</p>
+
+<p style='margin-left:.5in'>This AssemblyLine monitors the ISIM user attribute
+changes from the LDAP changelog. if any ISIM user attribute is changed, the
+AssemblyLine updates the matched TAM user data.</p>
+
+<p style='margin-left:.5in'>The AssemblyLine can be started manually anytime
+or, by the ScheduleSync assemblyline at the scheduled time.</p>
+
+<p style='margin-left:.5in'>Starting from the &quot;last change number&quot;
+defined in the TIMtoTAMSyncExit file, the first connector reads the changelogs
+and then updates the &quot;last change number&quot; each time the AssemblyLine
+is run.</p>
+
+<p style='margin-left:.5in'>When reading the changelog, The first task for this
+connector is to filter out the non-Identity Manager user changes.</p>
+
+<p style='margin-left:.5in'>Working in Lookup mode, the second connector
+searches TAM accounts under Identity Manager directory suffix. Each Access
+Manager account has an owner who is an Identity Manager user. The
+AssemblyLine's task is to find those Access Manager account owners who were
+found in the previous connector.</p>
+
+<p style='margin-left:.5in'>The connector does this by comparing the
+&quot;erprent&quot; attribute in each Access Manager account to find one that
+equals the &quot;targetdn&quot; attribute found in the first connector. If they
+are matched, both the Access Manager account and his owner, who is an Identity
+Manager user which has user attributes changed, are located.</p>
+
+<p style='margin-left:.5in'>Also, the Access Manager account's attribute,
+ertamdn, is retrieved. &quot;ertamdn&quot;, is the correspondent Access Manager
+user dn. This connector is a key connector because it finds Identity Manager
+user's dn and Access Manager user's dn.</p>
+
+<p style='margin-left:.5in'>The third connector now looks up the Identity
+Manager dn equal to the &quot;erparent&quot; and, retrieves the defined user
+attributes, like postal address, telephone number, etc.</p>
+
+<p style='margin-left:.5in'>The last connector works in Update mode. It looks
+up the Access Manager dn that matches the &quot;ertamdn&quot; attribute found
+in the second connector.</p>
+
+<p style='margin-left:.5in'>The connector also defines the attributes mapping
+between the ISIM attributes and TAM ones. So all the defined TAM attributes are
+updated in TAM registry.</p>
+
+<p>Define the SyncTAM.properties <br>
+The following settings are defined as the same in previous examples. </p>
+
+<ul type=disc>
+ <li >TIM_LDAP_URL;</li>
+ <li >TIM_LDAP_Login;</li>
+ <li >TIM_LDAP_PW;</li>
+ <li >TAM_LDAP_URL;</li>
+ <li >TAM_LDAP_Login;</li>
+ <li >TAM_LDAP_PW;</li>
+</ul>
+
+<p>Use &quot;* &quot; for any value of that variable.<br>
+For example. * * * * 15 defines the scheduled starting time at 15 minutes
+passed every hour.</p>
+
+<ul type=disc>
+ <li >SYNC_Start_Month;</li>
+ <li >SYNC_Start_Day;</li>
+ <li >SYNC_Start_Weekday;</li>
+ <li >SYNC_Start_Hours;</li>
+ <li >SYNC_Start_Minutes;</li>
+</ul>
+
+<p>SYNC_Timout:<br>
+Specify the maximum time in seconds for the changelog connector to wait for the
+next new changelog.</p>
+
+<p>SYNC_Sleeptime:<br>
+Specify the number of seconds for the changelog connector to sleep if no new
+changelog there. <br>
+Note: If SYNC_Timout is set to 0 and SYNC_Sleeptime is set to non-zero value,
+the changelog connector will wait for the new changelog forever.</p>
+
+</div>
+
+</body>
+
+</html>

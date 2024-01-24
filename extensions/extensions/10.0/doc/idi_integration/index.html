@@ -1,0 +1,1247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>IBM Security Directory Integrator and Identity Manager
+Integration</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><BR>
+<A HREF="#scenarios">Scenarios</A><BR>
+<A HREF="#advantages">Advantages of New Features</A><BR>
+<A HREF="#protocols">A Note on Protocols</A><BR>
+<A HREF="#dataFeed">Identity Data Feed</A><BR>
+<A HREF="#accountManagement">Account Management</A><BR>
+<A HREF="#timClient">IM as a DSMLv2 Client</A><BR>
+<A HREF="#ISDIServer">ISDI as a DSMLv2 Server</A><BR>
+<A HREF="#timServer">IM as a DSMLv2 Server</A><BR>
+<A HREF="#ISDIClient">ISDI as a DSMLv2 Client</A><BR>
+<A HREF="#https">Use of HTTPS</A><BR>
+<A HREF="#passwordManagement">Password Management and Binary Attributes</A><BR>
+<A HREF="#authentication">Authentication</A><BR>
+<A HREF="#filtering">Filtering in Search Requests</A><BR>
+<A HREF="#troubleshooting">Troubleshooting</A></P>
+
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>This document is intended to explain the process required to use
+the IBM Security Directory Integrator (ISDI) to import identity information
+into Identity Manager (IM) and to manage accounts in the IM
+data store on external resources using ISDI. The target audience of
+this document includes organizational administrators who are
+competent or expert users of IM and ISDI.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The IM - ISDI integration features included with IM are:</P>
+<UL>
+	<LI>A Directory Service Markup
+	Language version 2 (DSMLv2) ServiceProvider. This allows import of
+	data into IM with IM acting as a DSMLv2 client and ISDI acting as a
+	DSMLv2 server. 
+	<LI>Implementation of a DSMLv2 IM
+	event handler. This allows the import of data into IM with IM
+	acting as a DSMLv2 server and ISDI acting as a DSMLv2 client. 
+	<LI>Out of the box schema support for communication with ISDI.
+	This includes provision for ISDI to be treated as an end-point and
+	defined as a service instance within the IM user interface for
+	identity feed. 
+</UL>
+<H2><a name="scenarios"></a>Scenarios</H2>
+<P>The scenarios that these features may be used for are shown in
+Figure 1.</P>
+<P align="center">
+<img alt="Scenarios for ISDI IM Integration" src="images/scenarios.gif"><br>
+<b>Figure 1: Scenarios for Use of ISDI - IM Integration Features</b>
+</P>
+<P>In Figure 1, the oval shapes represent scenarios or use cases
+where IM provides a service, the stick figures represent people or
+actors, and the rectangles represent external system. The actors are:</P>
+<UL>
+	<LI>An End User, who manages their own
+	accounts via IM. 
+	<LI>An Organizational Administrator,
+	who is an expert user of IM and ISDI. 
+	<LI>A System Administrator, who
+	administers an enterprise data store holding account data, such as a
+	database or a directory server. 
+	<LI>A Human Resources Manager, who administers an enterprise
+	identity data store, such as PeopleSoft, SAP, or a database. 
+</UL>
+<P><BR><BR>
+</P>
+<P>The primary goal of the identity feed reconciliation scenario is
+to do a bulk load of identity data into IM. The steps for it are
+shown in Figure 2.</P>
+<div align="center">
+<img height="394"
+ alt="Sequence of Events for Identity Feed Reconciliation"
+ src="images/IdentityFeedRecon.gif" width="516">
+ <br><b>Figure 2: Sequence of Events for Identity Feed Reconciliation</b>
+</div>
+<P>The identity feed reconciliation is initiated by the
+organizational administrator in the IM user interface. IM sends a
+search request message to ISDI. ISDI searches the enterprise data store
+for the identity data. ISDI sends the data back to IM, which
+processes the data. This processing includes evaluation of the
+position in the organization tree to place people in, evaluation of
+role membership, evaluation of a supervisor relationship, possibly
+evaluation of provisioning policy, and insertion of data into the IM
+data store. Evaluation of the provisioning policy could result in
+account management actions.</P>
+<P>The primary goal of the identity feed via JNDI scenario is to
+propagate changes made by the Human Resources Administrator in the
+enterprise data store to IM. The steps for it are shown in Figure 3.</P>
+<div align="center">
+<img height="430"
+ alt="Sequence of Events for Identity Feed via JNDI Connector"
+ src="images/IdentityFeedJNDI.gif" width="504">
+ <br><b>Figure 3: Identity Feed via the ISDI JNDI Connector</b>
+</div>
+<P>The identity feed via JNDI scenario is initiated by the
+organizational administrator via the ISDI user interface by running an
+assembly line. The assembly line will retrieve the identity data from
+the enterprise identity data store and iterate over the data found.
+The assembly line will attempt to look up each entry in the IM data
+store by sending IM a DSMLv2 search request. If the entry does not
+already exist in IM or if there is a change in the data, then ISDI
+will send IM an add or modify request. The data processing performed
+by IM is the same as for the identity feed via reconciliation
+scenario. If the connector is operating in delete mode it may send
+delete requests to IM.</P>
+<P>The primary goal of the account management scenario is to push out
+account management requests made from within IM to the enterprise
+account data store. This could be via an end user or via an
+Organizational Administrator. One scenario initiated by an end user
+is shown in Figure 4.</P>
+<div align="center">
+<img height="378"
+ alt="Sequence of Events for Account Management"
+ src="images/account_management.gif" width="484"><br>
+<b>Figure 4: Sequence of Events for Account Management by End User via the IM User Interface</b>
+</div>
+<P>The primary goal of the account event notification scenario is to
+propagate account changes made by system administrator to an
+enterprise account data store to IM. On receiving this event
+notification, IM will evaluate provisioning policy. This scenario is
+shown in Figure 5.</P>
+<div align=center>
+<img height="432"
+ alt="Steps in Propagation of Account Event Processing"
+ src="images/account_event.gif" width="522"><br>
+<b>Figure 5: Steps in Propagation of Account Management Event Scenario</b>
+</div>
+<P>The account management event scenario is initiated by an
+Organizational Administrator running an assembly line from within the
+ISDI user interface. This will lead to a search of the enterprise
+account management data store. ISDI will compare the entry found to
+the equivalent entry in the IM data store to detect changes made by
+system administrators direct to the enterprise system. ISDI will then
+send the request to IM, which will evaluate provisioning policies.
+If there is a violation of a provisioning policy then IM may send
+either a change or delete request to ISDI to either bring the account
+into compliance, to suspend it, or to delete it.</P>
+<H4><A NAME="advantages"></A>Advantages of New Features</H4>
+<P>The main advantages of the new features over previous releases
+are:</P>
+<UL>
+	<LI>The introduction of ISDI to assist
+	in manipulating data from various sources for managing identity
+	data, where previously a Directory Services Markup Language (DSML)
+	file or custom Java Naming and Directory Interface (JNDI) client was
+	required. Now ISDI can be used instead of custom programming to
+	manipulate raw personal information data into a form able to be
+	imported into IM. For example, ISDI can be used to parse data from a
+	comma separated file or a database and feed the result into IM as
+	personal information data or changes to that data. 
+	<LI>The introduction of ISDI to assist
+	in managing account data from databases to eliminate the need to
+	write Structured Query Language (SQL) stored procedures. ISDI can be
+	used as a database client and communicate with IM in a
+	bISDIrectional way. 
+	<LI>The use of ISDI to manage account
+	data in directory servers. Previously, the only option to do this
+	was with the LDAP-X agent, which was only available for Windows and
+	required manipulation of a number of files to describe the mapping
+	and linking rules that ISDI has a graphical user interface for. 
+	<LI>Use of ISDI to provide a scripting environment to replace the
+	more difficult to use agentCfg program with shell scripts. ISDI
+	provides scripting points and allows a variety of scripting
+	languages. 
+</UL>
+<P>For managing identity data, IM can act as a DSMLv2 client to
+retrieve person data from ISDI in reconciliation by executing searches
+against ISDI, which acts as a DSMLv2 server. IM may also act as a
+DSMLv2 server, accepting requests from a DSMLv2 client, in
+particular, ISDI using the JNDI service provider. Person placement
+rules and other business logic included with DSML file reconciliation
+and JNDI feed is as per previous releases.</P>
+<P>For managing account data, provisioning policy checks and other
+business logic are done on account data changes as per previous
+releases with Directory Access Markup Language (DAML) clients.</P>
+<P>Information on ISDI can be found in the distribution of the
+product. It is assumed that the reader is familiar with this.</P>
+<H4><a name="protocols"></a>A Note on Protocols</H4>
+<P>It is not necessary for the reader to understand the various
+protocols and markup languages beyond the fact that IM is able to
+use several of these. However, due to their use in ISDI integration
+and discussion here a note is in order to explain the reason for the
+use of the different protocols and markup languages. The interested
+reader may find out more about these protocols at
+<A HREF="http://www.oasis.com/">http://www.oasis.com</A>.</P>
+<P>Directory Services Markup Language version 1 (DSML) was created by
+the OASIS DSML working group to represent directory content. IM (at
+that time enRole 4.0) adopted it with a file binding for the HR Feed
+mechanism. While it provided an identity feed mechanism it had two
+basic limitations:</P>
+<OL>
+	<LI>A custom program was required to
+	translate the user's original data source into DSML format. 
+	<LI>The file binding is not appropriate for use in a cluster. The
+	file had to be replicated on each node of the cluster. 
+</OL>
+<P>In addition, enRole 4.0 introduced Directory Access Markup
+Language (DAML) as a protocol for communicating with end-points. The
+difference between DSML and DAML is that DSML represents static data
+whereas DAML represents operations on that data, including add,
+modify, delete, and search. IM also acted as a DAML server allowing
+identity feed data to be fed to it from a client via a JNDI
+implementation. While this provided a mechanism to make changes to
+the identity information in the IM data store, it had these
+limitations:</P>
+<OL>
+	<LI>There was no mechanism to use DAML
+	to pull data from an endpoint for identity feed. In other words, IM
+	could not act as a DAML client when doing identity feed. Data had to
+	be pushed into IM using the JNDI application programming interface.
+	<LI>DAML was not an endorsed standard
+	so there was no motivation for third parties to create their own
+	tools. 
+	<LI>It also required creation of
+	custom programs to use the JNDI interface. 
+	<LI>The DAML implementation only worked with Hypertext Transfer
+	Protocol over a Secure Sockets Layer (https). This was inconvenient
+	for pilot studies,where users wanted to get started with the minimum
+	amount of configuration prerequisites. 
+</OL>
+<P>DAML was submitted to the OASIS DSML working committee as a
+proposed draft. After consideration by the members of the DSML
+working committee, DSMLv2 was published. DSMLv2 has the same
+aim as DAML but the syntax is quite different. The present
+implementation of DSMLv2 in conjunction with the ISDI connectors and
+event handlers overcome the limitations described above:</P>
+<OL>
+	<LI>It is not necessary for users to
+	write custom programs to import identity data into IM. 
+	<LI>DSMLv2 is an endorsed standard. 
+	<LI>There is no requirement to
+	replicate files on each node of a cluster. 
+	<LI>When doing identity feed, IM can
+	act both as a DSMLv2 client and as a DSMLv2 server. In
+	particular, IM can pull in identity feed data from a DSMLv2
+	endpoint. 
+	<LI>The DSMLv2 implementation can be used with either Hypertext
+	Transfer Protocol (http) or Hypertext Transfer Protocol over a
+	Secure Sockets Layer (https). 
+</OL>
+<P>The Connector API is used to load handlers for the different
+protocols. This is described in the document Provisioning
+Connector API.</P>
+<H4><a name="dataFeed"></a>Identity Data Feed</H4>
+<P>The IM identity data feed facility is used to import people into
+the IM data store. As well as basic information about people,
+relations defining their position in the organization chart,
+organizational role membership, and supervisor. Since the intent of
+this document is to assist the reader in customizing schemas and
+importing data, it is important to understand the entities involved
+and the relations between them. The domain entities involved in the
+identity data feed are shown in Figure 6.</P>
+<div align="center">
+<img height="336"
+ alt="Entity Relation Diagram for Identity Feed"
+ src="images/identity_feed_entities.gif" width="614"><br>
+<b>Figure 6: Domain Entities Involved in Identity Data Feed</b>
+</div>
+<P>In the data feed process each person must have a distinguished
+name, which is used to identify the person when a lookup,
+modification, or delete request is received.</P>
+<P>Each person has a set of custom attributes. The required and
+allowed list of attributes is determined by the set of object
+classes, which also should be present for each entry in a search or
+add request. Typically, the object-class used is inetorgperson,
+described by RFC 2798 (<A HREF="http://www.faqs.org/rfcs/rfc2798.html">www.faqs.org/rfcs/rfc2798.html</A>),
+however, any set of object classes is allowed.</P>
+<P>A parent relation exists between each person and their business
+unit to define their position in the organization chart. A business
+unit may be an organization, an organizational unit, or a location.
+If no relation is specified in the data feed, then the person will be
+added at the top level of the organization where the ISDI Data Feed
+service is defined. The parent relation is defined by the placement
+rule script fragment, which is defined on the ISDI Data Feed service
+and refers to attributes in individual person entries. Since IM
+insists that the parent relation refers to an existing business unit
+entity, the business units should exist before the placement rules
+are evaluated.</P>
+<P>Each person may optionally have a supervisor. The supervisor is
+identified by common name in the raw data fed into IM. IM searches
+for the supervisor by name and stores a reference to the supervisor's
+person entry. Since IM insists that the reference must point to a
+valid entry, supervisors should be imported into the IM data store
+before the staff that they supervise.</P>
+<P>Each person may belong to zero or more organizational roles. The
+role is specified by the role name in the raw data fed into IM,
+however, as for the other relations, IM stores a reference to the
+organizational role entity.</P>
+<P>An ISDI Data Feed service instance must also be created to define
+various parameters for the data import. However, this is not a domain
+entity since it is purely system data. The IM install program will
+install a service definition in the directory that can be used for
+identify feed (loading people into the IM system). The IM user
+interface may be used to define a service instance of type
+erDSMLv2Service, named ISDI Data Feed in the user interface. The
+details of this service are described in Table 1.</P>
+<div align="center">
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><B>Item</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Attribute Name</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Label</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Description</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>object class name</P>
+		</TD>
+		<TD>
+			<P>objectclass</P>
+		</TD>
+		<TD>
+			<P>not shown</P>
+		</TD>
+		<TD>
+			<P>erDSML2Service: the name of the object class in the directory
+			schema.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD ROWSPAN=4>
+			<P>required attributes</P>
+		</TD>
+		<TD>
+			<P>namingcontexts</P>
+		</TD>
+		<TD>
+			<P>Naming Context</P>
+		</TD>
+		<TD>
+			<P>This attribute identifes the service. It must have a
+			distinguished name format. It is required to identify the service
+			when IM is acting as a DSMLv2 service.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erServiceName</P>
+		</TD>
+		<TD>
+			<P>Service Name</P>
+		</TD>
+		<TD>
+			<P>A name to display on the user interface.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erURL</P>
+		</TD>
+		<TD>
+			<P>URL</P>
+		</TD>
+		<TD>
+			<P>The url of the data source.&nbsp;Presently supported protocols
+			are file, http, and https.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>ernamingattribute</P>
+		</TD>
+		<TD>
+			<P>Name Attribute</P>
+		</TD>
+		<TD>
+			<P>The naming attribute on a service used to define the
+			distinguished names of entries in event notification.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD ROWSPAN=4>
+			<P>optional attributes</P>
+		</TD>
+		<TD>
+			<P>erUid</P>
+		</TD>
+		<TD>
+			<P>User ID</P>
+		</TD>
+		<TD>
+			<P>Name of principal to authenticate DSMLv2 clients when using the
+			JNDI client.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erPassword</P>
+		</TD>
+		<TD>
+			<P>Password</P>
+		</TD>
+		<TD>
+			<P>Key to authenticate DSMLv2 clients when using the JNDI client. 
+			</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erPlacementRule</P>
+		</TD>
+		<TD>
+			<P>Placement Rule</P>
+		</TD>
+		<TD>
+			<P>Placement rule defining script to place entries within the
+			organization chart.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erUseWorkflow</P>
+		</TD>
+		<TD>
+			<P>Use Workflow</P>
+		</TD>
+		<TD>
+			<P>Boolean flag to indicate whether to use workflow when managing
+			data. This will lead to evaluation of provisioning policies and an
+			entry in the audit trail.</P>
+		</TD>
+	</TR>
+</TABLE>
+<B>Table 1: ISDI Data Feed Service Schema</B>
+</div>
+<P>An example of this service is shown in the Figure 7.</P>
+<div align="center">
+<img alt="DSMLv2 Identity Feed Screenshot"
+ src="images/dsml2_service.gif"><br>
+<b>Figure 7 ISDI Data Feed Screenshot</b>
+</div>
+<H4><a name="accountManagement"></a>Account Management</H4>
+<P>For ISDI to be used to provision accounts a schema must be defined
+for the service and account types and profiles must be defined and
+added to the data store. The entities involved in account management
+are shown in Figure 8.</P>
+<div align="center">
+<img alt="Entities Involved in Account Management"
+ src="images/account_management_entities.gif"><br>
+<b>Figure 8: Entities Involved in Account Management</b>
+</div>
+<P>The service profile contains meta information about the service,
+including a relation to the account profile for the accounts to be
+managed. The service profile also contains operational attributes
+used to determine the protocol handler and the processing factory to
+load. These are described in Table 2.</P>
+<div align="center">
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><B>Attribute Name</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Description</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erObjectProfileName</P>
+		</TD>
+		<TD>
+			<P>The name of the service profile</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erCustomClass</P>
+		</TD>
+		<TD>
+			<P>The name of the object class for service instances.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erAccountClass</P>
+		</TD>
+		<TD>
+			<P>The name of the account class associated with the service
+			profile.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erAccountName</P>
+		</TD>
+		<TD>
+			<P>The name of the account profile associated with the service
+			profile.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erproperties</P>
+		</TD>
+		<TD>
+			<P>The names of either service instance attributes or service
+			profile properties to be used by the ServiceProvider.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erprotocolmappings</P>
+		</TD>
+		<TD>
+			<P>An attribute map for service instance attributes.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erserviceproviderfactory</P>
+		</TD>
+		<TD>
+			<P>The fully qualified name of a Java class to load the
+			ServiceProvider implementation.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erxforms</P>
+		</TD>
+		<TD>
+			<P>Used by DAML only.</P>
+		</TD>
+	</TR>
+</TABLE>
+<B>Table 2: Service Profile Attributes</B> 
+</div>
+<P>The AccountProfile entity only contains two attributes: the name
+of the account profile and the name of the LDAP object class for the
+account.</P>
+<P>Service instances have a 'type of' relation with service profile
+that is computed based on the service object class.&nbsp; The Service
+instance has a name, a set of custom attributes, and a set of
+operational attributes. &nbsp; The custom attributes may be whatever
+is required for the specific service type, for example, the name of a
+database table.&nbsp; The operational attributes that should be
+defined in the schema are described in Table 3.</P>
+<div align="center">
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><B>Item</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Name</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Description</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>object class name</P>
+		</TD>
+		<TD>
+			<P>objectclass</P>
+		</TD>
+		<TD>
+			<P>Any descriptive name for the Service Type</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD ROWSPAN=3>
+			<P>required attributes</P>
+		</TD>
+		<TD>
+			<P>erITDICategory</P>
+		</TD>
+		<TD>
+			<P>The type of entity to manage. Only 'Account' is supported at
+			present.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erServiceName</P>
+		</TD>
+		<TD>
+			<P>A name to display on the user interface.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erURL</P>
+		</TD>
+		<TD>
+			<P>The url of the data source. Presently supported protocols are
+			http and https.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD ROWSPAN=4>
+			<P>optional attributes</P>
+		</TD>
+		<TD>
+			<P>erUid</P>
+		</TD>
+		<TD>
+			<P>Name of principal to authenticate DSMLv2 clients when using the
+			JNDI client.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erPassword</P>
+		</TD>
+		<TD>
+			<P>Key to authenticate DSMLv2 clients when using the JNDI client.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>ernamingattribute</P>
+		</TD>
+		<TD>
+			<P>The naming attribute on a service used to define the
+			distinguished names of entries in event notification.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>namingcontexts</P>
+		</TD>
+		<TD>
+			<P>This attribute identifes the service. It must have a
+			distinguished name format. It is required to identify the service
+			when IM is acting as a DSMLv2 service.</P>
+		</TD>
+	</TR>
+</TABLE>
+<B>Table 3: Attributes to be used when Defining a Service for
+Provisioning Accounts with ISDI</B> 
+</div>
+<P>The account entity has a 'belongs to' relation with the service
+instance. The distinguished name should be unique across the service
+instance. If it is not, IM will not be able to locate the correct
+account for lookup, update, and delete requests and duplicates will
+be created. The distinguished name at present must be formed by the
+user id, for example, 'eruid=bubble'.</P>
+<P>An account may be owned by a person. The relation may be created
+by IM directly if the account is provisioned or adopted via IM.
+However, if the account is discovered by IM during reconciliation or
+event notification then the relation must be computed. The relation
+is computed by comparing the user id of the account with the aliases
+of people in the system. If a one-to-one match between user id and
+alias is found then an owned by relation is created between the
+account. Otherwise the account will be orphaned, or in other words,
+created in the IM data store, but without an owner.</P>
+<P>Password and status are attributes that have special meaning
+within IM. Accounts may also have a list of custom attributes that
+should be defined as needed for individual account types. 
+</P>
+<P>Accounts may also have relations with supporting data entities.
+'Supporting data' is IM terminology for any kind of entity that IM
+should maintain but that it does not have special knowledge of.
+Examples are Windows NT global and local groups, and Active Directory
+containers. The supporting data entities are themselves imported into
+IM using the same method as accounts.</P>
+<P>The documentation on the Connector architecture describes how to
+add these definitions to the IM data store. The reason for defining
+a service schema is that there is a one-to-one relation between
+account type and service type in the IM data model.</P>
+<P>Provisioning policies are evaluated on account data as described
+in the Policy and Organizational Administrators' Guide. The most
+immediately relevant aspect of provisioning policy evaluation to the
+information discussed here is that evaluation can only take place if
+IM can associate the account entity with a person.</P>
+<H4><a name="timClient"></a>IM as a DSMLv2 Client</H4>
+<P>IM needs to function as a DSMLv2 client to initiate and process
+identity data feed reconciliation requests and account management
+requests.</P>
+<P>In this mode IM will initiate search requests for identity data
+feed when the user schedules a reconciliation. An instance of a ISDI
+Data Feed service should be created.</P>
+<P>For account management, add, modify, delete, and search requests
+will be created by IM based on actions from within the IM user
+interface. Change password, suspend, and restore operations are
+treated as special cases of modify requests. Passwords are sent as
+base 64 encoded binary attributes within messages. Therefore, https
+should be used when doing account management in a production
+environment.</P>
+<P>The required parameters for the server to operate successfully in
+this mode are:</P>
+<UL>
+	<LI>Service name, for the service to
+	be able to displayed in the IM user interface. 
+	<LI>URL, for IM to be able to locate
+	and connect to ISDI. 
+	<LI>User ID, and password for IM to
+	be able to authenticate to ISDI. 
+	<LI>Category, which differentiates the type of entity being
+	processed (person or account). 
+</UL>
+<H4><a name="ISDIServer"></a>ISDI as a DSMLv2 Server</H4>
+<P>ISDI needs to function as a DSMLv2 server to respond to identity
+data feed reconciliation requests and account management requests
+initiated from the IM server.</P>
+<P>ISDI 7.2, which provides a DSMLv2 protocol handler is required.</P>
+<P>In order for ISDI to handle a DSMLv2 request these components will
+be required to be defined:</P>
+<UL>
+	<LI>A DSMLv2 event handler to receive
+	the request. The event handler should specify which assembly lines
+	to route add, modify, delete, and search requests to. 
+	<LI>An assembly line to contain the
+	connector. 
+	<LI>A connector to connect to the enterprise data store. This
+	connector should contain an output map to map from IM's attributes
+	to the attributes understood by the enterprise system. If the
+	connector operates in update or delete mode then link criteria must
+	be specified. 
+</UL>
+<P>The sequence of events for a reconciliation process for an
+identity feed, focusing on the individual ISDI components is shown in
+Figure 9.</P>
+<div align="center">
+<img height="342"
+ alt="Sequence of Events for an ISDI Event Handler"
+ src="images/ISDI_event_handler.gif" width="662"><br>
+<b>Figure 9: Sequence Diagram for ISDI Handling of a Identity Feed Search Requests</b>
+</div>
+<P>The details of the steps are:</P>
+<UL>
+	<LI>IM generates a search request and
+	sends it to ISDI. 
+	<LI>The ISDI DSMLv2 event handler
+	receives the request, parses it, and translates it to a work entry. 
+	<LI>The event hander examines the
+	request type and routes the work entry to the appropriate assembly
+	line. In this case it is the assembly line. 
+	<LI>The assembly line invokes the
+	connector in iterate mode. 
+	<LI>The connector queries the
+	enterprise data source. 
+	<LI>The connector passes the data back
+	to the event handler. 
+	<LI>The event handler passes the data back to IM. 
+</UL>
+<P>The steps are a little different for account management where ISDI
+will also need to process add, modify, and delete requests. In those
+cases the components will be the same but the ISDI connector will
+operate in different modes. Iterate mode was used for processing the
+search request. Update mode can be used for both add and modify,
+although add-only mode is simpler if only add is required. Delete
+mode should be used for processing of delete requests. The DSMLv2
+event handler is capable of inspecting the DSMLv2 request and routing
+to the appropriate assembly line. The model for data flow between ISDI
+components in processing account management requests is shown in
+Figure 10.</P>
+<div align="center">
+<img height="468"
+ alt="Activity Diagram for Handling of Account Management Requests"
+ src="images/account_man_activity.gif" width="568"><br>
+<b>Figure 10: Activity Diagram for ISDI Handling of Account Management Requests</b>
+</div>
+<P>Follow these steps to define a DSMLv2 event handler:</P>
+<UL>
+	<LI>Startup the ISDI ibmditk program 
+	<LI>Create an assembly line with a
+	connector to connect to your data source. This will be referred to
+	when defining the event handler. It should be defined in in iterator
+	mode. The assembly line details will vary whether you intend to
+	process search, add, modify, or delete requests. 
+	<LI>Add a new Event Handler of type DSMLv2EventHandler. In the
+	Assembly Line Search field, select the assembly line just created. 
+</UL>
+<P>A screen shot of an example DSMLv2 event handler is shown in
+Figure 11.</P>
+<div align="center">
+<img height="744" alt="ISDI DSMLv2 Event Handler"
+ src="images/dsml2_event_handler.gif" width="1024"><br>
+<b>Figure 11: Screenshot of ISDI DSMLv2 Event Handler</b>
+</div>
+<P>Connectors in add, modify, and delete assembly lines must define
+an input map to translate the attributes used in IM to the
+attributes found in the managed data source. Connectors in the search
+assembly lines must define an output map to translate the attributes
+found in the raw data source to entries that can be imported into
+IM. These must include:</P>
+<UL>
+	<LI>A distinguished name attribute,
+	$dn. A script to compute this in the form 'eruid=&lt;user id&gt;'
+	must be provided and it must match the value for the user id.
+	Special characters, as defined in RFC 2253, UTF-8 String
+	Representation of Distinguished Names
+	(<A HREF="http://www.faqs.org/rfcs/rfc2253.html">www.faqs.org/rfcs/rfc2253.html</A>)
+	must be escaped. 
+	<LI>An object class, objectclass
+	matching the account or person object class defined in IM. 
+	<LI>Attributes defined in the IM directory schema. 
+</UL>
+<P>When attributes have the same name in the managed resource as in
+IM, no translation is required in the output map. In that case, the
+appropriate checkbox will already be selected by ISDI. For attributes
+where a simple name change is required this can be accomplished by
+selecting a different checkbox to translate the connector entry
+attribute to the appropriate work attribute. However, some attributes
+will need to be either created or manipulated using scripts. For
+these attributes, the advanced mapping facility should be used. 
+</P>
+<P>When using ISDI as an end-point for account management, you may
+also need to define an assembly line for add / modify and an assembly
+line for delete and then specify these in the DSMLv2 event handler.
+For ISDI connectors operating in modify and delete mode, you will need
+to define link criteria. Change password, suspend, and restore
+requests are treated as modification requests.</P>
+<P>The DSMLv2 event handler must be running to receive DSMLv2
+requests.</P>
+<H4><a name="timServer"></a>IM as a DSMLv2 Server</H4>
+<P>IM needs to function as a DSMLv2 server to receive and process
+identity data feed requests and account management events initiated
+by ISDI. To accomplish this ISDI will need to be able to locate and
+connect with IM. IM will also have to know which service to use in
+creating person or account data. To succeed in this the attributes
+shown in Table 4 should be used in the service instance:</P>
+<div align="center">
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><B>Attribute Name</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Label</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Description</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erServiceName</P>
+		</TD>
+		<TD>
+			<P>Service name</P>
+		</TD>
+		<TD>
+			<P>Required for the service to be able to displayed in the IM
+			user interface</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erUid</P>
+		</TD>
+		<TD>
+			<P>User ID</P>
+		</TD>
+		<TD>
+			<P>Required for ISDI to be able to authenticate to IM.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erPassword</P>
+		</TD>
+		<TD>
+			<P>Password</P>
+		</TD>
+		<TD>
+			<P>Required for ISDI to be able to authenticate to IM.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>erITDICategory</P>
+		</TD>
+		<TD>
+			<P>Category</P>
+		</TD>
+		<TD>
+			<P>Required to differentiate the type of entity being processed
+			(person or account)</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>ernamingattribute</P>
+		</TD>
+		<TD>
+			<P>Naming Attribute</P>
+		</TD>
+		<TD>
+			<P>Required specifies the attribute to use when forming
+			distinguished names in servicing search requests</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>namingcontexts 
+			</P>
+		</TD>
+		<TD>
+			<P>Naming Context</P>
+		</TD>
+		<TD>
+			<P>Identifies the service when processing the incoming request.
+			Must be in the form 'attribute=value'.</P>
+		</TD>
+	</TR>
+</TABLE>
+<B>Table 4: Service Instance Values Required for IM to Act as a
+DSMLv2 Server</B> 
+</div>
+<P>Authentication of DSMLv2 clients is done via a Java Authentication
+and Authorization Service Logon Module. The name of this login module
+is 'serviceLoginContext'. Although it should not be necessary to
+configure it, the J2EE application vendors' documentation (Websphere
+) will provide information on configuration in case of
+troubleshooting.</P>
+<P>IM will only return one entry as the result of a search request
+from a DSMLv2 client. Change password events need not be sent to IM
+because IM will not store the password.</P>
+<H4><a name="ISDIClient"></a>ISDI as a DSMLv2 Client</H4>
+<P>ISDI needs to function as a DSMLv2 client in order to initiate
+identity feeds via the JNDI interface and to send account management
+event notifications. In order for ISDI to act as a DSMLv2 client to
+IM these components are required:</P>
+<UL>
+	<LI>An assembly line - to contain the
+	connectors 
+	<LI>A connector to communicate with
+	the enterprise system. This connector should contain an input map to
+	map from the enterprise data store attributes to attributes
+	understood by IM. 
+	<LI>A JNDI connector to communicate with IM. If this connector
+	operates in update or delete mode then link criteria must be
+	specified. This will be treated as an LDAP filter by ISDI and it
+	should result in unique lookup of entries.
+</UL>
+<P>The sequence of messages that is passed between the ISDI components
+is shown in Figure 12.</P>
+<div align="center">
+<img
+ alt="Sequence Diagram for ISDI Acting as a DSMLv2 Client"
+ src="images/ISDI_dsmlv2_client.gif"><br>
+<b>Figure 12: Sequence Diagram of ISDI Acting as a DSMLv2 Client</b>
+</div>
+<P>An explanation of these steps is:</P>
+<UL>
+	<LI>The organizational administrator run the assembly line. 
+	<LI>The assembly line starts the ISDI
+	Connector to the enterprise system in iterate mode. 
+	<LI>The connector performs a search of
+	the enterprise data store. 
+	<LI>For each entry found the JNDI
+	connector is invoked in update mode. Alternatively, this connector
+	could operate in add-only or delete mode. 
+	<LI>The JNDI connector attempts to
+	lookup the entry in IM. If the JNDI connector is operating in
+	add-only mode there will be no lookup. 
+	<LI>IM receives the search request
+	and looks for the entry in it's own data store. 
+	<LI>If the entry is not found, the JNDI connector will send an
+	add request to IM. If the entry is found but a difference detected,
+	the JNDI connector will send a modify request to IM. If the entry
+	is found and the JNDI connector is operating in delete mode, then
+	the JNDI connector will send IM a delete request. 
+</UL>
+<P>A JNDI connector should be used in add-only, update, or delete
+mode. The parameters necessary for the connector to communicate with
+IM are described in Table 5.</P>
+<div align="center">
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=2>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><B>Attribute</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Value</B></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><B>Description</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JNDI Driver</P>
+		</TD>
+		<TD>
+			<P>com.ibm.dsml2.jndi.DSML2InitialContextFactory</P>
+		</TD>
+		<TD>
+			<P>The name of the Java class implementing
+			javax.naming.spi.InitialContextFactory</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Provider URL</P>
+		</TD>
+		<TD>
+			<P>protocol://host:port/enrole/dsml2_event_handler</P>
+		</TD>
+		<TD>
+			<P>Protocol may be either http or https. The host is the IP or DNS
+			name of the machine. Port is the port that host is listening on.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Authentication Method</P>
+		</TD>
+		<TD>
+			<P>Simple</P>
+		</TD>
+		<TD>
+			<P>Uses the principal and key supplied.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Login Username</P>
+		</TD>
+		<TD>
+			<P>Implementation specific</P>
+		</TD>
+		<TD>
+			<P>Must match the value of User ID defined on the IM service
+			instance.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Login Password</P>
+		</TD>
+		<TD>
+			<P>Implementation specific</P>
+		</TD>
+		<TD>
+			<P>Must match the value of Password defined on the IM service
+			instance.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Name Parameter</P>
+		</TD>
+		<TD>
+			<P>$dn</P>
+		</TD>
+		<TD>
+			<P>Must match the name of the distinguished name in input map and
+			link scripts.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Search Base</P>
+		</TD>
+		<TD>
+			<P>Implementation specific</P>
+		</TD>
+		<TD>
+			<P>The search base is used to locate the IM service. It must
+			match the value of Naming Context defined on the IM service
+			instance and it must be in the form 'attribute=value'.</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Search Filter</P>
+		</TD>
+		<TD>
+			<P>(objectclass=*)</P>
+		</TD>
+		<TD>
+			<P>Required to be present but does not often need a more specific
+			value.</P>
+		</TD>
+	</TR>
+</TABLE>
+<B>Table 5: JNDI Connector Properties</B> 
+</div>
+<P>The provider URL may also include the tenant, if IM is installed
+as a multi-tenant system. In this case the Provider URL would have
+the form:</P>
+<PRE STYLE="margin-bottom: 0.2in">protocol://host:port/enrole/dsml2_event_handler/tenantID</PRE><P>
+Usually the tenant id is not required, since IM will look up the
+default value in it's configuration files. &nbsp;The naming context
+may also be added to the url instead of being specified in the search
+base parameter. &nbsp;If this was done the url would look like this:</P>
+<PRE STYLE="margin-bottom: 0.2in">protocol://host:port/enrole/dsml2_event_handler/tenantID/namingContex</PRE><P>
+User should note that, while the search base and the naming context
+in the url are alternative ways of specifying the same parameter, the
+search parameter is only used for searches, whereas the namingcontext
+in the url is used for all requests. This becomes important for add
+requests. If the search base parameter specifies the naming context
+it won't be used in an add request unless the user specifically adds
+it to the distinguished name of the entry.</P>
+<P>There are a number of points available within ISDI to customize the
+data sent to IM. For example, when performing an identity feed the
+data desired to be stored within IM may not necessarily be available
+from a single enterprise data source. In this case more than one ISDI
+connector can be used to collect and combine information from the
+enterprise data sources before sending the entry to IM. The flexible
+scripting environment available from with IM is ideal for this.</P>
+<H4><a name="https"></a>Use of Hypertext Transfer Protocol over a Secure Sockets Layer
+(https)</H4>
+<P>For account management and identity data feed over the network in
+a production environment it is strongly recommended to use a secure
+protocol. Communication over https is provided to maintain the
+privacy of data used in communication between IM and ISDI using
+cryptographic methods. Transmission of this data over the network
+without encryption should only be used in development, test, or pilot
+environments.</P>
+<P>The implementation of https for IM - ISDI communication is
+implemented using the Java Secure Sockets Extension (JSSE) https
+protocol handler. The JSSE implementation is provided as part of the
+J2EE application server. </P>
+<P>Documentation on configuration of JSSE with the application server
+can be found from the application server vendors' site: <A HREF="https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.5/as_ditamaps/was9_welcome_base.html">Websphere
+Application Server Knowledge Center</A>. More fundamental information
+on JSSE for Websphere can be found  <a href="https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.5/com.ibm.websphere.base.doc/ae/csec_jsse.html">here.</a></P>
+<P>The certificate stores used by these interfaces and
+implementations uses the Java Key Store (JKS) format. Starting with Websphere version 6.1 you can manage your keys using the Websphere administrative console. More information can be found <a
+	href="https://www.ibm.com/support/knowledgecenter/en/SSEQTP_9.0.5/com.ibm.websphere.base.doc/ae/csec_sslcertmanadmin.html">here</a>.</P>
+<P>Although the demonstration certificates provided with the
+application servers can be used to test https configuration, for
+production either certificates should be customer self issued or
+obtained from a vendor such as <A HREF="http://www.verisign.com/">Verisign</A>.</P>
+<P>The steps listed here are for configuring http with Websphere.</P>
+<P STYLE="margin-bottom: 0in">Steps for enabling SSL:</P>
+<OL>
+	<LI>Create Java key store (JKS) format
+	files using the Websphere IKeyMan key management tool for both the
+	server and the client. 
+	<LI>To enable ISDI to act as the SSL
+	server, check the 'Use SSL' checkbox in the HTTP Event Handler
+	configuration tab. Follow the instructions in the <A HREF="https://www.ibm.com/support/knowledgecenter/en/SSCQGF_7.2.0/com.ibm.IBMDI.doc_7.2/welcome.html">IBM
+	Security Directory Integrator Reference Guide</A>, 'Secure Sockets Layer (SSL) Support' section under 'Installing and Administering > Security'. Restart ISDI. Make sure that
+	the trust database and key database properties are pointing to the
+	JKS files in step 1. 
+	<LI>To enable IM to recognize the 'https' protocol in the URL
+	when making a request to ISDI, add the property 
+	<PRE STYLE="margin-bottom: 0.2in">        java.protocol.handler.pkgs=com.ibm.net.ssl.internal.www.protocol</PRE><P STYLE="margin-bottom: 0in">
+	in the JVM settings using the Websphere console. 
+	<LI>To enable IM to be a client of the SSL connection with ISDI
+	add the following properties 
+	<PRE>        javax.net.ssl.trustStore=&lt;full path to trust store&gt;
+        javax.net.ssl.trustStorePassword=&lt;password to trust store&gt;</PRE>
+	in the JVM settings using the Websphere console. 
+	<LI>Save the settings and restart Websphere. 
+</OL>
+<H4><a name="passwordManagement"></a>Password Management and Binary Attributes</H4>
+<P>The password management attribute in IM is defined with a binary
+syntax. In addition, there may be user-defined attributes that are
+binary. Because XML is a text based markup language, these attributes
+are transported over the network using a base 64 encoding. Base 64
+encoding is a method for representing binary data as text. In order
+for this to work, both IM and ISDI must have a common understanding
+of the binary nature of these attributes.</P>
+<P>The DSMLv2 event listener in ISDI will base 64 decode attributes if
+they are well known binary attributes or if they appear in the
+listener configuration tab in the Extra Binary Attributes Field. 
+</P>
+<P>In some cases, attributes on the managed resource may be strings,
+even though the attribute coming from IM is binary. This will not be
+uncommon for password, which many resources define as binary and
+others define as a string. In this case, a type conversion must be
+done. The simplest way to do this is to insert a hook in the ISDI
+connector output map such as this example:</P>
+<PRE STYLE="margin-bottom: 0.2in">ret.value = new java.lang.String(work.getObject(&quot;erpassword&quot;, &quot;UTF-8&quot;));</PRE><P>
+Binary attributes should be encoded to a Base 64 string in any
+request from ISDI to IM or vice-versa. At receiver's end, these
+attributes should be decoded from Base 64 string to get the binary
+value. In IM, only the binary attributes with syntax listed in
+$IM_HOME\data\Dsml2Schema.properties are encoded or decoded, while
+communicating with ISDI.</P>
+<P>In some cases, the syntax of a particular binary attribute may not
+be present in Dsml2Schema.properties.</P>
+<P>Steps to add a new attribute syntax in Dsml2Schema.properties:</P>
+<OL>
+	<LI>Open Dsml2Schema.properties file
+	in a text editor. 
+	<LI>Add an entry for the desired binary attribute, to the file in
+	the following format
+	:-<BR>syntax.binary.&lt;ATTRIBUTE_SYNTAX_NAME&gt;=&lt;OID_OF_SYNTAX&gt;<BR>For
+	example, the attribute syntax of 'OctetString' is used for&nbsp;
+	some binary attributes in Sun Directory Server. So to add
+	attribute syntax of octetstring, add the following entry to the
+	file: 
+	<PRE STYLE="margin-bottom: 0.2in">syntax.binary.octetstring=1.3.6.1.4.1.1466.115.121.1.40</PRE>
+	<LI>Save the file. 
+	<LI>Restart IM for the changes to take effect. 
+</OL>
+<H4><a name="authentication"></a>Authentication of IM to ISDI</H4>
+<P>With endpoints hosted by the Agent Development Kit (ADK),
+authentication of requests was done via a lookup to a local password
+database on a per agent basis and setting of that password was done
+via a simple menu item in the agent configuration AgentCfg tool. With
+an ISDI DSMLv2 event handler this is now done by setting an ISDI
+Connector in the event handler configuration screen. That connector
+should be configured to operate in lookup mode with an attribute of
+'username'. An example database is given in the LDAP account
+management example.</P>
+<H4><a name="filtering"></a>Filtering in Search Requests</H4>
+<P>The reconciliation management user interface for IM allows the
+user to enter a search filter for each reconciliation unit. This
+filter is passed to ISDI, however, within ISDI configuration is
+required to make use of the filter. The connector must be customized
+using a script to read the filter from the incoming request and set
+it into the search filter attribute for the LDAP connector.  Out of
+the box only the LDAP and JNDI connectors will be able to make use of
+this.</P>
+<P>To implement this, in the ISDI search assembly line, in the Hooks
+tab for the connector, add a script in the Before Selection Hook. The
+script should read the value for the work property &quot;dsml.filter&quot;
+and set it into the connector. This is demonstrated in the ldap
+account management example.</P>
+<H4><a name="troubleshooting"></a>Troubleshooting</H4>
+<P>Within ISDI most messages are printed to the main console and there
+are a number of methods to get more information about the events that
+occur. See the ISDI documentation for more details.</P>
+<P>For troubleshooting within IM the logs provide useful
+information. These can be configured via the JLog settings in
+&lt;IM_HOME&gt;/data/enRoleLogging.properties. Most of the
+functionality here can be traced with the setting:</P>
+<PRE STYLE="margin-bottom: 0.2in">logger.trace.com.ibm.itim.remoteservices.level=DEBUG_MAX</PRE>
+</BODY>
+</HTML>

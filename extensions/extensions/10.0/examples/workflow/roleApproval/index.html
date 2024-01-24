@@ -1,0 +1,728 @@
+<html>
+
+<head>
+<title>Role Owner approval during a Person Create or Modify</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Role Owner Approvals</h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In TIM 5.0, the </span><tt><span
+style='font-size:10.0pt;color:black'>Role Owner</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> can now be the
+participant of an </span><tt><span style='font-size:10.0pt;color:black'>Approval</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity. Out of the box
+there are two new workflow extensions with regards to handling role changes for
+a given person.</span></p>
+
+<h2>Role Owner Approval Workflow Extensions</h2>
+
+<ul type=disc>
+ <li  style='color:black'><tt><span style='font-size:10.0pt'>approveRolesByOwner(Person
+     person)</span></tt><span style='font-family:"Arial","sans-serif"'> </span></li>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>Person
+      person</span></tt></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>- Cannot be null. Will cause activity to fail because of invalid
+data. </span></p>
+
+<p  style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'>This workflow extension takes a person as an input parameter. If
+the person has new roles found (determined by the javascript: </span><tt><span
+style='font-size:10.0pt;color:black'>person.getNewRoles()</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>), approvals will be
+generated for those roles and sent to the role owners. The approval process
+cannot be customized and so the participant is always the Role Owner. The roles
+cannot be customized and will always be the new roles on the person.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><tt><span style='font-size:10.0pt'>approveRolesWithOperation(Person
+     person, List rolelist, String approvalOperationName)</span></tt><span
+     style='font-family:"Arial","sans-serif"'> </span></li>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>Person
+      person</span></tt></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>- Cannot be null. Will cause activity to fail because of invalid
+data. </span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>List
+      rolelist</span></tt></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>- Can be null. If null, roles to approve will be pulled off the
+person via the javascript: </span><tt><span style='font-size:10.0pt;color:black'>person.getNewRoles()</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>. A new list of roles can
+be manually set to the </span><tt><span style='font-size:10.0pt;color:black'>rolelist</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> by writing the
+appropriate script within a script node prior to the Role Owner Approval
+Workflow Extension node. For instance, the following script could be used to
+set a new role to the </span><tt><span style='font-size:10.0pt;color:black'>rolelist</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>: </span></p>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>&nbsp;</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> &lt;script&gt;</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> var roles = (new RoleSearch()).searchByName(&quot;roleName&quot;);</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> if (roles.length &gt; 0) {</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> rolelist.set(roles);</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> }</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> &lt;/script&gt;</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> </span></pre>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>Here, </span><tt><span style='font-size:10.0pt;color:black'>roleName</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> is the name of an
+existing role. </span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>String
+      approvalOperationName</span></tt></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>- Can be null. If null, the default simple approval operation
+(which has the role owner as the participant) will be used. </span></p>
+
+<p  style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'>This workflow extension takes a person, role list, and approval
+operation name as input parameters. The person's new roles will start the
+specified approval operation name for each role. If a role list passed to the
+extension and is not null while having roles in it, approvals will only be
+generated for those roles in the list rather than using person.getNewRoles(). </span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Note:
+     When one or more role approval requests are rejected by the role owner,
+     then the respective roles shall not be added to the person, but the person
+     operation will be continued in the usual manner.</span></li>
+</ul>
+
+<h1>Role Owner approval during a Person Create or Modify</h1>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="#simple">Simple role owner approval for all new roles</a></span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="#custom_approval">Customized role owner approval process for all new
+     roles</a></span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="#additional_customizations">Additional customizations that could be
+     made to skip the approval process, when the new roles have no owner
+     defined.</a></span></li>
+</ol>
+
+<h2><a name=simple>Simple Role Owner approval for all new roles for a Person</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This example
+covers the following use case: Given a person's new roles (added during person
+add or person modify), role owner approvals need to be generated for each of
+those new roles provided those new roles have owners defined. If the owner is
+not defined for the newly added role, then the participant resolution fails and
+the approval request goes to System Administrators. After executing the below
+steps, kindly follow the steps mentioned under the third heading listed above,
+if you need to skip the approval process by the System Administrators, in the
+absence of a role owner. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The role owner
+approval process in this case is very simple. The process has one approval
+activity where the participant is the role owner and role.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Changes are
+required to the person add and person modify operations (Configure System &gt;
+Manage Operations) highlighted below.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=619 height=487 src="images/simple/1_person_add_modify.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Both the person
+add and person modify operations will require the same extension activity
+dragged in before the </span><tt><span style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity or </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>First modify the
+person add operation by opening the operation in the workflow designer. Drag in
+a new </span><tt><span style='font-size:10.0pt;color:black'>EXTENSION</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity. Connect
+transitions between the </span><tt><span style='font-size:10.0pt;color:black'>START</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, </span><tt><span
+style='font-size:10.0pt;color:black'>EXTENSION</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, and </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activities as show below.
+The extension to select is </span><tt><span style='font-size:10.0pt;color:black'>approveRolesByOwner(Person
+person)</span></tt><span style='font-family:"Arial","sans-serif";color:black'>.
+Finally map the person relevant data item to the person input parameter and
+person output parameter. The final activity will look like the one show below.
+Save the operation by clicking </span><tt><span style='font-size:10.0pt;
+color:black'>OK</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=826 height=792 src="images/simple/2_person_add.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Now select the
+person modify operation to apply the same changes as done for the person add
+operation. The final activity will look like the one show below. Save the
+operation by clicking </span><tt><span style='font-size:10.0pt;color:black'>OK</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=832 height=771 src="images/simple/3_person_modify.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>All changes are
+now complete. During any person add or modify, approval(s) will be generated
+for any new role(s) added to the given person. Approvals will be generated for
+each role of the new roles provided the role has an owner defined.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The status of the
+role owner approval in this example as it is so far will not be rolled up to
+the top level of the audit trail. If you need to do that you will need to add
+these lines to the post script for the role approval activity:</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> WorkflowRuntimeContext.setProcessResult(WorkflowRuntimeContext.getActivityResult());</span></pre><pre><span
+style='color:black'> WorkflowRuntimeContext.setProcessResultDetail(WorkflowRuntimeContext.getActivityResultDetail());</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>and remove or
+modify the post script code on the activities following the role approval
+extension. </span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Note</span></b><span
+style='font-family:"Arial","sans-serif";color:black'>: To generate the approval
+request, ensure that you add the extension node, </span><tt><span
+style='font-size:10.0pt;color:black'>approveRolesByOwner</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, before the </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> or the </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity. Adding the
+extension node after the </span><tt><span style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> or the </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity does not
+generate the approval request.</span></p>
+
+<h2><a name="custom_approval">Customized role owner approval process for all
+new roles</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This example
+builds upon the </span><span style='font-family:"Arial","sans-serif";
+color:black'><a href="#simple">first</a> example above but the use case is
+slightly modified.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Use case: Given a
+person's new roles (added during person add or person modify), role owner
+approvals need to be generated for each of those new roles provided those new roles
+have owners defined. However, the role owner approval process needs to be
+customized rather than using the simple approval process defined out of the
+box. If the owner is not defined for the newly added role, then the participant
+resolution fails and the approval request goes to System Administrators. After
+executing the below steps, kindly follow the steps mentioned under the third
+heading listed above, if you need to skip the approval process by the System
+Administrators, in the absence of a role owner.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Changes are
+required to the person add and person modify operations (Configure System &gt;
+Manage Operations) highlighted below.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=619 height=487 src="images/simple/1_person_add_modify.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Both the person
+add and person modify operations will require the same extension activity
+dragged in before the </span><tt><span style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity or </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>First modify the person
+add operation by opening the operation in the workflow designer. Drag in a new </span><tt><span
+style='font-size:10.0pt;color:black'>EXTENSION</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity. Connect
+transitions between the </span><tt><span style='font-size:10.0pt;color:black'>START</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, </span><tt><span
+style='font-size:10.0pt;color:black'>EXTENSION</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, and </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activities as show below.
+The extension to select is </span><tt><span style='font-size:10.0pt;color:black'>approveRolesWithOperation(Person
+person, List rolelist, String approvalOperationName)</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>. Finally map the person
+relevant data item to the person input parameter and person output parameter.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=827 height=792 src="images/custom_approval/2_person_add.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click on </span><tt><span
+style='font-size:10.0pt;color:black'>Search Relevant Data</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=528 height=258
+src="images/custom_approval/2a_person_add_relevant_data.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add a </span><tt><span
+style='font-size:10.0pt;color:black'>rolelist</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> relevant data item.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=373 height=246
+src="images/custom_approval/2a_person_add_relevant_data_add_rolelist.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add a </span><tt><span
+style='font-size:10.0pt;color:black'>customApprovalOperationName</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> relevant data item with a
+default value of </span><tt><span style='font-size:10.0pt;color:black'>My
+Custom Role Approval</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>. This name could be any global operation name that has been setup
+for being a custom role approval operation (shown later in this example).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=373 height=245
+src="images/custom_approval/2a_person_add_relevant_data_add_custom_approval_operation_name.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Final relevant
+data item list after adding </span><tt><span style='font-size:10.0pt;
+color:black'>rolelist</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> and </span><tt><span style='font-size:10.0pt;color:black'>customApprovalOperationName</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=527 height=260
+src="images/custom_approval/2b_person_add_relevant_data_final.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The final
+extension activity after mapping all relevant data items. Click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the activity and click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the person add operation.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=832 height=795 src="images/custom_approval/2c_person_add.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Modify the person
+modify operation by opening the operation in the workflow designer. Changes
+here will be very similar to what was done for the person add operation.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=832 height=774 src="images/custom_approval/3_person_modify.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click on </span><tt><span
+style='font-size:10.0pt;color:black'>Search Relevant Data</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=528 height=263
+src="images/custom_approval/3a_person_modify_relevant_data.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add a </span><tt><span
+style='font-size:10.0pt;color:black'>rolelist</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> relevant data item.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add a </span><tt><span
+style='font-size:10.0pt;color:black'>customApprovalOperationName</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> relevant data item with a
+default value of </span><tt><span style='font-size:10.0pt;color:black'>My
+Custom Role Approval</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>. This name could be any global operation name that has been setup
+for being a custom role approval operation (shown later in this example).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The final
+extension activity after mapping all relevant data items. Click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the activity and click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the person modify operation.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=838 height=785 src="images/custom_approval/3b_person_modify.jpg"></span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Note</span></b><span
+style='font-family:"Arial","sans-serif";color:black'>: To generate the approval
+request, ensure that you add the extension node, </span><tt><span
+style='font-size:10.0pt;color:black'>approveRolesWithOperation</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>, before the </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> or the </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity. Adding the
+extension node after the </span><tt><span style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> or the </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity does not
+generate the approval request.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click on the </span><tt><span
+style='font-size:10.0pt;color:black'>Global</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> operation level and click on </span><tt><span
+style='font-size:10.0pt;color:black'>Add...</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=671 height=371
+src="images/custom_approval/4_custom_approval_operation.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Specify the </span><tt><span
+style='font-size:10.0pt;color:black'>Operation Name</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> to be </span><tt><span
+style='font-size:10.0pt;color:black'>My Custom Role Approval</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> (the name we specified
+earlier in the person add/modify </span><tt><span style='font-size:10.0pt;
+color:black'>customApprovalOperationName</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'>'s default value). </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=691 height=342
+src="images/custom_approval/4a_custom_approval_operation.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After the
+workflow designer opens, click on the </span><tt><span style='font-size:10.0pt;
+color:black'>Properties</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> button in the upper right. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=833 height=767
+src="images/custom_approval/4b_custom_approval_operation.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Two input
+parameters are required in order to use this global operation as the custom
+approval operation name. These input parameters are </span><tt><span
+style='font-size:10.0pt;color:black'>personIn</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> and </span><tt><span
+style='font-size:10.0pt;color:black'>roleIn</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> and will need to be added in the same order
+as shown below. This is because this global operation gets executed via
+&quot;approveRolesByOperation&quot; extension used in Person add/modify
+operation earlier. The input parameters to this
+&quot;approveRolesByOperation&quot; extension are defined in the following
+order:</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'></br>Input Parameters:</span></b><span
+style='font-family:"Arial","sans-serif";color:black'></br> </span><tt><span
+style='font-size:10.0pt;color:black'>person</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> of type </span><tt><span style='font-size:
+10.0pt;color:black'>Person</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'></br> </span><tt><span style='font-size:10.0pt;color:black'>rolelist</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> of type </span><tt><span
+style='font-size:10.0pt;color:black'>List</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'></br> </span><tt><span style='font-size:10.0pt;
+color:black'>approvalOperationname</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> of type </span><tt><span style='font-size:10.0pt;color:black'>String</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Since input
+values for parameters(person,rolelist) specified above are mapped with input
+parameters(personIn, roleIn) defined here, these input parameters should be
+added in [personIn,roleIn] order as shown below. Any change in this order will
+lead to incorrect mapping of person relevant data to role object and vice-versa
+and will not produce the expected results.</span></p>
+
+<p><tt><span style='font-size:10.0pt;color:black'>personIn</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> has the type of </span><tt><span
+style='font-size:10.0pt;color:black'>Person</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=371 height=248
+src="images/custom_approval/4d_custom_approval_input_person.jpg"></span></p>
+
+<p><tt><span style='font-size:10.0pt;color:black'>roleIn</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> has the type of </span><tt><span
+style='font-size:10.0pt;color:black'>Organizational Role</span></tt></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=373 height=245
+src="images/custom_approval/4d_custom_approval_input_role.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Final input
+parameter list</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=529 height=462
+src="images/custom_approval/4c_custom_approval_input_parameters.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Drag in a new </span><tt><span
+style='font-size:10.0pt;color:black'>APPROVAL</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity put it between </span><tt><span
+style='font-size:10.0pt;color:black'>START</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> and </span><tt><span style='font-size:10.0pt;
+color:black'>END</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> while connecting transitions as shown.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=835 height=776
+src="images/custom_approval/4e_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Open the approval
+activity and specify the </span><tt><span style='font-size:10.0pt;color:black'>Participant</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> as </span><tt><span
+style='font-size:10.0pt;color:black'>Role Owner</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>. Map the input parameters
+</span><tt><span style='font-size:10.0pt;color:black'>roleIn</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> and </span><tt><span
+style='font-size:10.0pt;color:black'>personIn</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=852 height=785
+src="images/custom_approval/4f_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>On the </span><tt><span
+style='font-size:10.0pt;color:black'>Notification</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> tab, add the following to
+the text and XHTML bodies:</span></p>
+
+<pre style='margin-left:60.0pt'><span style='color:black'>This is a role owner approval for role: &lt;JS&gt;roleIn.get().name;&lt;/JS&gt;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The notification
+can be customized further but for this example this is the only modification
+made.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=843 height=788
+src="images/custom_approval/4g_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>On the </span><tt><span
+style='font-size:10.0pt;color:black'>Action Text</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> tab, uncheck </span><tt><span
+style='font-size:10.0pt;color:black'>Use Notification Text as Action Text</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> and specify the following
+as the action text:</span></p>
+
+<pre style='margin-left:60.0pt'><span style='color:black'>This is a role owner approval for role: &lt;JS&gt;roleIn.get().name;&lt;/JS&gt;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The action text
+can be customized further but for this example this is the only modification
+made.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=877 height=791
+src="images/custom_approval/4h_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>On the </span><tt><span
+style='font-size:10.0pt;color:black'>Postscript</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> tab, add the following
+javascript which will bubble up the result of the approval activity which is
+required. This result is used to remove or leave the given role on the person
+object before the person is stored in the data store.</span></p>
+
+<pre style='margin-left:60.0pt'><span style='color:black'>process.setResult(activity.resultSummary, activity.resultDetail);</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=831 height=761
+src="images/custom_approval/4i_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the approval activity and click </span><tt><span
+style='font-size:10.0pt;color:black'>OK</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> to save the new global operation named </span><tt><span
+style='font-size:10.0pt;color:black'>My Custom Role Approval</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=853 height=777
+src="images/custom_approval/4j_custom_approval_approval_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>All changes are
+now complete. During any person add or modify, approval(s) will be generated
+for any new role(s) added to the given person using the </span><tt><span
+style='font-size:10.0pt;color:black'>My Custom Role Approval</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> global operation.
+Approvals will be generated for each role of the new roles provided the role
+has an owner defined.</span></p>
+
+<h2><a name="additional_customizations"><!-- <a name="custom_approval_advanced"/>
+<h2>Customized role owner approval process for all new roles (Advanced)</h2>
+
+<p></p>
+ -->Additional
+customizations that could be made to skip the approval process, when the new
+roles have no owner defined.</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>As mentioned
+before, in case the owner is not defined for the newly added role, then the
+participant resolution fails and the request goes to System
+Administrators.Please follow the steps mentioned below to skip this approval
+process, if none of the newly added roles have an owner. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Note that these
+steps are additional customizations that are to be implemented only after
+completing the steps mentioned above (Either 1 or 2). </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Both the person
+add and person modify operations will require the same </span><tt><span
+style='font-size:10.0pt;color:black'>SCRIPT</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> node to be dragged in before the </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity or </span><tt><span
+style='font-size:10.0pt;color:black'>MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activity.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>First modify the
+person add operation by opening the operation in the workflow designer. Drag in
+a new SCRIPT node.Connect transitions between the </span><tt><span
+style='font-size:10.0pt;color:black'>START</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'>, </span><tt><span style='font-size:10.0pt;
+color:black'>SCRIPT</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>, </span><tt><span style='font-size:10.0pt;color:black'>EXTENSION</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> and </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> activities as shown
+below.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=900 height=761 src="images/additional_customizations/1_person_add.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click on
+properties (encircled in red below). Add a relevant data item roleOwnerExists.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=912 height=768
+src="images/additional_customizations/2_person_add_relevant_data_add_roleOwnerExists.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the following
+script to the script node:</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>&lt;script&gt;</span></pre><pre><span
+style='color:black'> roleOwnerExists.set(&quot;false&quot;);</span></pre><pre><span
+style='color:black'> var per = person.get();</span></pre><pre><span
+style='color:black'> var rolesArray = per.getNewRoles();</span></pre><pre><span
+style='color:black'> for( var i=0; i&lt;rolesArray.length;i++) {</span></pre><pre><span
+style='color:black'> &nbsp;&nbsp;var owners = rolesArray[i].getProperty(&quot;owner&quot;);</span></pre><pre><span
+style='color:black'> &nbsp;&nbsp;if(owners.length!=0){</span></pre><pre><span
+style='color:black'> &nbsp;&nbsp;&nbsp;&nbsp;roleOwnerExists.set(&quot;true&quot;);</span></pre><pre><span
+style='color:black'> &nbsp;&nbsp;&nbsp;&nbsp;break;</span></pre><pre><span style='color:
+black'> &nbsp;&nbsp;}</span></pre><pre><span style='color:black'> }</span></pre><pre><span
+style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>&lt;/script&gt;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=876 height=739
+src="images/additional_customizations/3_person_add_script_node.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the following
+condition to the transition line connecting </span><tt><span style='font-size:
+10.0pt;color:black'>CheckForRoleOwner</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'> (</span><tt><span style='font-size:10.0pt;color:black'>SCRIPT</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> node) and </span><tt><span
+style='font-size:10.0pt;color:black'>CREATE PERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> :</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> roleOwnerExists.get()==&quot;false&quot;;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=876 height=668
+src="images/additional_customizations/4_person_add_link_scriptnode_createperson.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Now add the
+following condition to the transition line connecting </span><tt><span
+style='font-size:10.0pt;color:black'>CheckForRoleOwner</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> (</span><tt><span
+style='font-size:10.0pt;color:black'>SCRIPT</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> node) and </span><tt><span style='font-size:
+10.0pt;color:black'>RoleApprovalExtensionId</span></tt><span style='font-family:
+"Arial","sans-serif";color:black'> (</span><tt><span style='font-size:10.0pt;
+color:black'>EXTENSION</span></tt><span style='font-family:"Arial","sans-serif";
+color:black'>) :</span></p>
+
+<pre><span style='color:black'> roleOwnerExists.get()==&quot;true&quot;;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Save the
+operation by clicking OK.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Perform similar
+changes to Person modify workflow as well .In the </span><tt><span
+style='font-size:10.0pt;color:black'>CheckForRoleOwner SCRIPT</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> node, replace the line</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> var per = person.get();</span></pre><pre><span
+style='color:black'> with the following line:</span></pre><pre><span
+style='color:black'> var per = Entity.get();</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Save the changes.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For the Person
+modify workflow, the final activity will appear as follows:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img border=0
+width=888 height=744 src="images/additional_customizations/5_person_modify.jpg"></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>If you are
+customizing the workflow designed for 'Customized role owner approval process
+for all new roles', you may need to replace the line : </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>var rolesArray = per.getNewRoles();</span></pre><pre><span
+style='color:black'> with</span></pre><pre><span style='color:black'> var rolesArray = rolelist.get ();</span></pre>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>, only when you explicitly
+set the rolelist with some pre-defined role. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>All the required
+changes have been done now.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After applying
+these changes, the approval request will be generated only if the newly added
+role has at least one owner defined for it. Otherwise, the </span><tt><span
+style='font-size:10.0pt;color:black'>CREATEPERSON / MODIFYPERSON</span></tt><span
+style='font-family:"Arial","sans-serif";color:black'> operation will be
+directly performed and the operation RoleApprovalExtensionId will be skipped.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Note: With the
+above customization, if more than one role is added to the person, then the
+approval process shall not be skipped, if at least one role from the list of
+the newly added roles , has an owner. And in such a scenario, the approval
+request for the roles without an owner would be sent to the System
+Administrators.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><a
+href="../index.html">Back up one level</a> </span></p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chaiti Ghatnekar</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_sod_definition">SoD Definition Report Master</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">1865</property>
+            <expression name="value">if((!(params["Business Unit"].value == null || params["Business Unit"].value == "" || params["Business Unit"].value == "Any" )) &amp;&amp; (!(params["Separation of Duty Policy Name"].value == null || params["Separation of Duty Policy Name"].value == "" || params["Separation of Duty Policy Name"].value == "Any" ))  )
+"select * from SOD_POLICY s0 where s0.ENABLED in ('T', 'F') and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and s0.ENABLED in ('T','F')) and s0.DN = '"+params["Separation of Duty Policy Name"]+"' and s0.BUSINESS_UNIT_NAME = '"+params["Business Unit"]+"' order by s0.NAME, s0.BUSINESS_UNIT_NAME"
+else{
+if(!(params["Business Unit"].value == null || params["Business Unit"].value == "" || params["Business Unit"].value == "Any" ))
+"select * from SOD_POLICY s0 where s0.ENABLED in ('T', 'F') and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and s0.ENABLED in ('T','F')) and s0.BUSINESS_UNIT_NAME = '"+params["Business Unit"]+"' order by s0.NAME, s0.BUSINESS_UNIT_NAME"
+else
+{
+if(!(params["Separation of Duty Policy Name"].value == null || params["Separation of Duty Policy Name"].value == "" || params["Separation of Duty Policy Name"].value == "Any" ))
+"select * from SOD_POLICY s0 where s0.ENABLED in ('T', 'F') and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and s0.ENABLED in ('T','F')) and s0.DN = '"+params["Separation of Duty Policy Name"]+"' order by s0.NAME, s0.BUSINESS_UNIT_NAME"
+else
+"select * from SOD_POLICY s0 where s0.ENABLED in ('T', 'F') and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and s0.ENABLED in ('T','F')) order by s0.NAME, s0.BUSINESS_UNIT_NAME"
+}
+
+}</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">1865</property>
+        </structure>
+    </list-property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "sod_definition.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_sod_definition");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_sod_definition">SoD Definition Report Master</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Separation of Duty Policy Name" id="2277">
+            <text-property name="helpText" key="parameter_tooltip_sod_policy_name"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_sod_policy_name"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">SoDNames</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["NAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Business Unit" id="2278">
+            <text-property name="helpText" key="parameter_tooltip_business_unit"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_business_unit"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">SoDBUs</property>
+            <expression name="valueExpr">dataSetRow["BUSINESS_UNIT_NAME"]</expression>
+            <expression name="labelExpr">dataSetRow["BUSINESS_UNIT_NAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SoDByNameAndBU" id="1865">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ID</property>
+                    <property name="displayName">ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">GLOBAL_ID</property>
+                    <property name="displayName">GLOBAL_ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DESCRIPTION</property>
+                    <property name="displayName">DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">BUSINESS_UNIT_NAME</property>
+                    <property name="displayName">BUSINESS_UNIT_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENABLED</property>
+                    <property name="displayName">ENABLED</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">VERSION</property>
+                    <property name="displayName">VERSION</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">GLOBAL_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">BUSINESS_UNIT_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ENABLED</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">VERSION</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ID</property>
+                    <property name="nativeName">ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">GLOBAL_ID</property>
+                    <property name="nativeName">GLOBAL_ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="nativeName">DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">BUSINESS_UNIT_NAME</property>
+                    <property name="nativeName">BUSINESS_UNIT_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ENABLED</property>
+                    <property name="nativeName">ENABLED</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">VERSION</property>
+                    <property name="nativeName">VERSION</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select * from SOD_POLICY s0 
+where s0.ENABLED in ('T', 'F') 
+and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and s0.ENABLED in ('T','F'))
+order by s0.NAME, s0.BUSINESS_UNIT_NAME</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SoDNames" id="1900">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">GLOBAL_ID</property>
+                    <property name="displayName">GLOBAL_ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">GLOBAL_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">GLOBAL_ID</property>
+                    <property name="nativeName">GLOBAL_ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct s0.GLOBAL_ID, s0.NAME, S0.DN
+from SOD_POLICY s0 
+where (s0.ENABLED = 'T' or s0.ENABLED = 'F') 
+and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and (s0.ENABLED = 'T' or s0.ENABLED = 'F')) order by s0.NAME asc</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SoDBUs" id="1901">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">BUSINESS_UNIT_NAME</property>
+                    <property name="displayName">BUSINESS_UNIT_NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">BUSINESS_UNIT_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">BUSINESS_UNIT_NAME</property>
+                    <property name="nativeName">BUSINESS_UNIT_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct s0.BUSINESS_UNIT_NAME from SOD_POLICY s0 
+where (s0.ENABLED = 'T' or s0.ENABLED = 'F') 
+and s0.VERSION in (select max(s1.VERSION) from SOD_POLICY s1 where s0.GLOBAL_ID=s1.GLOBAL_ID and (s0.ENABLED = 'T' or s0.ENABLED = 'F')) order by s0.BUSINESS_UNIT_NAME asc</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SoDNameBasedOnParameter" id="2335">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1_SoD_DN</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select s0.NAME
+from SOD_POLICY s0 
+where s0.DN like ? </property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <property name="paddingTop">1pt</property>
+                    <text name="Report Title 1" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content" key="title_sod_definition"><![CDATA[Report Title 1]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="1762">
+                <cell id="1763">
+                    <grid id="2305">
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="width">100%</property>
+                        <column id="2306"/>
+                        <column id="2307"/>
+                        <row id="2308">
+                            <cell id="2309">
+                                <text name="SoD Name Label" id="1890">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="heading_sod_name"><![CDATA[Name]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2310">
+                                <data id="2279">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">SoDNameBasedOnParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">param_1_SoD_DN</property>
+                                            <expression name="expression">params["Separation of Duty Policy Name"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">NAME</property>
+                                            <expression name="expression">dataSetRow["NAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">SoD</property>
+                                            <expression name="expression">convertAnyToNLS(params["Separation of Duty Policy Name"], dataSetRow["NAME"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">SoD</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="2311">
+                            <cell id="2312">
+                                <text name="SoD BU Label" id="1891">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="heading_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2313">
+                                <data id="2280">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Business Unit</property>
+                                            <expression name="expression">convertAnyToNLS(params["Business Unit"], params["Business Unit"])</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Business Unit</property>
+                                </data>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="2288">
+            <property name="width">100%</property>
+            <column id="2289"/>
+            <row id="2290">
+                <cell id="2291">
+                    <label id="2215">
+                        <property name="fontWeight">normal</property>
+                        <property name="color">#000000</property>
+                        <property name="paddingTop">3px</property>
+                        <property name="paddingLeft">0px</property>
+                        <property name="paddingBottom">3px</property>
+                        <property name="paddingRight">0px</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">row["count"] &lt;= 0</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text" key="description_sod_click_on_name">instruction-label</text-property>
+                    </label>
+                    <table id="2314">
+                        <property name="marginTop">15px</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">SoDByNameAndBU</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ID</property>
+                                <expression name="expression">dataSetRow["ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">GLOBAL_ID</property>
+                                <expression name="expression">dataSetRow["GLOBAL_ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">NAME</property>
+                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DESCRIPTION</property>
+                                <expression name="expression">dataSetRow["DESCRIPTION"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">BUSINESS_UNIT_NAME</property>
+                                <expression name="expression">dataSetRow["BUSINESS_UNIT_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ENABLED</property>
+                                <expression name="expression">dataSetRow["ENABLED"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DN</property>
+                                <expression name="expression">dataSetRow["DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">VERSION</property>
+                                <expression name="expression">dataSetRow["VERSION"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Total</property>
+                                <expression name="expression">Total.count()</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <column id="2330"/>
+                        <column id="2331"/>
+                        <column id="2332"/>
+                        <column id="2333"/>
+                        <header>
+                            <row id="2315">
+                                <cell id="2316">
+                                    <label id="2163">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">5px</property>
+                                        <text-property name="text" key="heading_sod_name">NAME</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2317">
+                                    <label id="2165">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">5px</property>
+                                        <text-property name="text" key="heading_business_unit">BUSINESS_UNIT_NAME</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2318">
+                                    <label id="2167">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">5px</property>
+                                        <text-property name="text" key="heading_status">ENABLED</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2319">
+                                    <text name="SoD BU  Lable11" id="2304">
+                                        <property name="style">parameter-name</property>
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content" key="heading_description"><![CDATA[Bussiness Unit]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="2320">
+                                <cell id="2321">
+                                    <data id="2334">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <property name="resultSetColumn">NAME</property>
+                                        <structure name="action">
+                                            <property name="linkType">drill-through</property>
+                                            <property name="reportName">separation_of_duty_def_sub.rptdesign</property>
+                                            <property name="targetWindow">_blank</property>
+                                            <property name="targetFileType">report-design</property>
+                                            <list-property name="paramBindings">
+                                                <structure>
+                                                    <property name="paramName">global_id</property>
+                                                    <expression name="expression">row["GLOBAL_ID"]</expression>
+                                                </structure>
+                                            </list-property>
+                                        </structure>
+                                    </data>
+                                </cell>
+                                <cell id="2322">
+                                    <data id="2166">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <property name="resultSetColumn">BUSINESS_UNIT_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="2323">
+                                    <data id="2168">
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <list-property name="mapRules">
+                                            <structure>
+                                                <expression name="testExpr">row["ENABLED"]</expression>
+                                                <property name="operator">eq</property>
+                                                <expression name="value1">'T'</expression>
+                                                <text-property name="display" key="description_status_enabled">Enabled</text-property>
+                                            </structure>
+                                            <structure>
+                                                <expression name="testExpr">row["ENABLED"]</expression>
+                                                <property name="operator">eq</property>
+                                                <expression name="value1">'F'</expression>
+                                                <text-property name="display" key="description_status_disabled">Disabled</text-property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">ENABLED</property>
+                                    </data>
+                                </cell>
+                                <cell id="2324">
+                                    <data id="2302">
+                                        <property name="resultSetColumn">DESCRIPTION</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="2325">
+                                <cell id="2326">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="1615">
+                                        <property name="marginTop">0pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text" key="heading_total_policies">Total Policies</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2329">
+                                    <data id="2283">
+                                        <property name="marginTop">0pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="resultSetColumn">Total</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </footer>
+                    </table>
+                    <grid name="Information Message Dialog" id="1752" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1753"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="2292">
+            <property name="width">100%</property>
+            <column id="2293"/>
+            <row id="2294">
+                <cell id="2295">
+                    <property name="paddingTop">1pt</property>
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_sod_definition"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

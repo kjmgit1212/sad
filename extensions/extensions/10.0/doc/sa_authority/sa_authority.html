@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Shared Access Authorization API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P>
+<A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><BR>
+<A HREF="#apiDescription">API Description</A><BR>
+<A HREF="#apiExample">API Example</A><BR>
+<a href="#appendixA"></a></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is
+designed with extensibility as a primary goal. Many of the architectural components
+have been built using frameworks that can make use of custom
+extensions. This document describes how the shared access authorization engine can be extended 
+by plugin custom authorization providers. The ability  to plugin custom
+providers is provided through the use of a defined application
+programming interface (API). This document describes the Shared Access Authorization API.  
+It also describes how to configure the custom providers.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>Clients can use the Shared Access Authorization API to plugin one or more custom authorization providers.
+When there are multiple providers configured, the shared access
+authorization engine combines the results returned from all providers in the
+following manner:</P><p>
+
+<p>
+<ul>
+	<li>Uses &quot;Union&quot; to combine the result of authorized
+	shared accesses returned from multiple providers.
+	<li>Uses &quot;Or&quot; to combine the boolean return of checkout
+	authorization.</li>
+	</li>
+</ul>
+</p>
+</p>
+<P>
+<P>
+<p>The Shared Access Authorization API consists of 
+<ul>
+<li> An interface any custom provider must implement
+<li> A search filter class which defines the search attributes for the authorized shared accesses
+<li> A mediator class that invokes the authorization from all providers configured 
+<li> An exception class which represents an error condition during authorization
+</ul>
+<p>
+The API classes can be found in the <a
+	href="../../api/com/ibm/itim/script/package-summary.html">com.ibm.itim.pim.authority</a>,
+  classes in <a
+	href="../../api/com/ibm/itim/script/wrappers/package-summary.html">com.ibm.itim.dataservices.model.pim</a> and <a
+	href="../../api/com/ibm/itim/script/wrappers/package-summary.html">com.ibm.itim.dataservices.model</a> are also referenced as part of the API parameters.</p>
+</P><H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The focal class in the API is the
+<a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SharedAccessAuthorizationStrategy</a>.
+This  interface defines two authorization methods: 
+<ul>
+<li> Find the authorized shared accesses for a given user with a search filter 
+<li> Determine if a given user is authorized to check out a shared access
+</ul>
+A custom authorization provider must implement this interface.</P><P><a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">CredentialComponent</a> is an interface representing a credential or credential pool.  
+	A authorization provider returns the authorized shared accesses as a collection of CredentialComponent. 
+	The provider can either construct CredentialComponent with Credential and CredentialPool, 
+	or provide its own implementation for CredentialComponent. </P>
+<p><a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SharedAccessSearchFilter</a> defines the search attributes for the authorized shared accesses. 
+	The search attributes include a list of predefined attributes, plus a generic attribute and value map for any additional search attributes which is provided for extensibility. 
+	A custom provider should filter the shared accesses with the search attribute values. <a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SearchParameter</a> defines the search size limit and scope. 
+	The scope is applicable only if SharedAccessSearchFilter specifies the match string for the business unit name; otherwise, the scope is ignored.</p>
+<p><a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SharedAccessAuthority</a> serves as a mediator in the shared access authorization engine. It calls <a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SharedAccessAuthorizationProviderFactory</a> to get all the providers that are configured in pim.properties 
+	and invokes the authorization method from all providers in sequence, until the maximum size limit reached or until one provider return boolean value &quot;true&quot;.
+Below show an example of registering one custom authorization provider, and an example of registering one custom authorization provider together with the default authorization provider provided by Identity Manager:
+<pre>
+sa.authority.provider=examples.pim.SampleSAAuthrozationProvider
+</pre></p><p>
+<pre>sa.authority.provider=examples.pim.SampleSAAuthrozationProvider,com.ibm.itim.pim.authority.store.SharedAccessPolicyEvaluator</pre></p><p>If there are no providers configured in the properties file,
+SharedAccessAuthrozationProviderFactory return the default role-based
+shared access policy authorization provider, named <a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html"></a>SharedAccessPolicyEvaluator.</p>
+<p><a
+	HREF="../../api/com/ibm/itim/remoteservices/provider/ServiceProvider.html">SharedAccessAuthorityException</a> represents an error condition during authorization. </p><H2><A NAME="apiExample"></A>API Example</H2>
+<P>Please see the accompanying example code with
+this package.</P>
+<H2></H2></BODY>
+</HTML>

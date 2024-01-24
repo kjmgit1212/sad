@@ -1,0 +1,970 @@
+<html>
+
+<head>
+<title>ITDI Integration HR Feed Example</title>
+<link rel=Stylesheet type="text/css" media=all href="../../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Example Using ITDI to Feed Identity Data into ISIM</h1>
+
+<h3>Contents</h3>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><a
+href="#Example1a">Part (a) Using ISIM's Reconciliation Mechanism To Query ITDI
+for an Identity Feed</a><br>
+<a href="#Example1b">Part (b) Using ITDI to parse a Comma Separated File and
+Feeding into ISIM with the JNDI Feed Mechanism</a><br>
+<a href="#Example1bi">(i) Connector in Add-Only Mode</a><br>
+<a href="#Example1bii">(ii) Connector in Update Mode</a><br>
+<a href="#Example1biii">(iii) Connector in Delete Mode</a><br>
+<a href="#Example1biv">(iv) Adding People to a Specific Place in the
+Organization Tree</a><br>
+<a href="#Example1bv">(v) Setting Organizational Roles and Supervisor
+Relationships</a><br>
+<a href="#i18n">Internationalization</a><br>
+<a href="#troubleshooting">Troubleshooting the Examples</a></span></p>
+
+<h3><a name=Example1a></a>Part (a) Using ISIM's Reconciliation Mechanism To
+Query ITDI for an Identity Feed</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In this example
+we will use ISIM's reconciliation function to query ITDI for entries that will
+be interpreted as people. ITDI will parse a comma separated (CSV) file and map
+the data found to the attributes that we want to import into ISIM's data store.
+Here ISIM acts as a DSMLv2 client and ITDI acts as a server.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>ISIM includes a
+service type erDSMLv2Service, named ITDI Data Feed in the user interface. A
+service instance of this type can be used to perform an identity feed using the
+ISIM reconciliation mechanism.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To add a service
+instance for this example follow these steps in the ISIM user interface:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to the Service Management screen. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a new service of type ITDI data feed with these parameters: </span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>name:
+      you may pick any name. The name in this example is DSMLv2 HR Load. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>erurl:
+      </span><tt><span style='font-size:10.0pt'>http://host:port</span></tt><span
+      style='font-family:"Arial","sans-serif"'> , where host is the host name
+      of the machine where ITDI is installed. In this example, we will use
+      localhost and port 8800, so the url is http://localhost:8800. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Naming
+      Context: dc=HRLoad </span></li>
+ </ul>
+</ol>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>An example of
+this service instance is shown in Figure 1. </span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=751 height=570 src="images/dsml2_service.gif"
+alt="DSMLv2&#10; Service Instance Screen Shot"></span><span style='font-family:
+"Arial","sans-serif";color:black'><br>
+<b>Figure 1: Screen Shot of DSMLv2 Service Instance</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In this example
+we will not use the user id and password. However, the user id and password
+fields entered on this form may be used for authentication for both incoming
+and outgoing communication. It will be used later in an extension of this
+example.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Once you have
+configured and started ITDI you can come back to this screen and select the
+Test button to test connectivity to ITDI.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To configure ITDI
+several steps are required. The configuration file hrfeed_server.xml is
+supplied and configured for this example. You may use that file or follow the
+steps here to create the configuration. If you choose to use the given file you
+will need to modify certain parameters, including the host url of the server,
+authentication particulars, and the location of the CSV file.</span></p>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Note: If you are
+  upgrading from ITIM Express 4.6 you should use the versions of the xml files
+  found in express subdirectory. This is true for all of the examples unless
+  otherwise mentioned.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The example data
+file is People1.csv, which is a comma separated file containing a single entry:</span></p>
+
+<pre><span style='color:black'> First;Last;Title<br>
+<br>
+</span></pre><pre><span style='color:black'>&nbsp;</span></pre><pre><span
+style='color:black'> Barry;Manillo;70s Pop Singer</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Although this
+document refers to the file as a 'comma separated variables' file, the
+delimiter is ';'. The first row of the table gives the attribute names of the
+fields.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Follow these
+steps in the ITDI ibmditk user interface to configure ITDI:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     a new configuration root.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     an assembly line called processSearch. This will be referred to when
+     defining the event handler.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a connector of type File System Connector to read the CSV file. It should
+     be defined in iterator mode. In the configuration screen enter the parameter
+     ${EXAMPLES_HOME}/People1.csv. In the Inheritance Configuration Dialog, set
+     the parser type to be ibmdi.CSV.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>An
+     input map must be created to map the data from the CSV file to the
+     inetorgperson schema used in the ISIM data store. The schema for
+     inetorgperson is defined in RFC 2798, available at
+     http://www.faqs.org/rfcs/rfc2798.html. In the Input Map tab of the
+     FileSystem Connector click the Connect toolbar button and then click the
+     Next toolbar button. You should see the First, Last, and Title attributes
+     listed. Configure the input map for the connector with these values (See
+     screen shot in Figure 2): </span></li>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>$dn</span></tt><span
+      style='font-family:"Arial","sans-serif"'>, Advanced mapping: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=&quot;uid=&quot; + conn.getString(&quot;Last&quot;);</span></pre>
+
+<ol start=4 type=1>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>Title</span></tt><span
+      style='font-family:"Arial","sans-serif"'>, select </span><tt><span
+      style='font-size:10.0pt'>Title</span></tt><span style='font-family:"Arial","sans-serif"'>
+      </span></li>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>cn</span></tt><span
+      style='font-family:"Arial","sans-serif"'>, Advanced mapping: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=conn.getString(&quot;First&quot;) + &quot; &quot; + conn.getString(&quot;Last&quot;);</span></pre>
+
+<ol start=4 type=1>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>givenname</span></tt><span
+      style='font-family:"Arial","sans-serif"'>: select </span><tt><span
+      style='font-size:10.0pt'>First</span></tt><span style='font-family:"Arial","sans-serif"'>
+      </span></li>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>objectclass</span></tt><span
+      style='font-family:"Arial","sans-serif"'>, Advanced mapping: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=&quot;inetorgperson&quot;;</span></pre>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>or for express 4.6 </span></p>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=&quot;erexpressperson&quot;;</span></pre>
+
+<ol start=4 type=1>
+ <ul type=circle>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>sn</span></tt><span
+      style='font-family:"Arial","sans-serif"'>, select </span><tt><span
+      style='font-size:10.0pt'>Last</span></tt><span style='font-family:"Arial","sans-serif"'>
+      </span></li>
+  <li  style='color:black'><tt><span style='font-size:10.0pt'>uid</span></tt><span
+      style='font-family:"Arial","sans-serif"'>: select </span><tt><span
+      style='font-size:10.0pt'>Last</span></tt></li>
+ </ul>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     an event handler of type ibmdi.DSMLv2EventHandler. Name it ISIM Listener.
+     Enter 8800 for the port. Enter the value 'dc=HRLoad' for naming context
+     and select processSearch for the Assembly Line for Search. The value
+     entered for naming context here must match the value entered in the ISIM
+     service screen. See Figure 3, which shows the configured event handler.</span></li>
+</ol>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=999 height=751 src="images/connector_InputMap.jpg"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 2: Screen Shot of File System Connector Input Map</b> </span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=1006 height=756 src="images/event_handler.jpg"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 3: Screenshot of ITDI DSMLv2 Event Handler</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To run the
+example follow these steps:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the ibmditk, select the ISIM Listener event handler and click the run
+     button. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the ISIM user interface, navigate to the DSMLv2 HR Load. Select Detailed
+     Information. Enter the password again and select the Test button. Check
+     that the result is successful.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to the DSMLv2 HR Load server and run a reconciliation. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Go
+     to the View Completed Requests page to make sure the reconciliation
+     completed successfully. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to the Manage Users area. Check that there is a new person with the common
+     name Barry Manillo.</span></li>
+</ol>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Suggestions for
+extending this example for use in an enterprise deployment:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Replacing
+     the People1.csv file with a CSV file exported from the enterprise identity
+     data store. You will need to expand the connector input mapping to include
+     a wider range of attributes to either adapt to the out-of-the-box person
+     schema provided with ISIM or create a custom person schema for your
+     enterprise.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Replace
+     the File System Connector with one of the other connectors provided with
+     ITDI. Examples of useful connectors are Active Directory (ADSI),
+     Relational Database (JDBC), and Domino.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Change
+     the ITDI connector input map to use a unique distinguished name attribute,
+     such as employee number.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a Person Placement Rule to place people in the correct location in the
+     organization tree.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Run
+     ITDI in server mode. Once ITDI has been configured using the ibmditk tool,
+     the same configuration file can be loaded into the ibmtisrv server and run
+     as a service with a smaller footprint.</span></li>
+</ul>
+
+<h3><a name=Example1b></a>Part (b) Using ITDI to parse a Comma Separated File
+and Feeding into ISIM with the JNDI Feed Mechanism</h3>
+
+<h3><a name=Example1bi></a>(i) Connector in Add-Only Mode</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Use the DSMLv2 HR
+Load service instance created in the first part of this example. To allow this
+service to be recognized as the appropriate service when receiving a request
+from ITDI, make this change in the ISIM UI</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the DSMLv2 HR Load service instance detailed information set the value </span><tt><span
+     style='font-size:10.0pt'>dc=HRLoad</span></tt><span style='font-family:
+     "Arial","sans-serif"'> for the field Naming Contexts.</span></li>
+</ol>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This will
+correspond to the value for Search Base that we will set within ITDI.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The configuration
+file hrfeed_jndi_add_only.xml supplied is configured for this example. You may
+use that file or follow the steps here to create the configuration. If you
+choose to use the given file you will need to modify certain parameters,
+including the host url of the server and authentication particulars.</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Start
+     the IBM Directory Server Integrator ibmditk tool.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     a new configuration root.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     a new assembly line.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Create
+     a new Connector of type system:/Connectors/ibmdi.FileSystem in iterator
+     mode. In the Configuration tab set the File Path parameter to point to the
+     file &quot;examples/Tutorial/People.cvs&quot; provided with the ITDI
+     examples.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a comma separated variables (CSV) parser to the FileSystem Connector in
+     the Configure Inheritance dialog by setting the Parser field to
+     system:/Parsers/ibmdi:CSV.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Input Map tab of the FileSystem Connector click the Connect toolbar
+     button and then click the Next toolbar button. You should see the First,
+     Last, and Title attributes listed.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Map
+     the connector attributes to the work attributes. A mapping is needed to
+     map from the attribute names to the ISIM attribute names for
+     inetorgperson. Create these mappings: </span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>$dn,
+      advanced: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt;text-indent:-.25in'><span style='color:black'><span
+style='font:7.0pt "Times New Roman"'> </span></span><span style='color:black'>ret.value=&quot;uid=&quot; + conn.getString(&quot;Last&quot;)</span></pre><pre
+style='margin-left:96.0pt'><span style='color:black'> + &quot;,&quot; + JNDIFeed.getConnectorParam(&quot;jndiSearchBase&quot;);</span></pre>
+
+<ol start=7 type=1>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Title:
+      Title </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>cn,
+      advanced: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value = conn.getString(&quot;First&quot;) + &quot; &quot; + conn.getString(&quot;Last&quot;);</span></pre>
+
+<ol start=7 type=1>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>givenName:
+      First </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>objectclass,
+      advanced: </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=&quot;inetorgperson&quot;;</span></pre>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Arial","sans-serif";
+color:black'>or for express 4.6 </span></p>
+
+<pre style='margin-left:96.0pt'><span style='color:black'>ret.value=&quot;erexpressperson&quot;;</span></pre>
+
+<ol start=7 type=1>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>sn:
+      Last </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>uid:
+      Last<br>
+      As an alternative, you could configure the following in the advanced
+      mapping for the attribute; the results are the same. </span></li>
+ </ul>
+</ol>
+
+<pre style='margin-left:96.0pt'><span style='color:black'> ret.value = conn.getString(&quot;Last&quot;);</span></pre>
+
+<ol start=8 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a JNDI Connector to the assembly line. The name of the connector should be
+     JNDIFeed and it should be created in Add Only mode. The reason for the
+     Connector name is that we refer to that name in the script to determine
+     the distinguished name. The configuration parameter 'jndiSearchBase' in the
+     Input Map script in the last step is the search base. In the Configuration
+     tab of the connector set these values for the configuration parameters:</span></li>
+</ol>
+
+<table  border=1 cellpadding=0 width="80%"
+ style='width:80.0%;margin-left:.5in'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Value</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Notes</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>JNDI Driver</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>com.ibm.dsml2.jndi.DSML2InitialContextFactory</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Provider URL</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>http://localhost:9080/enrole/dsml2_event_handler/tenant</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>'enrole' is a fixed
+  parameter that is the name of the J2EE web module, 'dsml2_event_handler' is a
+  fixed parameter that is the URL mapping of the Servlet that handles the DSML2
+  request. The 'tenant' is an optional parameter with the tenant name for the
+  organization.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>authentication</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Simple</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Login username</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Login password</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>agent</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Name parameter</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$dn</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Search Filter</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>(objectclass=*)</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'></td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Search Base</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>dc=HRLoad</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>'dc=HRLoad' <em><span
+  style='font-family:"Arial","sans-serif"'>must</span></em> match the
+  namingContexts value of the service instance</span></p>
+  </td>
+ </tr>
+</table>
+
+<ol start=9 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>&nbsp;</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>The
+     host value of localhost in the url parameter should be changed to the host
+     name or ip of the ISIM server in your system. Similarly, the port value
+     9080, which is the default value for Websphere, should be set to the value
+     on your system.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Output Map of the JNDI Connector add '*' to the Connector Attribute
+     table.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Hooks tab of the JNDI Connector add </span><tt><span style='font-size:
+     10.0pt'>system.dumpEntry(error);</span></tt><span style='font-family:"Arial","sans-serif"'>
+     to the Default On Error hook.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>For
+     additional debug purposes, add </span><tt><span style='font-size:10.0pt'>system.dumpEntry(work);</span></tt><span
+     style='font-family:"Arial","sans-serif"'>to the Before Add hook.</span></li>
+</ol>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>When
+configuration completes, click the run button to run the assembly line.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>People should be
+added to ISIM with names matching those in the People.cvs file. However, there
+is one row in the file that cannot be accepted. The entry 'Roger' cannot be
+imported into ISIM because it is missing a surname, 'sn', attribute. This is
+expected and is a valid error, however, if the Default On Error hook script was
+not added the error would prevent subsequent entries from being processed.</span></p>
+
+<h3><a name=Example1bii></a>(ii) Connector in Update Mode</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In this part, we
+will make a couple of changes to the comma separated file and synchronize the
+changes to ISIM. Copy the file People.csv to People2.csv and open it in a text
+editor. Make the following changes:</span></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width="80%"
+ style='width:80.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Change the line</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>To</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Bill;Sanderman;Chief
+  Scientist</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>William;Sanderman;Chief
+  Scientist</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Roger</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Roger; Rabbit; Cartoon
+  Character</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Table
+1: Change to Comma Separated Variable File</span></b><span style='font-family:
+"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>We need to make a
+few changes to the ITDI configuration. If you don't want to make the changes by
+hand, close the existing configuration and open the file
+hrfeed_jndi_update.xml.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To run this
+example, use the ISIM user interface to verify the service instance detail for
+the DSMLv2 HR Load service. Verify that 'uid' is specified as the Name
+Attribute for the service. This is the name of the attribute for each person
+entry to use for constructing a distinguished name to return to ITDI. Steps in
+the ITDI user interface to operate the example in update mode:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the File Connector Configuration tab, set File Path to </span><tt><span
+     style='font-size:10.0pt'>examples/Tutorial/People2.csv</span></tt><span
+     style='font-family:"Arial","sans-serif"'>. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the JNDI Connector panel, change the Mode to Update. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the JNDI Connector Configuration panel, set the Search Base to </span><tt><span
+     style='font-size:10.0pt'>dc=HRLoad</span></tt><span style='font-family:
+     "Arial","sans-serif"'> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the JNDI Connector Configuration panel, set the Search Filter to </span><tt><span
+     style='font-size:10.0pt'>(objectclass=*)</span></tt><span
+     style='font-family:"Arial","sans-serif"'> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the JNDI Connector output tab, add * to the Attribute Map with both Add
+     and Update checked. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Link Criteria tab of the JNDI Connector set the Link Criteria to </span></li>
+</ol>
+
+<pre style='margin-left:60.0pt'><span style='color:black'> ret.filter=&quot;uid=(&quot; + work.getString(&quot;uid&quot;) + &quot;)&quot;;</span></pre>
+
+<ol start=7 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Modify
+     the output map of the JNDI connector as shown on Figure 4. Specify all the
+     attributes to the output map instead of using the wildcard character '*'.
+     Then deselect the $dn and objectclass attribute for update mode. We will
+     never change these values in update mode and it may cause problems if they
+     are accidentally mis-interpreted as having changed, for example, if they
+     are returned with a different case. </span></li>
+</ol>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=1010 height=759 src="images/output_map.jpg"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 4: Screen shot of Output Map</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Run the example
+by selecting the run icon in the ITDI assembly line. After the assembly line
+completes, check that Bill Sanderson's given name has been changed to William.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Suggestions for
+extending this example to an enterprise deployment:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Check
+     the Use Workflow checkbox in the service instance Detailed Information
+     form. This will cause an audit trail entry to be made for each person
+     change and the provisioning policy to be evaluated for accounts each time
+     a person is added or modified.</span></li>
+</ul>
+
+<h3><a name=Example1biii></a>(iii) Connector in Delete Mode</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To delete people
+from the ISIM data store using this approach the JNDI connector should be
+operated in Delete mode. The comma separated list file should contain a list of
+people to delete. An example of a file for this purpose in People3.csv and the
+ITDI configuration file hrfeed_jndi_delete.xml is provided. The steps below
+will create a similar configuration.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The user Mick
+Kamerun listed in the People3.csv file will be deleted. It is assumed that the
+reader added that person as described in part (i) of this example.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Continuing on
+from the example in part (ii) save the configuration file as hrfeed_jndi_delete.xml.
+Close the update configuration root in the ITDI user interface.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Change the
+JNDIFeed connector mode to delete. Run the assembly line. Check the ISIM People
+Management user interface and check that the person is gone.</span></p>
+
+<h3><a name=Example1biv></a>(iv) Adding People to a Specific Place in the
+Organization Tree</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In this section
+we will extend the example so that a person can be added to a position in the
+organization chart matching the name of their department in the CSV file. The
+person Mick Kamerun will be added back, but this time in the Sales
+organizational unit. The ITDI configuration file hrfeed_jndi_placement.xml
+contains the necessary configuration to run this part of the example, if the
+reader does not wish to follow the steps outlined here.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To prepare ISIM
+to accept the data, perform these steps in the ISIM user interface:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the same organization as the ITDI Data Feed service, add an organizational
+     unit called 'Sales'. This can be done using the Manage Organizational
+     Units, as shown in Figure 5. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the service instance detailed information form, add the placement rule: </span></li>
+</ol>
+
+<pre style='margin-left:60.0pt'><span style='color:black'> return &quot;ou=&quot; + entry.departmentnumber[0];</span></pre>
+
+<p  style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'>Notice that the attribute name is all in lower case letters. This
+is necessary because although LDAP attribute names are case insensitive, the
+directory server returns them in lower case, which must then match the
+Javascript expression, which is case sensitive. </span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=733 height=442 src="images/OrgChart.gif"
+alt="Screen shot of Organization Chart"></span><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<b>Figure 5: Screen shot of Organization Chart</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Copy the file
+People3.csv to People4.csv. Add an attribute for department with the value
+'Sales' as shown below.</span></p>
+
+<pre><span style='color:black'> First;Last;Title;Department<br>
+<br>
+</span></pre><pre><span style='color:black'>&nbsp;</span></pre><pre><span
+style='color:black'> Mick;Kamerun;VP Sales;Sales</span></pre>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>Follow these steps from
+within the ITDI user interface:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Open
+     the file created in the update example (hrfeed_jndi_update.xml). Save it
+     to another file and close the original.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Configuration panel of the CSV File Connector, change People3.csv to
+     People4.csv. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Input Map panel of the CSV File Connector, click the flashlight icon
+     to perform quick discovery of schema. This should add the Department
+     attribute to the list of available connector attributes. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Also
+     in the Input Map panel of the CSV File Connector, add a new Work Attribute
+     called 'departmentnumber'. This is an attribute of the LDAP class
+     inetorgperson. We will map the file connector attribute 'Department' to
+     the LDAP attribute 'departmentnumber'. As described in RFC 2798, it is
+     intended to be used as an alphanumeric department code. Configure the
+     mapping by selecting the checkbox for Department. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     the attribute 'departmentnumber' to the output map of the JNDI Connector. </span></li>
+</ol>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To run the
+example click the run icon in the ITDI user interface. Check that Mick Kamerun
+has been added under the Sales organizational unit in the organization tree.</span></p>
+
+<h3><a name=Example1bv></a>(v) Setting Organizational Roles and Supervisors
+Relationships</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This part of the
+example will show how to set organizational role and supervisor attributes for
+people during the identity feed process. The person Mick Kamerun will be given
+the organizational role of 'Executive' and a new person, Harry Callahan, whose
+supervisor is Mick Kamerun will be added. The ITDI configuration file
+hrfeed_jndi_role.xml is provided to match the steps described here.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add two static
+Organizational Roles to ISIM called 'Executive' and 'Manager'. This is shown in
+the screenshot in Figure 6.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=792 height=572 src="images/define_roles.gif"
+alt="Screenshot of Organizational Role Definition"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 6: Screenshot of Organizational Role Definition</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Copy the file
+People4.csv to People5.csv. Add attributes for Role and Supervisor as shown
+below. Also add an additional line for Harry Callahan.</span></p>
+
+<pre><span style='color:black'> First;Last;Title;Department;Role;Supervisor<br>
+<br>
+</span></pre><pre><span style='color:black'>&nbsp;</span></pre><pre><span
+style='color:black'> Mick;Kamerun;VP Sales;Sales;Executive<br>
+<br>
+</span></pre><pre><span style='color:black'>&nbsp;</span></pre><pre><span
+style='color:black'> Harry;Callahan;Director of Sales;Sales;Manager;Mick Kamerun</span></pre>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>To map these attributes to
+corresponding values in ISIM follow these steps in the ITDI user interface:</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Input Map panel of the CSV File Connector, click the Connector icon to
+     connect to the data source, then click the next icon two times. Since Mick
+     Kamerun does not have a supervisor, you need to move to the line with
+     Harry Callahan to discover the 'Supervisor' attribute. You should now see
+     the 'Supervisor' and 'Role' attributes added to the schema.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the Input Map panel of the CSV File Connector, add two new work
+     attributes. The first work attribute should be called 'erroles' and be
+     mapped to the 'Role' connector attribute. The second work attribute should
+     be called 'manager' and be mapped to the 'Supervisor' connector attribute.
+     When this is complete, the Input Map panel should look like the screen
+     shot shown in Figure 7.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     the attributes 'erroles' and 'manager' to the connector attributes of the
+     output map of the JNDI Connector. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>To
+     run the test, click the run button.</span></li>
+</ol>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=998 height=750 src="images/supervisor_InputMap.jpg"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 7: Screenshot of Supervisor Input Map</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Organizational
+Role and Supervisor are different than most other attributes discussed so far
+because they have a special meaning within ISIM. The reason is that they
+represent relationships to other entities in the system. In the ISIM data store
+that are stored as pointers to those other entities. A lookup is done by ISIM
+based on the names in the imported data to set these pointers.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The entities that
+are pointed to must exist before the relationships are created. The practical
+implication of this is that the Organizational Roles must be defined before the
+data feed is performed. In addition, supervisors must appear in the data feed
+before the people that they are supervising.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>After the test
+has run, check the data in the ISIM user interface in the People Management screens.
+Screenshots for Harry Callahan are shown in Figures 8 with the Role membership
+defined in the Personal Information tab and in Figure 9 with the supervisor
+attribute set to Mick Kamerun.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=761 height=543 src="images/harry_role_membership.gif"
+alt="Screenshot Showing Imported Data for Role Membership"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 8: Screenshot Showing Imported Data for Role Membership</b> </span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=762 height=558 src="images/harry_supervisor.gif"
+alt="Screenshot Showing Supervisor Relation"></span><span style='font-family:
+"Arial","sans-serif";color:black'><br>
+<b>Figure 9: Screenshot Showing Imported Data with Supervisor Relationship</b> </span></p>
+
+<h3><a name=i18n>Internationalization</a></h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>There are two
+problems to be overcome with locales other than English speaking ones:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Encodings
+     other than ASCII must be used to represent data.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Some
+     of the conventions, especially those used in this example document, are
+     not appropriate for all locales. This is more of a cultural problem than a
+     technical one but still must be addressed.</span></li>
+</ul>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Within ISIM all
+data is imported, exported, and stored as UTF-8. This includes data transported
+to and from ITDI. ITDI itself, however, is capable of handling more encodings.
+In this part of the example we will use a data file encoded in UTF-8 and
+shipped as <a href="PeopleDBCS.U8">PeopleDBCS.U8</a>. A screenshot of the
+example as shown in a web browser is given in Figure 10.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=314 height=62 src="images/utf8.gif"
+alt="Figure 10 Screenshot of UTF-8 data file with double byte data"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 10: Screenshot Showing UTF-8 Data File with Double Byte Data</b> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For a file
+connector in ITDI the encoding should be set within the file connector parser
+tab as shown in Figure 11. </span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=979 height=737 src="images/char_encoding.jpg"></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Figure 11: Screenshot of Setting Character Encoding in ITDI File Connector</b>
+</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Other encodings
+that may be used here are given in the Java platform documentation at <a
+href="http://java.sun.com/j2se/1.3/docs/guide/intl/encoding.doc.html">java.sun.com</a>.
+</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>If the scripts in
+the previous examples were used for an Asian locale they would result in
+unusual values for the uid and cn attribute. The suggested practice for uid is
+to use an ASCII based phonetic description of the name. For the cn attribute
+(common name) the best approach may be to specify it explicitly in the data
+file rather than deriving it from a script. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The changes to
+address these problems are given in the PeopleDBCS.U8 file and the example ITDI
+configuration file hrfeed_jndi_dbcs.xml. It is a variation of the JNDI update
+example above. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Before attempting
+to run this assembly line, you need to remove the placement rule for the
+service instance that you defined in step Part (b) (iv) - 2 above. Go to the
+ISIM user interface and in the service instance detailed information form,
+remove the placement rule: </span></p>
+
+<pre><span style='color:black'> return &quot;ou=&quot; + entry.departmentnumber[0];</span></pre>
+
+<h3><a name=troubleshooting></a>Troubleshooting the Examples</h3>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>uid attribute</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+Because many of the updates and deletes depend on the value of the person's uid
+attribute to lookup their existence and previous data, it is useful to display
+the value of uid on the personal information form. However, this is not done by
+default. Add it using the form designer.</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Double byte
+character set data</span></b></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The locale of
+ITDI is determined by the operating system or by Java environment variables.
+Therefore, double byte data may be displayed as '?' characters if the locale is
+not set to one that selects the right fonts. In this case you may change the
+ITDI startup script, ibmditk, to use the desired locale. For example, for
+Chinese, add the following options to the java command.</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><code><span
+style='font-size:10.0pt;color:black'>${ITDI_HOME}/java -Duser.language=zh
+-Duser.country=CN . . .</span></code><span style='font-family:"Arial","sans-serif";
+color:black'> </span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Binary
+attributes</span></b></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Because XML is a
+text based markup language, binary attributes must be transported over the
+network using a base 64 encoding. Base 64 encoding is a method for representing
+binary data as text. ISIM will automatically base 64 decode any value provided
+by ITDI for a binary attribute. Therefore, any value for a binary attribute
+(such as a password) in the CSV file must be specified as a base 64 encoded
+string. Several freeware utilities and web sites exist for base 64 encoding
+values.</span></p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,254 @@
+<html>
+
+<head>
+<title>Use of Role Classification during a Person Create or Modify</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Use of Role Classification</h1>
+
+<h2>Role Assignment during a Person Create or Modify</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In Tivoli
+Identity Manager 5.1, the role classification can be used in workflow
+processes. An enterprise may want to do this to specify a different workflow
+for assignment of roles of different types. For example, assignment to a new
+business role may require more approvals than assignment to an application
+role. This document describes how to get started with such an extension by providing
+a simple example that iterates over the new roles assigned to a person and
+logging the name and classification for each role. </span></p>
+
+<h3>Customization of the Person Modify Operation</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Open the person
+modify operation in the Tivoli Identity Manager console using the menu options
+Configure System | Manage Operations | Entity Type Level | Modify. In the
+workflow designer add a loop with a script node as shown in the diagram below. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=625
+height=239 src="role_classification.png"
+alt="Screenshot of Person Modify Operation"></span><span class=imgcaption1><span
+style='font-size:10.0pt;font-family:"Arial","sans-serif";color:black'>Customization
+of the Person Modify Operation Workflow</span></span><span style='font-family:
+"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The loop
+condition in the loop node should be </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> context.getLoopCount() &lt; Entity.get().getNewRoles().length</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The script node
+text should be </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'>var i = context.getLoopCountByID(&quot;NewRolesLoop&quot;);</span></pre><pre><span
+style='color:black'>var role = Entity.get().getNewRoles()[i-1];</span></pre><pre><span
+style='color:black'>Enrole.log(&quot;script&quot;, &quot;i: &quot; + i + &quot;, role name: &quot; + role.getProperty('errolename') + &quot;, classification: &quot; + role.getProperty('erroleclassification'));</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This will print
+out the loop index, the name of the role, and the role description. From this
+point modifications to the operation can be performed by branching on the value
+of role classification and adding approval nodes as in other examples. </span></p>
+
+<h2>Role Assignment Recertification</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Role
+classification can be used to customize the recertification process using the
+advanced policy option in the Recertification Policy section of the console
+user interface. The area most likely to be customized is the </span><code><span
+style='font-size:10.0pt;color:black'>RECERTAPPROVAL</span></code><span
+style='font-family:"Arial","sans-serif";color:black'> packaged approval node,
+shown below. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=817
+height=694 src="recert_workflow.png"
+alt="Recertification Policy Advanced Option Workflow"></span><span
+class=imgcaption1><span style='font-size:10.0pt;font-family:"Arial","sans-serif";
+color:black'>An Example of a Recertification Policy Advanced Option Workflow</span></span><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>If you are
+creating a new recertification process for role assignments based on role
+classification then it may be simpler to create a new workflow operation.
+Suppose that you wanted to have a special recertification process for all application
+roles. This can be done by creating a lifecycle operation for person described
+below. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Navigate to
+Configure System | Manage Operations and select the entity type level radio
+button and the Person entity type in the drop down. Click the Add... button to
+bring up the workflow designer. Call the new operation </span><code><span
+style='font-size:10.0pt;color:black'>recertify_application_roles</span></code><span
+style='font-family:"Arial","sans-serif";color:black'>. Add a loop node, two
+script nodes, and an approval node and connect them as shown below. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=800
+height=600 src="recert_app_roles.png"
+alt="Lifecycle Operation for Recertifying Application Roles"></span><span
+class=imgcaption1><span style='font-size:10.0pt;font-family:"Arial","sans-serif";
+color:black'>Lifecycle Operation for Recertifying Application Roles</span></span><span
+style='font-family:"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Open up the
+properties dialog by clicking on the Properties button and check the Non-static
+radio button option. Add 2 new relevant data items:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><code><span style='font-size:10.0pt'>roleClassification</span></code><span
+     style='font-family:"Arial","sans-serif"'> of type String</span></li>
+ <li  style='color:black'><code><span style='font-size:10.0pt'>container</span></code><span
+     style='font-family:"Arial","sans-serif"'> of type OrganizationalContainer</span></li>
+</ul>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click OK to
+continue.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=520
+height=482 src=properties.png alt="Workflow Properties Screenshot"></span><span
+class=imgcaption1><span style='font-size:10.0pt;font-family:"Arial","sans-serif";
+color:black'>Workflow Properties</span></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>the condition in
+the loop node should be </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> context.getLoopCount() &lt; Entity.get().getRoles().length</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The script and
+approval nodes are inside the loop. They will iterate over all the roles a
+person has. The checkRoleClassification script node should contain the
+following script. The others should remain empty. </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> var cn = Entity.get().getProperty('cn');</span></pre><pre><span
+style='color:black'> Enrole.log(&quot;script&quot;, &quot;person cn: &quot; + cn);</span></pre><pre><span
+style='color:black'> var i = context.getLoopCountByID(&quot;loopOverRoles&quot;);</span></pre><pre><span
+style='color:black'> var role = Entity.get().getRoles()[i-1];</span></pre><pre><span
+style='color:black'> if (role != null) {</span></pre><pre><span
+style='color:black'> var roleClassificationProp = role.getProperty('erroleclassification')[0];</span></pre><pre><span
+style='color:black'> if (roleClassificationProp != null) {</span></pre><pre><span
+style='color:black'> roleClassification.set(roleClassificationProp);</span></pre><pre><span
+style='color:black'> } else {//if classification not set on the role</span></pre><pre><span
+style='color:black'> roleClassification.set(&quot;undefined&quot;);</span></pre><pre><span
+style='color:black'> }</span></pre><pre><span style='color:black'> Enrole.log(&quot;script&quot;, &quot;person &quot; + cn + &quot; has role &quot; + role.getProperty('errolename') +</span></pre><pre><span
+style='color:black'> &quot; with classification: &quot; + roleClassification.get());</span></pre><pre><span
+style='color:black'> }</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This will set a
+workflow parameter called </span><code><span style='font-size:10.0pt;
+color:black'>roleClassification</span></code><span style='font-family:"Arial","sans-serif";
+color:black'> to the value of the role classification in the Tivoli Identity
+Manager data store. The code also logs an informational message. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In the transition
+from the checkRoleClassification script to the approval node enter the
+following condition </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> roleClassification.get() == &quot;role.classification.application&quot;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>And in the
+transition from the checkRoleClassification script to the noOpLoopEnd, enter
+the following condition </span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> roleClassification.get() != &quot;role.classification.application&quot;</span></pre>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The previous two
+scripts will restrict recertification approvals to only those having a role
+classification of </span><code><span style='font-size:10.0pt;color:black'>role.classification.application</span></code><span
+style='font-family:"Arial","sans-serif";color:black'>, which is the value
+stored by Tivoli Identity Manager when selecting Application value in the role
+management user interface. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In the approval
+node, set the participant to Manager, and map the input parameters as shown
+below. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=537
+height=522 src="role_approval_node.png" alt="Role Approval Details"></span><span
+class=imgcaption1><span style='font-size:10.0pt;font-family:"Arial","sans-serif";
+color:black'>Approval Node Details</span></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Click OK at the
+bottom of the Manage Operations screen to your new workflow.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Finally, create a
+life cycle rule to execute the life cycle operation. Go to the menu Configure
+System | Manage Life Cycle Rules and select the entity type level radio button.
+Also, select the Person entity type in the drop down. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><img width=690
+height=463 src="life_cycle_event.png" alt="Life Cycle Event Screenshot"></span><span
+class=imgcaption1><span style='font-size:10.0pt;font-family:"Arial","sans-serif";
+color:black'>Life Cycle Event Screenshot</span></span><span style='font-family:
+"Arial","sans-serif";color:black'> </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To test it out try
+creating a role with clasification of Application assigning someone to the
+owner of the role and assigning a supervisor to the person. If you run the life
+cycle rule using the run button at the top of the table then you should
+generate an approval that will be sent to the manager of the person who is a
+member the role. </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Two aspects of
+this example that would be needed for production use are the text displayed to
+the approver and recording the recertification results on the role member's
+profile. The text displayed to the approval workflow participant can be
+modified in the workflow designer by editing properties of the Approval Node.
+The recertification results can be persisted on the person being recertified by
+taking advantage of the dataservices API within a workflow extension. The
+workflow extension could then be included in the workflow. The Java APIs you
+would use in the workflow extension to record the recertification are as
+follows</span></p>
+
+<pre><span style='color:black'>&nbsp;</span></pre><pre><span style='color:black'> class: com.ibm.itim.dataservices.model.domain.Person</span></pre><pre><span
+style='color:black'> method: setLastRecertificationAction(String roleName, String action);</span></pre><pre><span
+style='color:black'> method: setLastRecertificationActionDate(String roleName, Date actionDate)</span></pre>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>See
+     the infocenter reference section called &quot;Application extensions&quot;
+     for more information about creating and installing workflow extensions. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>See
+     the infocenter reference section called &quot;Dataservices attributes for
+     recertification&quot; for more information about dataservices
+     recertification APIs </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>See
+     the dataservices examples for more information about using the
+     dataservices API in general. </span></li>
+</ul>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><a href="../index.html">Back
+up one level</a> </span></p>
+
+</div>
+
+</body>
+
+</html>

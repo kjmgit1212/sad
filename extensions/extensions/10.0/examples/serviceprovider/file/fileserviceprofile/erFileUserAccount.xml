@@ -1,0 +1,22 @@
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<page>
+<body>
+<form action="formvalidator0">
+<formElement name="data.eruid" label="$eruid" required="true">
+<input name="data.eruid" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+<formElement name="data.erfilegroupmembership" label="$erfilegroupmembership">
+<editableTextList><comboItem name="data.erfilegroupmembership" label="null"><size></size></comboItem></editableTextList></formElement>
+</form>
+</body>
+</page>

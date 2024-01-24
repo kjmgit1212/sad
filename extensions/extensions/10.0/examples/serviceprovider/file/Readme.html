@@ -1,0 +1,188 @@
+<html>
+
+<head>
+<title>File Service Provider Example</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif" alt=Banner></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif" alt=Logo></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>File Service Provider Example</h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This example
+demonstrates use of the ServiceProvider API to build a connector to a flat file
+database. It is perhaps the simplest possible example ServiceProvider. It may
+be useful in learning to use the ServiceProvider API and, in addition, to
+protype provisioning policies and workflow designs without needing to be
+connected to a real agent. </span></p>
+
+<h2>Service Provider Installation</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The service
+provider is the component that facilitates communication betweeen ISIM and the
+file database.&nbsp; </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To build the
+examples follow the instructions given in <a href="../../Building.html">Building
+the Examples</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the <dfn><span
+style='font-family:"Arial","sans-serif"'>examples.jar</span></dfn> file created
+by the build process to the application server's classpath by following the
+instructions given in <a href="../../Classpath.html">Adding <dfn><span
+style='font-family:"Arial","sans-serif"'>examples.jar</span></dfn> to Classpath</a>.
+</span></p>
+
+<h2>Service Profile Installation</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To install the
+example, run the build file (build.bat for windows and build.sh for unix) found
+in the serviceprovider directory. The build file will create a
+fileserviceprofile.jar file in the same directory. (You will need to set the
+ANT_HOME_LIB variable first.)</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Now log in to
+ISIM as ITIM Manager and select Configure System &gt; Manage Service Types.
+Press the Import button and select fileserviceprofile.jar.
+fileserviceprofile.jar is a simple jar file that contains a directory called
+fileserviceprofile and the following files:</span></p>
+
+<table  border=1 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>File Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="fileserviceprofile/schema.dsml"><code><span style='font-size:10.0pt'>schema.dsml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This defines the schema
+  for accounts, services, and groups for the service type.&nbsp; </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="fileserviceprofile/resource.def"><code><span style='font-size:10.0pt'>resource.def</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>This file describes
+  service profile configuration information, including which connector
+  properties and service parameters should be sent to the ServiceProvider
+  implementation.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="fileserviceprofile/CustomLabels.properties"><code><span
+  style='font-size:10.0pt'>CustomLabels.properties</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Human understandable
+  labels for the schema entries.&nbsp; These will be displayed in the ISIM user
+  inteface.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="fileserviceprofile/erFileUserAccount.xml"><code><span style='font-size:
+  10.0pt'>erUserAccount.xml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An optional file
+  containing the account form.&nbsp; This will be imported during profile
+  install so that the form will not have to be designed in the form design
+  utility.&nbsp;It was created by using the form designer and copying the data
+  from the LDAP server into a file with the account class name and an 'xml'
+  postfix.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><a
+  href="fileserviceprofile/erFileService.xml"><code><span style='font-size:
+  10.0pt'>erFileService.xml</span></code></a></span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>An optional file
+  containing the service form.&nbsp;This file will be imported during profile
+  install so that the form will not have to be designed in the form design
+  utility.&nbsp;It was created in the same way as the account form. </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+Also in the jar file are a few files and directories created by the jar
+program. </span></p>
+
+<h2>Service Setup</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>After installing the
+profile add a service instance of File Service Type and establish a
+provisioning policy allowing users to own accounts.</span></p>
+
+<h2>Testing</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The service
+provider may be tested by doing provisioning, deleting, and other account
+operations but not reconciliation.&nbsp;When the account requests are processed
+entries will be written to the file </span><code><span style='font-size:10.0pt;
+color:black'>fileprovider.log</span></code><span style='font-family:"Arial","sans-serif";
+color:black'>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

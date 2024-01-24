@@ -1,0 +1,4 @@
+// $ANTLR 2.7.2: examples/serviceprovider/rdbms/parser/sql_substitution.g -> SQLSubstitutionLexerTokenTypes.txt$
+SQLSubstitutionLexer    // output token vocab name
+VAR=4
+IGNORE=5

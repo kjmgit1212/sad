@@ -1,0 +1,313 @@
+<html>
+
+<head>
+<title>Running the Workflow Application Extension API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Running the Workflow Application Extension API Examples</h1>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><a href="#Overview">Overview</a><br>
+<a href="#RegisterClasses">Register Custom Classes with workflowextensions.xml</a><br>
+<a href="#RegisterServlet">Register Servlet with the Application Server</a><br>
+<a href="#BindToDesigner">Define Workflow with Extensions using ISIM UI</a></span></p>
+
+<h2><a name=Overview></a>Overview</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The Workflow
+Application Extension API does not contain any classes but does define the interfaces
+that allow the creation of custom classes that can be registered with the
+Provisioning System and subsequently processed by the workflow engine and
+accessed by the workflow designer. The intent of this API is to enable third
+parties to develop their own custom extensions that can then be used as
+workflow objects within the provisioning system.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In order to
+demonstrate the capabilities of this interface, the following examples are
+provided:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><b><span style='font-family:"Arial","sans-serif"'>AsynchronousApplicationExtension.java</span></b><span
+     style='font-family:"Arial","sans-serif"'> - An example of an Asynchronous
+     application that can be called from Workflow</span></li>
+ <li  style='color:black'><b><span style='font-family:"Arial","sans-serif"'>SynchronousApplicationExtension.java
+     - </span></b><span style='font-family:"Arial","sans-serif"'>An example of
+     a Synchronous application that can be called from Workflow</span></li>
+</ul>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>An example of creating an
+example where a custom approver is looked up in a database table is provided in
+the <a href="customApproval.html">customApprover</a> folder.</span></p>
+
+<h2><a name=RegisterClasses></a>Adding workflow extensions and Registering
+Custom Classes</h2>
+
+<h1><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Do these
+steps to add a workflow extension.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Log
+on to the IBM Security Identity Manager virtual appliance console to open the </span><span
+style='font-size:12.0pt;color:windowtext'>Appliance Dashboard</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'>.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>From
+the top-level menu of the </span><span style='font-size:12.0pt;color:windowtext'>Appliance
+Dashboard</span><span style='font-size:12.0pt;color:windowtext;font-weight:
+normal'>, select Configure </span><span style='font-size:12.0pt;color:windowtext'>&gt;
+Advanced Configuration &gt; Library and Workflow Extension</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> to display the
+Library and Workflow Extension page.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Click
+</span><span style='font-size:12.0pt;color:windowtext'>New</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> to add an
+external library.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>In
+the Add External Library window, click </span><span style='font-size:12.0pt;
+color:windowtext'>Browse</span><span style='font-size:12.0pt;color:windowtext;
+font-weight:normal'> to search and upload the library file. The </span><span
+style='font-size:12.0pt;color:windowtext'>File Name</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> field is
+populated with the library name. For example, <i>examples.jar</i>.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Select
+the </span><span style='font-size:12.0pt;color:windowtext'>Workflow Extension</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> check box to
+include the extension information.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:12.0pt;margin-bottom:0in;margin-left:
+.5in;margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Provide
+the information in the </span><span style='font-size:12.0pt;color:windowtext'>Extension</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> field.</span></h1>
+
+<p style='margin-left:.5in;text-indent:-.25in'><span style='font-family:"Arial","sans-serif";
+color:black'>7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp; </span></span><span
+style='font-family:"Arial","sans-serif";color:black'>Copy the following
+extension snippet in the <b>Extension</b> field of the Library and Workflow
+Extension page in the IBM Security Identity Manager virtual appliance console.</span></p>
+
+<h1><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Modify
+it according to the needs of custom class for the input &amp; output
+parameters.</span></h1>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Here is what it
+looks like for the above mentioned examples (no input &amp; output parameters
+used for the above mentioned examples).</span><span style='color:black'> </span></p>
+
+<pre style='margin-left:39.1pt'><span style='color:black'>&lt;ACTIVITY ACTIVITYID=&quot;<b>asynchronousChangePasswordExtension</b>&quot; LIMIT=&quot;<b>600000</b>&quot;&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;IMPLEMENTATION_TYPE&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;APPLICATION CLASS_NAME=&quot;<b>examples.workflow.AsynchronousApplicationExtension</b>&quot; </span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'>METHOD_NAME=&quot;<b>asynchronousChangePasswordExtension</b>&quot; /&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;/IMPLEMENTATION_TYPE&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'>&lt;/ACTIVITY&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'>&lt;ACTIVITY ACTIVITYID=&quot;<b>synchronousChangePasswordExtension</b>&quot; LIMIT=&quot;<b>600000</b>&quot;&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;IMPLEMENTATION_TYPE&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;APPLICATION CLASS_NAME=&quot;<b>examples.workflow.SynchronousApplicationExtension</b>&quot; </span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'>METHOD_NAME=&quot;<b>synchronousChangePasswordExtension</b>&quot; /&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> &lt;/IMPLEMENTATION_TYPE&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'>&lt;/ACTIVITY&gt;</span></pre><pre
+style='margin-left:39.1pt'><span style='color:black'> </span></pre>
+
+<h2><a name=RegisterServlet></a>Register Servlet with the Application Server</h2>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Log
+on to the IBM Security Identity Manager virtual appliance console to open the </span><span
+style='font-size:12.0pt;color:windowtext'>Appliance Dashboard.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>From
+the top-level menu of the </span><span style='font-size:12.0pt;color:windowtext'>Appliance
+Dashboard</span><span style='font-size:12.0pt;color:windowtext;font-weight:
+normal'>, select </span><span style='font-size:12.0pt;color:windowtext'>Configure
+&gt; Advanced Configuration &gt; Custom File Management</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'>.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>On
+the Custom File Management page, click the </span><span style='font-size:12.0pt;
+color:windowtext'>All Files</span><span style='font-size:12.0pt;color:windowtext;
+font-weight:normal'> tab.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Go
+to the <i>directories/itim_console.war/WEB-INF</i> directory.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Select
+the </span><span style='font-size:12.0pt;color:windowtext'>web.xml</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> file in the table
+of the right pane.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Click
+</span><span style='font-size:12.0pt;color:windowtext'>Download</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'>.</span></h1>
+
+<h1 style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt;text-indent:-.25in'><span style='font-size:12.0pt;
+color:windowtext;font-weight:normal'>7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:12.0pt;color:windowtext;font-weight:normal'>Edit
+the </span><span style='font-size:12.0pt;color:windowtext'>web.xml</span><span
+style='font-size:12.0pt;color:windowtext;font-weight:normal'> file to register
+the example servlet.</span></h1>
+
+<p style='margin-top:5.0pt;margin-right:0in;margin-bottom:12.0pt;margin-left:
+24.0pt'><span style='font-family:"Arial","sans-serif";color:black'>Here is what
+it looks like for the ExampleStartupServlet.</span></p>
+
+<pre>&nbsp;</pre><pre><span style='color:black'>&lt;servlet id=&quot;Servlet_1054249474210&quot;&gt;</span></pre><pre><span
+style='color:black'> &lt;servlet-name&gt;<b>ExampleStartupServlet</b>&lt;/servlet-name&gt;</span></pre><pre><span
+style='color:black'> &lt;description&gt;<b>Startup of workflow activity asynchronously</b>&lt;/description&gt;</span></pre><pre><span
+style='color:black'> &lt;servlet-class&gt;<b>examples.workflow.ExampleStartupServlet</b>&lt;/servlet-class&gt;</span></pre><pre><span
+style='color:black'> &lt;load-on-startup&gt;<b>1</b>&lt;/load-on-startup&gt;</span></pre><pre><span
+style='color:black'>&lt;/servlet&gt;</span></pre>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+Here is the default location for web.xml:<br>
+<br>
+directories/itim_console.war/WEB-INF/web.xml<br>
+<br>
+This ExampleStartupServlet on initial load will create a
+CompleteAsynchronousActivity daemon thread which runs as a background service
+which will periodically (every 1 minute) checks the ExampleActivity.id to see
+if there is any activity pending, if so reads the activity id from the file and
+completes the activity.</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Note: Please
+make sure to unregister the ExampleStartupServlet from web.xml once done
+working with the examples and restart the server.</span></b></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>In order to run these
+examples, </span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="../Building.html">Compile the examples</a> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="../Classpath.html">Add example class files to the classpath</a></span></li>
+</ol>
+
+<h2><a name=BindToDesigner></a>Define Workflow with Extensions using ISIM UI</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In order to
+define workflow extensions,</span></p>
+
+<ol start=1 type=1>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Make
+     sure the Application server is running.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Open
+     a web browser and login to ISIM application.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to <b>Configure System &gt; Manage Operations</b>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     the <b>Entity Type</b> radio button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     <b>Account</b> as Entity Type and check the <b>changePassword</b> row.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on the <b>Change</b> button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Remove
+     the transition from <b>CHANGEPASSWORD</b> to <b>End</b> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Add
+     a new extension node between <b>CHANGEPASSWORD</b> to <b>End</b>.<br>
+     </span><span style='font-family:"Arial","sans-serif"'><img border=0
+     width=398 height=56 src="images/new_extension.gif"></span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Double-click
+     on the new <b>Extension </b>node, you will see a new pop-up window which
+     will show you all the extensions registered using the <b>workflowextensions.xml</b>.<br>
+     </span><span style='font-family:"Arial","sans-serif"'><img border=0
+     width=616 height=664 src="images/extension_node_props.gif"></span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Set
+     Activity ID as <b>ASYNCHRONOUSCHANGEPASSWORDEXT</b> and select <b>asynchronousChangePasswordExtension</b>()
+     for Extension Name.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     <b>Ok </b>button and attach the transitions to the newly added extension. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     <b>Ok</b> to save the workflow.<br>
+     </span><span style='font-family:"Arial","sans-serif"'><img border=0
+     width=542 height=47 src="images/finished_async_extension.gif"></span></li>
+ <li  style='color:black;margin-bottom:12.0pt'><span
+     style='font-family:"Arial","sans-serif"'>Navigate to <b>Password
+     Management </b>and change password.<br>
+     <br>
+     <b>Note:</b> Please see that the password is changed for a single account.
+     This example will not work if the password is changed for multiple
+     accounts simultaneously.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+     the auditLog of the change password request, you will see two activities. </span></li>
+ <ol start=1 type=1>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>One
+      for Change Password. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>The
+      other for ASYNCHRONOUSCHANGEPASSWORDEXT. </span></li>
+ </ol>
+</ol>
+
+</div>
+
+</body>
+
+</html>

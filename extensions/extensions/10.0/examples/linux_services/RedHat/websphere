@@ -1,0 +1,243 @@
+#!/bin/bash
+#/******************************************************************************
+# *
+# * Licensed Materials - Property of IBM
+# *
+# * Source File Name = websphere
+# *
+# * (C) COPYRIGHT IBM Corp. 2006, 2008 All Rights Reserved
+# *
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# *
+# *****************************************************************************/
+
+#********************************************************************************************
+#
+#  This file contains sample code. IBM provides this code on an 'AS IS' basis without
+#  warranty of any kind, either expressed or implied, including but not limited to,
+#  the implied warranties of merchantability or
+#  fitness for a particular purpose.
+#
+#********************************************************************************************
+# This information is required by Redhat Linux
+#********************************************************************************************
+# chkconfig: 345 99 24
+# description: Starts and stops WebSphere Application Server
+#
+# processname: websphere
+#
+#********************************************************************************************
+#
+# To configure WebSphere Application Server as a Linux Service so it automatically starts
+#
+#   1. Put this script in the directory /etc/init.d
+#   2. Update WASADMIN_CREDENTIALS variable below
+#   3. Run this command from the directory /etc/init.d to format the script text to unix
+#      dos2unix websphere
+#   4. Run this command to change the script permissions so it is executable
+#      chmod  ugo+rx websphere  
+#   5. Run this command to define websphere as a Linux service 
+#      chkconfig --add websphere
+#
+#********************************************************************************************
+
+# WebSphere Admin Security Credentials.  Set the value to "" if WebSphere Security is turned off.
+# Otherwise set the value to "-username <wasadmin> -password <password>"
+WASADMIN_CREDENTIALS="-username wasadmin -password password_goes_here"
+
+SERVER_NAME="server1"
+WAS_PROFILE="/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/bin/setupCmdLine.sh"
+WAS_PROCESS_NAME=""
+
+RETVAL=0
+pid=0
+
+function start()
+{
+    echo "Launching WebSphere Application Server..."
+
+    check_install
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    getPID "$WAS_PROCESS_NAME"
+    if [ -n "$pid" ]; then
+        echo "WebSphere is already running." 
+        RETVAL=0
+        return $RETVAL
+    fi                    
+
+    # Start the Server but don't wait for it to finish (cause it can take a long time)
+    ${WAS_HOME}/bin/startServer.sh ${SERVER_NAME} -replacelog -nowait
+    RETVAL=$?
+    return $RETVAL
+}	
+
+function stop()
+{
+    echo "Stopping WebSphere Application Server..."
+
+    check_install
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    getPID "$WAS_PROCESS_NAME"
+    if [ -z "$pid" ]; then
+        echo "WebSphere is not running." 
+        RETVAL=0
+        return $RETVAL
+    fi                    
+
+    # Stop the Server but don't wait for it to finish (cause it hangs alot)
+    if ${WAS_HOME}/bin/stopServer.sh ${SERVER_NAME} -replacelog -nowait $WASADMIN_CREDENTIALS
+    then
+        # If the stopServer command was successfully issued then lets 
+        # loop a maximum of 6 times with a 10 second wait for it to finish/
+        # If it doesn't stop then we will kill it
+        for x in "1,2,3,4,5,6"
+        do
+            echo "Waiting for WebSphere to terminate...."
+            usleep 10000000
+            getPID "$WAS_PROCESS_NAME"
+            if [ -z "$pid" ]; then
+                RETVAL=0
+                return $RETVAL
+            fi                    
+        done
+
+        getPID "$WAS_PROCESS_NAME"
+        if [ -z "$pid" ]; then
+            RETVAL=0
+            return $RETVAL
+        else
+            stop_process "$WAS_PROCESS_NAME"
+            RETVAL=$?
+	    return $RETVAL
+        fi
+    fi
+         
+    RETVAL=$?
+    return $RETVAL
+}	
+
+function restart()
+{
+    stop
+    start
+}	
+
+function status()
+{
+    check_install
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    getPID "$WAS_PROCESS_NAME"
+    if [ -z "$pid" ]; then
+        echo "WebSphere is not running."
+        RETVAL=0
+        return $RETVAL
+    fi 
+
+    echo "${WAS_PROCESS_NAME} is active. Process id is: ${pid}"
+    ${WAS_HOME}/bin/serverStatus.sh ${SERVER_NAME} -replacelog $WASADMIN_CREDENTIALS
+    RETVAL=$?
+    return $RETVAL
+}
+
+function stop_process
+{
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 is not running." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+
+    kill $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+      
+    kill -QUIT $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+     
+    kill -KILL $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi
+
+    echo "$1 could not be stopped!"        
+    RETVAL=1
+    return $RETVAL
+}
+
+function getPID()
+{
+    pid=`ps aux | grep $1 | grep -v grep | head -1 | awk '{print $2}'`
+}
+
+function check_install
+{
+    # Source WebSphere environment
+    if [ -f $WAS_PROFILE ] ; then
+        . $WAS_PROFILE
+    else
+        echo "WebSphere is not installed!"
+        RETVAL=1
+        return $RETVAL
+    fi
+
+    cd ${WAS_HOME}
+
+    WAS_PROCESS_NAME="${WAS_HOME}/java/bin/java"
+
+    RETVAL=0
+
+    return $RETVAL
+}
+
+###################################################################################
+# Mainline Shell script 
+###################################################################################
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart)
+  	restart
+	;;
+  status)
+  	status
+	;;
+  *)
+        echo "Usage: `basename $0` {start|stop|restart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL

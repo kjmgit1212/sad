@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chris Hemp</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_approvals_and_rejections">Approvals and Rejections</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "approvals_and_rejections.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_approvals_and_rejections");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_approvals_and_rejections">Approvals and Rejections</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="User Dn" id="1801" extends="itim.User Dn as Approver"/>
+        <scalar-parameter name="Request Date Range" id="1769" extends="TivoliCommonReporting_v1.Report Period"/>
+        <scalar-parameter name="Service Dn" id="1770" extends="itim.Service Dn"/>
+        <scalar-parameter name="User Id" id="1771" extends="itim.User Id"/>
+        <scalar-parameter name="Approval Request Status" id="1772" extends="itim.Approval Request Status"/>
+        <scalar-parameter name="Approval Activity Name" id="1773" extends="itim.Approval Activity Name"/>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServiceNameBasedOnServicesParameter" id="1649"
+ extends="itim.ServiceNameBasedOnServicesParameter"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UserNameBasedOnUsersParameter" id="1699"
+ extends="itim.UserNameBasedOnUsersParameter"/>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Approval Rejections Table" id="1751">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">COMPLETED</property>
+                    <property name="displayName">COMPLETED</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICETYPE</property>
+                    <property name="displayName">SERVICETYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SUBJECT</property>
+                    <property name="displayName">SUBJECT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">RESULT_SUMMARY</property>
+                    <property name="displayName">RESULT_SUMMARY</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">COMPLETED</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">SERVICETYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">SUBJECT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">RESULT_SUMMARY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">User Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">convertAnyToSql(params["User Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Start Date</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">getDateGMTString(getStartDate(params["Request Date Range"]));</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">End Date</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">getDateGMTString(getEndDate(params["Request Date Range"]));</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">4</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Service Dn"]);</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">User Id</property>
+                    <property name="paramName">User Id</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">5</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Result Summary</property>
+                    <property name="paramName">Approval Request Status</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">6</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">Approval Activity Name</property>
+                    <property name="paramName">Approval Activity Name</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">7</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">COMPLETED</property>
+                    <property name="nativeName">COMPLETED</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">SERVICETYPE</property>
+                    <property name="nativeName">SERVICETYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">SUBJECT</property>
+                    <property name="nativeName">SUBJECT</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">RESULT_SUMMARY</property>
+                    <property name="nativeName">RESULT_SUMMARY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT  NAPerson."CN", 
+        ACTIVITY."COMPLETED", 
+        NAService."SERVICETYPE", 
+        NAService."ERSERVICENAME", 
+        PROCESS."SUBJECT", 
+        ACTIVITY."RESULT_SUMMARY", 
+        ACTIVITY."NAME" 
+FROM    PROCESS , 
+        ACTIVITY , 
+        PROCESSLOG , 
+        (SELECT Person_cn.cn , 
+                Person.DN 
+        FROM    Person_cn , 
+                Person 
+        WHERE ( Person.DN = Person_cn.DN ) 
+        ) 
+        NAPERSON , 
+        (SELECT Service.servicetype , 
+                Service.erservicename , 
+                Service.DN 
+        FROM    Service 
+        ) 
+        NASERVICE , 
+        SERVICE_ACCOUNT_MAPPING 
+WHERE   PROCESSLOG.PROCESS_ID                  = PROCESS.ID 
+    AND ACTIVITY.ID                            = PROCESSLOG.ACTIVITY_ID 
+    AND PROCESSLOG.EVENTTYPE                   = 'CM' 
+    AND PROCESS.SUBJECT_PROFILE                = SERVICE_ACCOUNT_MAPPING.ACCOUNTPROFILE 
+    AND SERVICE_ACCOUNT_MAPPING.SERVICEPROFILE = NAService.servicetype 
+    AND NAPerson.cn                            = PROCESSLOG.REQUESTOR 
+    AND NAService.erservicename = PROCESS.SUBJECT_SERVICE 
+    AND ACTIVITY.PROCESS_ID     = PROCESS.ID 
+    AND ACTIVITY.SUBTYPE        = 'AP' 
+    AND NAPerson.DN like ?
+    AND ACTIVITY.COMPLETED > ? 
+    AND ACTIVITY.COMPLETED &lt; ? 
+    AND NAService.DN like ? 
+    AND NAService.servicetype like '%'
+    AND PROCESS.SUBJECT like ? 
+    AND ACTIVITY.RESULT_SUMMARY like ? 
+    AND ACTIVITY.NAME like ? 
+ORDER BY activity.completed asc, 
+        NAPerson.cn asc, 
+        NAService.servicetype asc, 
+        NAService.erservicename asc, 
+        process.subject asc, 
+        activity.result_summary asc, 
+        activity.name asc</property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="37" id="37"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <text name="Report Title" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="title_approvals_and_rejections"><![CDATA[Report Title]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232">
+                    <grid name="Parameter Table" id="95">
+                        <property name="style">parameter-table</property>
+                        <property name="width">100%</property>
+                        <expression name="bookmark">getNLS("title_report_criteria");</expression>
+                        <structure name="toc">
+                            <expression name="expressionValue">getNLS("title_report_criteria");</expression>
+                        </structure>
+                        <column id="96">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="97">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="1655">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="1659">
+                            <property name="width">25%</property>
+                        </column>
+                        <row id="100">
+                            <cell id="101">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 11" id="1802">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_approver");</VALUE-OF>"><VALUE-OF>getNLS("parameter_approver");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="102">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 1" id="312">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">UserNameBasedOnUsersParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">User Dn</property>
+                                            <expression name="expression">params["User Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">CN</property>
+                                            <expression name="expression">dataSetRow["CN"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">DN</property>
+                                            <expression name="expression">dataSetRow["DN"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">User Parameter</property>
+                                            <expression name="expression">convertAnyToNLS(params["User Dn"], dataSetRow["CN"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User Parameter</property>
+                                </data>
+                            </cell>
+                            <cell id="1652">
+                                <property name="style">parameter-value</property>
+                                <text name="Parameter Name 2" id="1609">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_user_id");</VALUE-OF>"><VALUE-OF>getNLS("parameter_user_id");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1656">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 11" id="1797">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">User Id Parameter</property>
+                                            <expression name="expression">convertSplatToNLS(params["User Id"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">User Id Parameter</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="1784">
+                            <cell id="1785">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 1" id="214">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_service");</VALUE-OF>"><VALUE-OF>getNLS("parameter_service");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1786">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 3" id="1721">
+                                    <property name="style">parameter-value</property>
+                                    <property name="dataSet">ServiceNameBasedOnServicesParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">Service Dn</property>
+                                            <expression name="expression">params["Service Dn"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">ERSERVICENAME</property>
+                                            <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">Service Parameter</property>
+                                            <expression name="expression">convertAnyToNLS(params["Service Dn"], dataSetRow["ERSERVICENAME"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Service Parameter</property>
+                                </data>
+                            </cell>
+                            <cell id="1787">
+                                <property name="style">parameter-value</property>
+                                <text name="Parameter Name 21" id="1790">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_approval_request_status");</VALUE-OF>"><VALUE-OF>getNLS("parameter_approval_request_status");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1788">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 2" id="1720">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Approval Request Status</property>
+                                            <expression name="expression">convertApprovalRequestStatusToNLS(params["Approval Request Status"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Approval Request Status</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="1791">
+                            <cell id="1792">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 211" id="1796">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_approval_activity_name");</VALUE-OF>"><VALUE-OF>getNLS("parameter_approval_activity_name");</VALUE-OF></div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1793">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 111" id="1800">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Approval Activity Name</property>
+                                            <expression name="expression">convertSplatToNLS(params["Approval Activity Name"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Approval Activity Name</property>
+                                </data>
+                            </cell>
+                            <cell id="1794">
+                                <property name="style">parameter-value</property>
+                                <text name="Parameter Name 4" id="1717">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_date_range");</VALUE-OF>"><VALUE-OF>getNLS("parameter_date_range");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1795">
+                                <property name="style">parameter-value</property>
+                                <data name="Parameter Value 4" id="1722">
+                                    <property name="style">parameter-value</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Request Date Range Parameter</property>
+                                            <expression name="expression">getNLS(params["Request Date Range"]);</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Request Date Range Parameter</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="1779">
+                            <cell id="1780">
+                                <property name="style">parameter-name</property>
+                                <text name="Parameter Name 5" id="1737">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_start_date");</VALUE-OF>"><VALUE-OF>getNLS("parameter_start_date");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1781">
+                                <property name="style">parameter-value</property>
+                                <text id="1806">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getStartDate(params["Request Date Range"])</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1782">
+                                <property name="style">parameter-value</property>
+                                <text name="Parameter Name 6" id="1740">
+                                    <property name="style">parameter-name</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_end_date");</VALUE-OF>"><VALUE-OF>getNLS("parameter_end_date");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="1783">
+                                <property name="style">parameter-value</property>
+                                <text id="1807">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getEndDate(params["Request Date Range"])</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="1593">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="1594"/>
+            <row id="396">
+                <cell id="397">
+                    <property name="paddingTop">10pt</property>
+                    <table name="Dormant accounts grouped by Service" id="1281">
+                        <property name="style">group-table-with-section</property>
+                        <property name="marginTop">0px</property>
+                        <property name="marginLeft">0px</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">Approval Rejections Table</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">CN</property>
+                                <expression name="expression">dataSetRow["CN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COMPLETED</property>
+                                <expression name="expression">getDateFromString(dataSetRow["COMPLETED"])</expression>
+                                <property name="dataType">date-time</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICETYPE</property>
+                                <expression name="expression">getNLS(dataSetRow["SERVICETYPE"])</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERSERVICENAME</property>
+                                <expression name="expression">dataSetRow["ERSERVICENAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SUBJECT</property>
+                                <expression name="expression">dataSetRow["SUBJECT"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">RESULT_SUMMARY</property>
+                                <expression name="expression">convertApprovalRequestStatusToNLS(dataSetRow["RESULT_SUMMARY"])</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">NAME</property>
+                                <expression name="expression">convertActivityNameToNLS(dataSetRow["NAME"])</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">STATUS</property>
+                                <expression name="expression">dataSetRow["RESULT_SUMMARY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key">convertEmptyName(row["ERSERVICENAME"])</expression>
+                                <property name="direction">asc</property>
+                            </structure>
+                        </list-property>
+                        <column id="1414">
+                            <property name="width">15px</property>
+                        </column>
+                        <column id="1343"/>
+                        <column id="1344"/>
+                        <column id="1345"/>
+                        <column id="1757"/>
+                        <column id="1747"/>
+                        <column id="1763"/>
+                        <group id="1288">
+                            <property name="groupName">Approver</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["CN"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["CN"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="1289">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1407">
+                                        <property name="colSpan">7</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">15px</property>
+                                        <property name="paddingLeft">5px</property>
+                                        <property name="paddingBottom">15px</property>
+                                        <text id="1471">
+                                            <property name="style">section-title</property>
+                                            <expression name="bookmark">row["ERSERVICENAME"]</expression>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_approver");</VALUE-OF>"><VALUE-OF>convertEmptyName(row["CN"])</VALUE-OF></div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                                <row id="1544">
+                                    <property name="backgroundColor">#FFFFFF</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <cell id="1545">
+                                        <property name="style">section</property>
+                                        <property name="color">#000000</property>
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1547">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1473">
+                                            <property name="paddingTop">1pt</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_time_of_action_approve_reject");</VALUE-OF>"><VALUE-OF>getNLS("heading_time_of_action_approve_reject");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1548">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1474">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service_type");</VALUE-OF>"><VALUE-OF>getNLS("heading_service_type");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1549">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1475">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_service");</VALUE-OF>"><VALUE-OF>getNLS("heading_service");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1753">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1764">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_user_id");</VALUE-OF>"><VALUE-OF>getNLS("heading_user_id");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1743">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1748">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_status");</VALUE-OF>"><VALUE-OF>getNLS("heading_status");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1759">
+                                        <property name="style">table-header-cell</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">3px</property>
+                                        <property name="paddingBottom">3px</property>
+                                        <text id="1765">
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("heading_approval_activity_name");</VALUE-OF>"><VALUE-OF>getNLS("heading_approval_activity_name");</VALUE-OF><div>]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1691">
+                                    <cell id="1692">
+                                        <property name="paddingTop">0pt</property>
+                                        <property name="paddingLeft">15px</property>
+                                        <property name="paddingBottom">0pt</property>
+                                    </cell>
+                                    <cell id="1693">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1694">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1696">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1755">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1745">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                    <cell id="1761">
+                                        <property name="style">table-footer-cell</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="1326">
+                                <cell id="1410">
+                                    <property name="paddingTop">0pt</property>
+                                    <property name="paddingLeft">15px</property>
+                                    <property name="paddingBottom">0pt</property>
+                                </cell>
+                                <cell id="1327">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <text id="1808">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF>row["COMPLETED"]</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="1329">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="390">
+                                        <property name="resultSetColumn">SERVICETYPE</property>
+                                    </data>
+                                </cell>
+                                <cell id="1331">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1709">
+                                        <property name="resultSetColumn">ERSERVICENAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="1754">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1766">
+                                        <property name="resultSetColumn">SUBJECT</property>
+                                    </data>
+                                </cell>
+                                <cell id="1744">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <grid id="1669">
+                                        <property name="width">100%</property>
+                                        <column id="1670">
+                                            <property name="width">25px</property>
+                                        </column>
+                                        <column id="1671"/>
+                                        <row id="1672">
+                                            <cell id="1673">
+                                                <image name="Normal Icon" id="1452" extends="TivoliCommonReporting_v1.Normal Icon">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr">!isRequestStatusApproved(row["STATUS"]);</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                                                                    <text-property name="altText">getNLS("active");</text-property>
+                                                </image>
+                                                <image name="Critical Icon" id="1453" extends="TivoliCommonReporting_v1.Critical Icon">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr">isRequestStatusApproved(row["STATUS"]);</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                                                                    <text-property name="altText">getNLS("inactive");</text-property>
+                                                </image>
+                                            </cell>
+                                            <cell id="1674">
+                                                <data id="1645">
+                                                    <property name="resultSetColumn">RESULT_SUMMARY</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                                <cell id="1760">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <property name="paddingRight">3px</property>
+                                    <data id="1767">
+                                        <property name="resultSetColumn">NAME</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1804" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1805"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_approvals_and_rejections"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

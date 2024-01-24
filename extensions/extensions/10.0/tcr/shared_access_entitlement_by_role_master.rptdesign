@@ -1,0 +1,2709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Romil Shah</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_services">Shared Access Entitlements by Role</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "services_0.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_services");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_services">Services</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Role Business Unit" id="4839">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="heading_role_bu"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Role Name" id="4840">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="role_name"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Entitlement Type" id="2325">
+            <property name="hidden">false</property>
+            <text-property name="helpText" key="parameter_tooltip_entitlement_type"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_entitlement_type"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">-1</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">value</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">0</property>
+                    <property name="label">Credential</property>
+                    <property name="labelID">Credential</property>
+                </structure>
+                <structure>
+                    <property name="value">1</property>
+                    <property name="label">Credential Pool</property>
+                    <property name="labelID">Credential_Pool</property>
+                </structure>
+                <structure>
+                    <property name="value">-1</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="BusinessUnitNameBasedOnBusinessUnitParameter" id="1970"
+ extends="itim.BusinessUnitNameBasedOnBusinessUnitParameter">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select "NAME"
+from ORGANIZATIONALCONT0
+where "DN" like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SharedAccessBasedOnRoleAndEntitlementTypeParameter" id="2089">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ROLE_INHERITED</property>
+                    <property name="displayName">ROLE_INHERITED</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SA_POLICY</property>
+                    <property name="displayName">SA_POLICY</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POLICY_DN</property>
+                    <property name="displayName">POLICY_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POLICY_ID</property>
+                    <property name="displayName">POLICY_ID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POLICY_BU_DN</property>
+                    <property name="displayName">POLICY_BU_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SCOPE</property>
+                    <property name="displayName">SCOPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ROLE_FILTER</property>
+                    <property name="displayName">ROLE_FILTER</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ROLE_INHERITED_DN</property>
+                    <property name="displayName">ROLE_INHERITED_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ROLE_FILTER_DN</property>
+                    <property name="displayName">ROLE_FILTER_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERROLENAME</property>
+                    <property name="displayName">ERROLENAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ROLE_BU</property>
+                    <property name="displayName">ROLE_BU</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENTITLEMENT_NAME</property>
+                    <property name="displayName">ENTITLEMENT_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENTITLEMENT_TYPE</property>
+                    <property name="displayName">ENTITLEMENT_TYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">FILTER_ENTITLEMENTS</property>
+                    <property name="displayName">FILTER_ENTITLEMENTS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRED_ENTITLEMENT</property>
+                    <property name="displayName">CRED_ENTITLEMENT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_ENTITLEMENT</property>
+                    <property name="displayName">POOL_ENTITLEMENT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_NAME</property>
+                    <property name="displayName">SERVICE_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TARGET_DN</property>
+                    <property name="displayName">TARGET_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_TYPE</property>
+                    <property name="displayName">SERVICE_TYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_GROUP</property>
+                    <property name="displayName">SERVICE_GROUP</property>
+                </structure>
+                <structure>
+                    <property name="columnName">IS_EXCLUSIVE</property>
+                    <property name="displayName">IS_EXCLUSIVE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRED_SERVICE_DN</property>
+                    <property name="displayName">CRED_SERVICE_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_SERVICE_DN</property>
+                    <property name="displayName">POOL_SERVICE_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">GROUP_NAME</property>
+                    <property name="displayName">GROUP_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POLICY_BU</property>
+                    <property name="displayName">POLICY_BU</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRED_SER_BU_DN</property>
+                    <property name="displayName">CRED_SER_BU_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRED_SER_BU_NAME</property>
+                    <property name="displayName">CRED_SER_BU_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_SER_BU_DN</property>
+                    <property name="displayName">POOL_SER_BU_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_SER_BU_NAME</property>
+                    <property name="displayName">POOL_SER_BU_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRED_SERVICE</property>
+                    <property name="displayName">CRED_SERVICE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_SERVICE</property>
+                    <property name="displayName">POOL_SERVICE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DEFINITION_TYPE</property>
+                    <property name="displayName">DEFINITION_TYPE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ROLE_INHERITED</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">SA_POLICY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">POLICY_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">POLICY_ID</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">POLICY_BU_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">SCOPE</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ROLE_FILTER</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ROLE_INHERITED_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ROLE_FILTER_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ERROLENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ROLE_BU</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ENTITLEMENT_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">ENTITLEMENT_TYPE</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">FILTER_ENTITLEMENTS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">CRED_ENTITLEMENT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">POOL_ENTITLEMENT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">SERVICE_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">TARGET_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">SERVICE_TYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">SERVICE_GROUP</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">IS_EXCLUSIVE</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">CRED_SERVICE_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">POOL_SERVICE_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">GROUP_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">POLICY_BU</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">CRED_SER_BU_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">CRED_SER_BU_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">POOL_SER_BU_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">POOL_SER_BU_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">CRED_SERVICE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">POOL_SERVICE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">DEFINITION_TYPE</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1_RoleName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Role Name"]);</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param2_RoleName</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Role Name"]);</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param3_EntitlementType</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">convertStaticAnyToSql(params["Entitlement Type"]);</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param4_RoleBU</property>
+                    <property name="dataType">string</property>
+                    <property name="position">4</property>
+                    <expression name="defaultValue">convertAnyToSql(params["Role Business Unit"]);</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ROLE_INHERITED</property>
+                    <property name="nativeName">ROLE_INHERITED</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">SA_POLICY</property>
+                    <property name="nativeName">SA_POLICY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">POLICY_DN</property>
+                    <property name="nativeName">POLICY_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">POLICY_ID</property>
+                    <property name="nativeName">POLICY_ID</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">-5</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">POLICY_BU_DN</property>
+                    <property name="nativeName">POLICY_BU_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">SCOPE</property>
+                    <property name="nativeName">SCOPE</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">5</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ROLE_FILTER</property>
+                    <property name="nativeName">ROLE_FILTER</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ROLE_INHERITED_DN</property>
+                    <property name="nativeName">ROLE_INHERITED_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ROLE_FILTER_DN</property>
+                    <property name="nativeName">ROLE_FILTER_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ERROLENAME</property>
+                    <property name="nativeName">ERROLENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ROLE_BU</property>
+                    <property name="nativeName">ROLE_BU</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ENTITLEMENT_NAME</property>
+                    <property name="nativeName">ENTITLEMENT_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">ENTITLEMENT_TYPE</property>
+                    <property name="nativeName">ENTITLEMENT_TYPE</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">5</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">FILTER_ENTITLEMENTS</property>
+                    <property name="nativeName">FILTER_ENTITLEMENTS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">CRED_ENTITLEMENT</property>
+                    <property name="nativeName">CRED_ENTITLEMENT</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">POOL_ENTITLEMENT</property>
+                    <property name="nativeName">POOL_ENTITLEMENT</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">SERVICE_NAME</property>
+                    <property name="nativeName">SERVICE_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">TARGET_DN</property>
+                    <property name="nativeName">TARGET_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">SERVICE_TYPE</property>
+                    <property name="nativeName">SERVICE_TYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">SERVICE_GROUP</property>
+                    <property name="nativeName">SERVICE_GROUP</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">IS_EXCLUSIVE</property>
+                    <property name="nativeName">IS_EXCLUSIVE</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">5</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">CRED_SERVICE_DN</property>
+                    <property name="nativeName">CRED_SERVICE_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">POOL_SERVICE_DN</property>
+                    <property name="nativeName">POOL_SERVICE_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">GROUP_NAME</property>
+                    <property name="nativeName">GROUP_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">POLICY_BU</property>
+                    <property name="nativeName">POLICY_BU</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">CRED_SER_BU_DN</property>
+                    <property name="nativeName">CRED_SER_BU_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">CRED_SER_BU_NAME</property>
+                    <property name="nativeName">CRED_SER_BU_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">POOL_SER_BU_DN</property>
+                    <property name="nativeName">POOL_SER_BU_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">POOL_SER_BU_NAME</property>
+                    <property name="nativeName">POOL_SER_BU_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">CRED_SERVICE</property>
+                    <property name="nativeName">CRED_SERVICE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">POOL_SERVICE</property>
+                    <property name="nativeName">POOL_SERVICE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">DEFINITION_TYPE</property>
+                    <property name="nativeName">DEFINITION_TYPE</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">5</property>
+                </structure>
+            </list-property>
+            <property name="queryText">
+with Ancestor(ASCENDENT, DESCENDENT, root) AS
+(
+ SELECT RI.ASCENDENT, RI.DESCENDENT,  ROLE.DN FROM ROLE_INHERITANCE RI
+ INNER JOIN ROLE  ON ROLE.DN=RI.DESCENDENT
+ WHERE ROLE.ERROLENAME LIKE ?
+ 
+ UNION ALL
+ 
+ SELECT RI.ASCENDENT, RI.DESCENDENT, A.root FROM ROLE_INHERITANCE RI,Ancestor A
+ WHERE A.ASCENDENT=RI.DESCENDENT 
+)
+
+SELECT DISTINCT R1.*, R.ERROLENAME, ROLE_BU.NAME AS ROLE_BU, S_E.NAME AS ENTITLEMENT_NAME, S_E.TYPE AS ENTITLEMENT_TYPE, 
+                S_E.TARGET_NAME AS FILTER_ENTITLEMENTS, S_CRED.ACCOUNT_UID AS CRED_ENTITLEMENT, S_POOL.NAME AS POOL_ENTITLEMENT, S_E.SERVICE_NAME, S_E.TARGET_DN, S_E.SERVICE_TYPE, S_E.SERVICE_GROUP,
+                S_CRED.IS_EXCLUSIVE, SER_CRED.DN AS CRED_SERVICE_DN, SER_POOL.DN AS POOL_SERVICE_DN, 
+                GRP.ERGROUPID AS GROUP_NAME, S_P_ORG.NAME AS POLICY_BU, CRED_ORG.DN AS CRED_SER_BU_DN,
+                CRED_ORG.NAME AS CRED_SER_BU_NAME, POOL_ORG.DN AS POOL_SER_BU_DN,
+                POOL_ORG.NAME AS POOL_SER_BU_NAME, SER_CRED.NAME AS CRED_SERVICE, 
+                SER_POOL.NAME AS POOL_SERVICE, S_E.DEFINITION_TYPE
+FROM 
+(
+ SELECT ROLE.ERROLENAME AS ROLE_INHERITED, S_P.POLICY_NAME AS SA_POLICY, S_P.DN AS POLICY_DN, S_P.ID AS POLICY_ID, 
+ S_P.BU_DN AS POLICY_BU_DN, S_P.SCOPE, A.root AS ROLE_FILTER,
+ A.ASCENDENT AS ROLE_INHERITED_DN, A.DESCENDENT AS ROLE_FILTER_DN  
+ FROM SA_POLICY_MEMBERSHIP S_M 
+ INNER JOIN Ancestor A ON S_M.ROLE_DN=A.ASCENDENT 
+ INNER JOIN SA_POLICY S_P ON S_P.ID=S_M.POLICY_ID 
+ INNER JOIN ROLE ON ROLE.DN=A.ASCENDENT
+
+ UNION 
+
+ SELECT ROLE.ERROLENAME AS ROLE_INHERITED, S_P.POLICY_NAME AS SA_POLICY, S_P.DN AS POLICY_DN, S_P.ID AS POLICY_ID,
+ S_P.BU_DN AS POLICY_BU_DN, S_P.SCOPE, ROLE.DN AS ROLE_FILTER, ROLE.DN AS ROLE_INHERITED_DN, ROLE.DN AS ROLE_FILTER_DN 
+ FROM SA_POLICY_MEMBERSHIP S_M 
+ INNER JOIN SA_POLICY S_P ON S_P.ID=S_M.POLICY_ID 
+ INNER JOIN ROLE ON ROLE.DN=S_M.ROLE_DN WHERE ROLE.ERROLENAME LIKE ?
+) R1 
+INNER JOIN SA_POLICY_ENTITLEMENT S_E ON S_E.POLICY_ID=R1.POLICY_ID  and CAST(S_E.TYPE AS CHAR) LIKE  ?
+INNER JOIN ROLE R ON R.DN = R1.ROLE_FILTER
+INNER JOIN ORGANIZATIONALCONT0 ROLE_BU ON ROLE_BU.DN=R.CONTAINERDN
+LEFT OUTER JOIN SA_EVALUATION_CREDENTIAL S_CRED ON S_CRED.DN=S_E.TARGET_DN
+LEFT OUTER JOIN SA_EVALUATION_CREDENTIAL_POOL S_POOL ON S_POOL.DN = S_E.TARGET_DN
+LEFT OUTER JOIN SA_EVALUATION_SERVICE SER_CRED ON SER_CRED.DN= S_CRED.SERVICE_DN
+LEFT OUTER JOIN SA_EVALUATION_SERVICE SER_POOL ON SER_POOL.DN = S_POOL.SERVICE_DN 
+LEFT OUTER JOIN SA_CREDPOOL_GROUP P_GRP ON P_GRP.DN = S_POOL.DN
+LEFT OUTER JOIN GROUPZ GRP ON GRP.DN = P_GRP.ERSERVICEGROUP
+LEFT OUTER JOIN ORGANIZATIONALCONT0 S_P_ORG ON LOWER(S_P_ORG.DN) = LOWER(R1.POLICY_BU_DN)
+LEFT OUTER JOIN SA_EVALUATION_BU CRED_ORG ON CRED_ORG.DN = SER_CRED.BU_DN
+LEFT OUTER JOIN SA_EVALUATION_BU POOL_ORG ON POOL_ORG.DN = SER_POOL.BU_DN
+WHERE ROLE_BU.NAME LIKE ?	
+</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>JS_EXPR</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>2</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>JS_EXPR</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>3</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>JS_EXPR</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleNameBasedOnRolesParameter" id="2320"
+ extends="itim.RoleNameBasedOnRolesParameter">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERROLENAME</property>
+                    <property name="displayName">ERROLENAME</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Role Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERROLENAME</property>
+                    <property name="nativeName">ERROLENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ROLE.DN, ROLE.ERROLENAME
+from ROLE where ROLE.DN like ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleOwner" id="3517">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ERROLENAME</property>
+                    <property name="displayName">ERROLENAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERROLENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">' '</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERROLENAME</property>
+                    <property name="nativeName">ERROLENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT R.ERROLENAME, ORG.NAME FROM ROLE_OWNER R_W 
+INNER JOIN ROLE R ON R.DN = R_W.OWNER
+INNER JOIN ORGANIZATIONALCONT0 ORG ON ORG.DN = R.CONTAINERDN
+WHERE R_W.DN LIKE ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue> </design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ERROLENAME</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>ERROLENAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ERROLENAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleBusinessUnit" id="4654">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">''</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT ORG.NAME FROM ORGANIZATIONALCONT0 ORG WHERE ORG.DN=?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue></design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>NAME</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>NAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>NAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleUserOwner" id="3573">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param_1</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">''</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT P_CN.CN, ORG.NAME FROM PERSON_CN P_CN 
+INNER JOIN ROLE_OWNER R_W ON R_W.OWNER = P_CN.DN 
+INNER JOIN PERSON P ON P.DN = P_CN.DN
+INNER JOIN ORGANIZATIONALCONT0 ORG ON ORG.DN = P.CONTAINERDN
+WHERE R_W.DN=?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue></design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CN</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>CN</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CN</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>NAME</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>NAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>NAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <property name="rightMargin">0.5416666667in</property>
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="37" id="37"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1774"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <property name="paddingTop">1pt</property>
+                    <label id="2397">
+                        <property name="style">main-title</property>
+                        <text-property name="text" key="title_shared_access_entitlement"></text-property>
+                    </label>
+                    <grid id="1999">
+                        <property name="width">100%</property>
+                        <column id="2000">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="2001">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="2002">
+                            <property name="width">16%</property>
+                        </column>
+                        <column id="2003">
+                            <property name="width">16%</property>
+                        </column>
+                        <row id="2004">
+                            <cell id="2005">
+                                <text id="1963">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#444E68</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_business_unit");</VALUE-OF>"><VALUE-OF>getNLS("parameter_business_unit");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2006">
+                                <data id="4835">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Role Business Unit</property>
+                                            <expression name="expression">convertSplatToNLS(params["Role Business Unit"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Role Business Unit</property>
+                                </data>
+                            </cell>
+                            <cell id="2007">
+                                <text id="2324">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#444E68</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_entitlement_type");</VALUE-OF>"><VALUE-OF>getNLS("parameter_entitlement_type");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2008">
+                                <data id="4837">
+                                    <list-property name="mapRules">
+                                        <structure>
+                                            <expression name="testExpr">row["Entitlement Type"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">0</expression>
+                                            <text-property name="display" key="Credential">Credential</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["Entitlement Type"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">1</expression>
+                                            <text-property name="display" key="Credential_Pool">Credential Pool</text-property>
+                                        </structure>
+                                        <structure>
+                                            <expression name="testExpr">row["Entitlement Type"]</expression>
+                                            <property name="operator">eq</property>
+                                            <expression name="value1">-1</expression>
+                                            <text-property name="display" key="any">Any</text-property>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Entitlement Type</property>
+                                            <expression name="expression">params["Entitlement Type"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Entitlement Type</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="2009">
+                            <cell id="2010">
+                                <text id="1974">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#444E68</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<div title="<VALUE-OF>getNLS("parameter_tooltip_role");</VALUE-OF>"><VALUE-OF>getNLS("parameter_role");</VALUE-OF><div>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2011">
+                                <data id="4836">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Role Name</property>
+                                            <expression name="expression">convertSplatToNLS(params["Role Name"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Role Name</property>
+                                </data>
+                            </cell>
+                            <cell id="2012"/>
+                            <cell id="2013"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232"/>
+            </row>
+        </grid>
+        <label id="2399">
+            <property name="style">section-title</property>
+            <property name="paddingTop">10pt</property>
+            <text-property name="text" key="title_shared_access_entitlemet_by_Role"></text-property>
+        </label>
+        <grid id="2542">
+            <property name="marginTop">0pt</property>
+            <property name="marginBottom">0pt</property>
+            <property name="height">10.5520833333in</property>
+            <property name="width">100%</property>
+            <column id="2543"/>
+            <row id="2544">
+                <cell id="2545">
+                    <property name="paddingTop">1pt</property>
+                    <property name="paddingBottom">20pt</property>
+                </cell>
+            </row>
+            <row id="2546">
+                <property name="height">10.3125in</property>
+                <cell id="2547">
+                    <property name="paddingTop">1pt</property>
+                    <property name="paddingBottom">1pt</property>
+                    <table id="2844">
+                        <property name="marginTop">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="height">8.6770833333in</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">SharedAccessBasedOnRoleAndEntitlementTypeParameter</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ROLE_INHERITED</property>
+                                <expression name="expression">dataSetRow["ROLE_INHERITED"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SA_POLICY</property>
+                                <expression name="expression">dataSetRow["SA_POLICY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POLICY_ID</property>
+                                <expression name="expression">dataSetRow["POLICY_ID"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ROLE_FILTER</property>
+                                <expression name="expression">dataSetRow["ROLE_FILTER"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ROLE_INHERITED_DN</property>
+                                <expression name="expression">dataSetRow["ROLE_INHERITED_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ROLE_FILTER_DN</property>
+                                <expression name="expression">dataSetRow["ROLE_FILTER_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ERROLENAME</property>
+                                <expression name="expression">dataSetRow["ERROLENAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ENTITLEMENT_TYPE</property>
+                                <expression name="expression">dataSetRow["ENTITLEMENT_TYPE"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICE_NAME</property>
+                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TARGET_DN</property>
+                                <expression name="expression">dataSetRow["TARGET_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">IS_EXCLUSIVE</property>
+                                <expression name="expression">dataSetRow["IS_EXCLUSIVE"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ROLE_BU</property>
+                                <expression name="expression">dataSetRow["ROLE_BU"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">FILTER_ENTITLEMENTS</property>
+                                <expression name="expression">dataSetRow["FILTER_ENTITLEMENTS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CRED_ENTITLEMENT</property>
+                                <expression name="expression">dataSetRow["CRED_ENTITLEMENT"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POOL_ENTITLEMENT</property>
+                                <expression name="expression">dataSetRow["POOL_ENTITLEMENT"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="2853"/>
+                        <header>
+                            <row id="4849">
+                                <cell id="4850">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="paddingTop">15px</property>
+                                    <grid name="Information Message Dialog" id="4851" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                                        <property name="marginTop">15px</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">var rowCn=0;
+
+rowCn = row.__rownum;
+
+if(rowCn ==0 ) {
+true
+} else {
+false
+}</expression>
+                                            </structure>
+                                        </list-property>
+                                        <overridden-values>
+                                            <ref-entry baseId="42" id="42"/>
+                                            <ref-entry baseId="43" id="43"/>
+                                            <ref-entry baseId="44" id="44"/>
+                                            <ref-entry baseId="45" id="45"/>
+                                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                                            <ref-entry baseId="47" id="47"/>
+                                            <ref-entry baseId="52" name="NewText2" id="52">
+                                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                                <property name="contentType">html</property>
+                                            </ref-entry>
+                                        </overridden-values>
+                                    </grid>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="4049">
+                            <property name="groupName">group_Role</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["ROLE_FILTER"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["ERROLENAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="4050">
+                                    <cell id="4051">
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="paddingBottom">10pt</property>
+                                        <data id="4131">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <property name="resultSetColumn">ERROLENAME</property>
+                                        </data>
+                                        <grid id="4238">
+                                            <property name="width">2.875in</property>
+                                            <column id="4239">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="4240">
+                                                <property name="width">0.46875in</property>
+                                            </column>
+                                            <row id="4241">
+                                                <cell id="4242">
+                                                    <label id="4244">
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="color">#444E68</property>
+                                                        <text-property name="text" key="heading_role_business_unit">Role Business Unit:	</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="4243">
+                                                    <data id="4660">
+                                                        <property name="resultSetColumn">ROLE_BU</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                        <label id="4247">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_role_owners">Role Owners</text-property>
+                                        </label>
+                                        <grid id="4274">
+                                            <property name="width">100%</property>
+                                            <column id="4275">
+                                                <property name="width">15px</property>
+                                            </column>
+                                            <column id="4276"/>
+                                            <row id="4277">
+                                                <cell id="4278"/>
+                                                <cell id="4279">
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <table id="4807">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="width">5.09375in</property>
+                                                        <property name="dataSet">RoleUserOwner</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param_1</property>
+                                                                <expression name="expression">row["ROLE_FILTER"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">CN</property>
+                                                                <expression name="expression">dataSetRow["CN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="4825">
+                                                            <property name="width">3px</property>
+                                                        </column>
+                                                        <column id="4826">
+                                                            <property name="width">1.1in</property>
+                                                        </column>
+                                                        <column id="4827">
+                                                            <property name="width">1.1in</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="4808">
+                                                                <cell id="4809">
+                                                                    <property name="colSpan">3</property>
+                                                                    <property name="rowSpan">1</property>
+                                                                    <property name="paddingTop">5px</property>
+                                                                    <label id="4810">
+                                                                        <text-property name="text" key="users">Users</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                            <row id="4811">
+                                                                <cell id="4812"/>
+                                                                <cell id="4813">
+                                                                    <label id="4814">
+                                                                        <text-property name="text" key="name">Name</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="4815">
+                                                                    <label id="4816">
+                                                                        <text-property name="text" key="parameter_business_unit">Business Unit</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="4818">
+                                                                <cell id="4819"/>
+                                                                <cell id="4820">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4830">
+                                                                        <property name="resultSetColumn">CN</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4822">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4831">
+                                                                        <property name="resultSetColumn">NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                        <grid id="4280">
+                                            <property name="width">100%</property>
+                                            <column id="4281">
+                                                <property name="width">15px</property>
+                                            </column>
+                                            <column id="4282"/>
+                                            <row id="4283">
+                                                <cell id="4284"/>
+                                                <cell id="4285">
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <table id="3732">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="width">5.09375in</property>
+                                                        <property name="dataSet">RoleOwner</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param_1</property>
+                                                                <expression name="expression">row["ROLE_FILTER"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">ERROLENAME</property>
+                                                                <expression name="expression">dataSetRow["ERROLENAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="3752">
+                                                            <property name="width">3px</property>
+                                                        </column>
+                                                        <column id="3753">
+                                                            <property name="width">1.1in</property>
+                                                        </column>
+                                                        <column id="3754">
+                                                            <property name="width">1.1in</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="3733">
+                                                                <cell id="3734">
+                                                                    <property name="colSpan">3</property>
+                                                                    <property name="rowSpan">1</property>
+                                                                    <property name="paddingTop">5px</property>
+                                                                    <label id="3735">
+                                                                        <text-property name="text" key="heading_roles">Roles</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                            <row id="3736">
+                                                                <cell id="3737"/>
+                                                                <cell id="3738">
+                                                                    <label id="3739">
+                                                                        <text-property name="text" key="name">Name</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="3740">
+                                                                    <label id="3741">
+                                                                        <text-property name="text" key="parameter_business_unit">Business Unit</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="3742">
+                                                                <cell id="3743"/>
+                                                                <cell id="3744">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="3745">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">ERROLENAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="3746">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="3747">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="4052">
+                                    <cell id="4053">
+                                        <grid id="4286">
+                                            <property name="width">100%</property>
+                                            <column id="4287">
+                                                <property name="width">15px</property>
+                                            </column>
+                                            <column id="4288"/>
+                                            <row id="4289">
+                                                <cell id="4290"/>
+                                                <cell id="4291">
+                                                    <table id="4055">
+                                                        <property name="width">100%</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENTS</property>
+                                                                <expression name="expression">dataSetRow["FILTER_ENTITLEMENTS"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ROLE_INHERITED</property>
+                                                                <expression name="expression">dataSetRow["ROLE_INHERITED"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SA_POLICY</property>
+                                                                <expression name="expression">dataSetRow["SA_POLICY"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">TARGET_DN</property>
+                                                                <expression name="expression">dataSetRow["TARGET_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POLICY_BU</property>
+                                                                <expression name="expression">dataSetRow["POLICY_BU"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENT_NAME</property>
+                                                                <expression name="expression">if(dataSetRow["ENTITLEMENT_NAME"]=="ALL_CREDENTIALS_ENTITLEMENT")
+{
+	getNLS("filter_all_credentials");
+	
+} else if (dataSetRow["ENTITLEMENT_NAME"]=="ALL_CREDENTIAL_POOLS_ENTITLEMENT")
+{
+	getNLS("filter_all_credential_pools");
+		
+} else 
+{
+	dataSetRow["ENTITLEMENT_NAME"];	
+}</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENT_TYPE</property>
+                                                                <expression name="expression">dataSetRow["ENTITLEMENT_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SERVICE_NAME</property>
+                                                                <property name="displayName">SERVICE_NAME</property>
+                                                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SERVICE_TYPE</property>
+                                                                <property name="displayName">SERVICE_TYPE</property>
+                                                                <expression name="expression">dataSetRow["SERVICE_TYPE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POLICY_DN</property>
+                                                                <property name="displayName">POLICY_DN</property>
+                                                                <expression name="expression">dataSetRow["POLICY_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POLICY_BU_DN</property>
+                                                                <property name="displayName">POLICY_BU_DN</property>
+                                                                <expression name="expression">dataSetRow["POLICY_BU_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POLICY_SCOPE</property>
+                                                                <property name="displayName">POLICY_SCOPE</property>
+                                                                <expression name="expression">dataSetRow["SCOPE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SERVICE_GROUP</property>
+                                                                <property name="displayName">SERVICE_GROUP</property>
+                                                                <expression name="expression">dataSetRow["SERVICE_GROUP"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DEFINITION_TYPE</property>
+                                                                <property name="displayName">DEFINITION_TYPE</property>
+                                                                <expression name="expression">dataSetRow["DEFINITION_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="filter">
+                                                            <structure>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="expr">row["DEFINITION_TYPE"]</expression>
+                                                                <simple-property-list name="value1">
+                                                                    <value>1</value>
+                                                                </simple-property-list>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="4650">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4068">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4069">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4070">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4319">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="4118">
+                                                                <cell id="4646">
+                                                                    <property name="colSpan">5</property>
+                                                                    <property name="rowSpan">1</property>
+                                                                    <property name="borderBottomStyle">none</property>
+                                                                    <property name="paddingTop">3px</property>
+                                                                    <property name="paddingLeft">0px</property>
+                                                                    <property name="paddingRight">0px</property>
+                                                                    <label id="4123">
+                                                                        <property name="style">section-title</property>
+                                                                        <property name="paddingTop">5px</property>
+                                                                        <text-property name="text" key="tilte_filtered_entitlement_section">Filtered Entitlement Section</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <group id="4377">
+                                                            <property name="groupName">POLICY_BU_DN</property>
+                                                            <property name="interval">none</property>
+                                                            <property name="sortDirection">asc</property>
+                                                            <expression name="keyExpr">row["POLICY_BU_DN"]</expression>
+                                                            <property name="repeatHeader">true</property>
+                                                            <property name="hideDetail">false</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <header>
+                                                                <row id="4378">
+                                                                    <cell id="4647">
+                                                                        <property name="colSpan">5</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <grid id="4399">
+                                                                            <property name="width">3.34375in</property>
+                                                                            <column id="4400">
+                                                                                <property name="width">1.1in</property>
+                                                                            </column>
+                                                                            <column id="4401">
+                                                                                <property name="width">1.2083333333in</property>
+                                                                            </column>
+                                                                            <row id="4402">
+                                                                                <cell id="4403">
+                                                                                    <property name="paddingTop">10pt</property>
+                                                                                    <label id="4406">
+                                                                                        <property name="fontWeight">bold</property>
+                                                                                        <property name="color">#444E68</property>
+                                                                                        <text-property name="text" key="heading_shared_access_policy_business_unit">Shared Access Policy Business Unit:</text-property>
+                                                                                    </label>
+                                                                                </cell>
+                                                                                <cell id="4404">
+                                                                                    <property name="paddingTop">20pt</property>
+                                                                                    <data id="4405">
+                                                                                        <property name="resultSetColumn">POLICY_BU</property>
+                                                                                    </data>
+                                                                                </cell>
+                                                                            </row>
+                                                                        </grid>
+                                                                    </cell>
+                                                                </row>
+                                                                <row id="4389">
+                                                                    <cell id="4648">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4653">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_entitlement_type">Entitlement Type</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4390">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4645">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_entitlement_name">Entitlement Name</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4391">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4101">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_inherited_from">Inherited From</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4392">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4075">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_shared_access_policy">Shared Access Policy</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4393">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4842">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_shared_access_policy_scope">Shared Access Policy Scope</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                </row>
+                                                            </header>
+                                                        </group>
+                                                        <detail>
+                                                            <row id="4771">
+                                                                <cell id="4772">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4652">
+                                                                        <list-property name="mapRules">
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["ENTITLEMENT_TYPE"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">1</expression>
+                                                                                <text-property name="display" key="Credential_Pool">Credential Pool</text-property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["ENTITLEMENT_TYPE"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">0</expression>
+                                                                                <text-property name="display" key="Credential">Credential</text-property>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <property name="resultSetColumn">ENTITLEMENT_TYPE</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4773">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4644">
+                                                                        <property name="resultSetColumn">ENTITLEMENT_NAME</property>
+                                                                        <structure name="action">
+                                                                            <property name="linkType">drill-through</property>
+                                                                            <property name="reportName">shared_access_entitlement_by_role_sub.rptdesign</property>
+                                                                            <property name="targetWindow">_blank</property>
+                                                                            <property name="targetFileType">report-design</property>
+                                                                            <list-property name="paramBindings">
+                                                                                <structure>
+                                                                                    <property name="paramName">EntitlementFilter</property>
+                                                                                    <expression name="expression">if(row["ENTITLEMENTS"] != null ) {
+ row["ENTITLEMENTS"].replace('*','%');
+} else {
+ row["ENTITLEMENTS"]
+}</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">EntitlementType</property>
+                                                                                    <expression name="expression">row["ENTITLEMENT_TYPE"]</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">Service</property>
+                                                                                    <expression name="expression">if(row["SERVICE_NAME"] != null ) {
+ row["SERVICE_NAME"].replace('*','%');
+} else {
+ row["SERVICE_NAME"]
+ }</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">ServiceType</property>
+                                                                                    <expression name="expression">if(row["SERVICE_TYPE"] != null ) {
+ row["SERVICE_TYPE"].replace('*','%');
+ } else {
+  row["SERVICE_TYPE"]
+}</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">PolicyBusinessUnitDn</property>
+                                                                                    <expression name="expression">row["POLICY_BU_DN"]</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">PolicyScope</property>
+                                                                                    <expression name="expression">row["POLICY_SCOPE"]</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">ServiceTag</property>
+                                                                                    <expression name="expression">if(row["SERVICE_GROUP"] != null ) {
+ row["SERVICE_GROUP"].replace('*','%');
+ } else {
+  row["SERVICE_GROUP"]
+}</expression>
+                                                                                </structure>
+                                                                            </list-property>
+                                                                        </structure>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4774">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4102">
+                                                                        <property name="resultSetColumn">ROLE_INHERITED</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4775">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4076">
+                                                                        <property name="resultSetColumn">SA_POLICY</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4776">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4844">
+                                                                        <list-property name="mapRules">
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["POLICY_SCOPE"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">1</expression>
+                                                                                <text-property name="display" key="shared_access_policy_scope_single">Single</text-property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <expression name="testExpr">row["POLICY_SCOPE"]</expression>
+                                                                                <property name="operator">eq</property>
+                                                                                <expression name="value1">2</expression>
+                                                                                <text-property name="display" key="shared_access_policy_scope_subtree">Subtree</text-property>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <property name="resultSetColumn">POLICY_SCOPE</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="4163">
+                                    <cell id="4164">
+                                        <grid id="4292">
+                                            <property name="width">100%</property>
+                                            <column id="4293">
+                                                <property name="width">15px</property>
+                                            </column>
+                                            <column id="4294"/>
+                                            <row id="4295">
+                                                <cell id="4296"/>
+                                                <cell id="4297">
+                                                    <table id="4083">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="width">100%</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENTS</property>
+                                                                <expression name="expression">dataSetRow["CRED_ENTITLEMENT"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ROLE_INHERITED</property>
+                                                                <expression name="expression">dataSetRow["ROLE_INHERITED"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">TARGET_DN</property>
+                                                                <expression name="expression">dataSetRow["TARGET_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SA_POLICY</property>
+                                                                <expression name="expression">dataSetRow["SA_POLICY"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENT_TYPE</property>
+                                                                <expression name="expression">dataSetRow["ENTITLEMENT_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SERVICE_NAME</property>
+                                                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CRED_SERVICE_DN</property>
+                                                                <expression name="expression">dataSetRow["CRED_SERVICE_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CRED_SER_BU_DN</property>
+                                                                <expression name="expression">dataSetRow["CRED_SER_BU_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CRED_SER_BU_NAME</property>
+                                                                <expression name="expression">dataSetRow["CRED_SER_BU_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CRED_SERVICE</property>
+                                                                <expression name="expression">dataSetRow["CRED_SERVICE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">IS_EXCLUSIVE</property>
+                                                                <expression name="expression">dataSetRow["IS_EXCLUSIVE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DEFINITION_TYPE</property>
+                                                                <property name="displayName">DEFINITION_TYPE</property>
+                                                                <expression name="expression">dataSetRow["DEFINITION_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="filter">
+                                                            <structure>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="expr">row["DEFINITION_TYPE"]</expression>
+                                                                <simple-property-list name="value1">
+                                                                    <value>0</value>
+                                                                </simple-property-list>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="expr">row["ENTITLEMENT_TYPE"]</expression>
+                                                                <simple-property-list name="value1">
+                                                                    <value>0</value>
+                                                                </simple-property-list>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="4667">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4096">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4097">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4110">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4643">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="4113">
+                                                                <cell id="4661">
+                                                                    <property name="colSpan">5</property>
+                                                                    <property name="rowSpan">1</property>
+                                                                    <property name="borderBottomStyle">none</property>
+                                                                    <property name="paddingTop">3px</property>
+                                                                    <property name="paddingLeft">0px</property>
+                                                                    <property name="paddingRight">0px</property>
+                                                                    <label id="3407">
+                                                                        <property name="style">section-title</property>
+                                                                        <property name="paddingTop">5px</property>
+                                                                        <text-property name="text" key="title_credential_section">Credential Section</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <group id="4552">
+                                                            <property name="groupName">CRED_SERVICE_BU</property>
+                                                            <property name="interval">none</property>
+                                                            <property name="sortDirection">asc</property>
+                                                            <expression name="keyExpr">row["CRED_SER_BU_DN"]</expression>
+                                                            <property name="repeatHeader">true</property>
+                                                            <property name="hideDetail">false</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <header>
+                                                                <row id="4553">
+                                                                    <cell id="4662">
+                                                                        <property name="colSpan">1</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <label id="4795">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_service_business_unit_tag">Service Business Unit:</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4791">
+                                                                        <property name="colSpan">4</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <property name="paddingLeft">3pt</property>
+                                                                        <data id="4575">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <property name="resultSetColumn">CRED_SER_BU_NAME</property>
+                                                                        </data>
+                                                                    </cell>
+                                                                </row>
+                                                            </header>
+                                                        </group>
+                                                        <group id="4562">
+                                                            <property name="groupName">CRED_SERVICE</property>
+                                                            <property name="interval">none</property>
+                                                            <property name="sortDirection">asc</property>
+                                                            <expression name="keyExpr">row["CRED_SERVICE_DN"]</expression>
+                                                            <property name="repeatHeader">true</property>
+                                                            <property name="hideDetail">false</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <header>
+                                                                <row id="4563">
+                                                                    <cell id="4663">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <property name="paddingLeft">10pt</property>
+                                                                        <label id="4790">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_service_tag">Service:</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4564">
+                                                                        <property name="colSpan">4</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <property name="paddingLeft">3pt</property>
+                                                                        <data id="4576">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <property name="resultSetColumn">CRED_SERVICE</property>
+                                                                        </data>
+                                                                    </cell>
+                                                                </row>
+                                                                <row id="4633">
+                                                                    <cell id="4664">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingLeft">10pt</property>
+                                                                        <label id="4099">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_entitlement">Entitlement</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4634">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">1pt</property>
+                                                                        <label id="4103">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_inherited_from">Inherited From</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4635">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">1pt</property>
+                                                                        <label id="4111">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_shared_access_policy">Shared Access Policy</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4636">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">1pt</property>
+                                                                        <label id="4783">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_exclusive_access">Exclusive Access</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4640">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">1pt</property>
+                                                                    </cell>
+                                                                </row>
+                                                            </header>
+                                                        </group>
+                                                        <detail>
+                                                            <row id="4777">
+                                                                <cell id="4778">
+                                                                    <property name="style">table-details</property>
+                                                                    <property name="paddingLeft">10pt</property>
+                                                                    <data id="4572">
+                                                                        <property name="resultSetColumn">ENTITLEMENTS</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4779">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4573">
+                                                                        <property name="resultSetColumn">ROLE_INHERITED</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4780">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4574">
+                                                                        <property name="resultSetColumn">SA_POLICY</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4781">
+                                                                    <property name="style">table-details</property>
+                                                                    <text id="4852">
+                                                                        <list-property name="visibility">
+                                                                            <structure>
+                                                                                <property name="format">all</property>
+                                                                                <expression name="valueExpr">!isExclusiveAccess(row["IS_EXCLUSIVE"]);</expression>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <text-property name="content" key="yes"><![CDATA[]]></text-property>
+                                                                    </text>
+                                                                </cell>
+                                                                <cell id="4782">
+                                                                    <property name="style">table-details</property>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="4298">
+                                    <cell id="4299">
+                                        <property name="paddingTop">1pt</property>
+                                        <grid id="4300">
+                                            <property name="width">100%</property>
+                                            <column id="4301">
+                                                <property name="width">15px</property>
+                                            </column>
+                                            <column id="4302"/>
+                                            <row id="4303">
+                                                <cell id="4304"/>
+                                                <cell id="4305">
+                                                    <table id="4165">
+                                                        <property name="width">100%</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENTS</property>
+                                                                <expression name="expression">dataSetRow["POOL_ENTITLEMENT"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ROLE_INHERITED</property>
+                                                                <expression name="expression">dataSetRow["ROLE_INHERITED"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">TARGET_DN</property>
+                                                                <expression name="expression">dataSetRow["TARGET_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SA_POLICY</property>
+                                                                <expression name="expression">dataSetRow["SA_POLICY"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ENTITLEMENT_TYPE</property>
+                                                                <expression name="expression">dataSetRow["ENTITLEMENT_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">GROUP_NAME</property>
+                                                                <property name="displayName">GROUP_NAME</property>
+                                                                <expression name="expression">dataSetRow["GROUP_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">SERVICE_NAME</property>
+                                                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POOL_SER_BU_DN</property>
+                                                                <property name="displayName">POOL_SER_BU_DN</property>
+                                                                <expression name="expression">dataSetRow["POOL_SER_BU_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POOL_SERVICE_DN</property>
+                                                                <property name="displayName">POOL_SERVICE_DN</property>
+                                                                <expression name="expression">dataSetRow["POOL_SERVICE_DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POOL_SERVICE</property>
+                                                                <property name="displayName">POOL_SERVICE</property>
+                                                                <expression name="expression">dataSetRow["POOL_SERVICE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">POOL_SER_BU_NAME</property>
+                                                                <expression name="expression">dataSetRow["POOL_SER_BU_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DEFINITION_TYPE</property>
+                                                                <property name="displayName">DEFINITION_TYPE</property>
+                                                                <expression name="expression">dataSetRow["DEFINITION_TYPE"]</expression>
+                                                                <property name="dataType">integer</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="filter">
+                                                            <structure>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="expr">row["DEFINITION_TYPE"]</expression>
+                                                                <simple-property-list name="value1">
+                                                                    <value>0</value>
+                                                                </simple-property-list>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="operator">eq</property>
+                                                                <expression name="expr">row["ENTITLEMENT_TYPE"]</expression>
+                                                                <simple-property-list name="value1">
+                                                                    <value>1</value>
+                                                                </simple-property-list>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="4673">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4192">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4193">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4194">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="4195">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="4166">
+                                                                <cell id="4668">
+                                                                    <property name="colSpan">5</property>
+                                                                    <property name="rowSpan">1</property>
+                                                                    <property name="borderBottomStyle">none</property>
+                                                                    <property name="paddingTop">3px</property>
+                                                                    <property name="paddingLeft">0px</property>
+                                                                    <property name="paddingRight">0px</property>
+                                                                    <label id="4168">
+                                                                        <property name="style">section-title</property>
+                                                                        <property name="paddingTop">5px</property>
+                                                                        <text-property name="text" key="title_credential_pool_section">Credential Pool Section</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <group id="4590">
+                                                            <property name="groupName">POOL_SERVICE_BU_DN</property>
+                                                            <property name="interval">none</property>
+                                                            <property name="sortDirection">asc</property>
+                                                            <expression name="keyExpr">row["POOL_SER_BU_DN"]</expression>
+                                                            <property name="repeatHeader">true</property>
+                                                            <property name="hideDetail">false</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <header>
+                                                                <row id="4591">
+                                                                    <cell id="4669">
+                                                                        <property name="colSpan">1</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <label id="4789">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_service_business_unit_tag">Service Business Unit:</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4785">
+                                                                        <property name="colSpan">4</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <property name="paddingLeft">3pt</property>
+                                                                        <data id="4630">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <property name="resultSetColumn">POOL_SER_BU_NAME</property>
+                                                                        </data>
+                                                                    </cell>
+                                                                </row>
+                                                            </header>
+                                                        </group>
+                                                        <group id="4604">
+                                                            <property name="groupName">POOL_SERVICE_DN</property>
+                                                            <property name="interval">none</property>
+                                                            <property name="sortDirection">asc</property>
+                                                            <expression name="keyExpr">row["POOL_SERVICE_DN"]</expression>
+                                                            <property name="repeatHeader">true</property>
+                                                            <property name="hideDetail">false</property>
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="pageBreakBefore">auto</property>
+                                                            <property name="pageBreakInside">auto</property>
+                                                            <header>
+                                                                <row id="4605">
+                                                                    <cell id="4670">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <property name="paddingLeft">10pt</property>
+                                                                        <label id="4796">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_service_tag">Service:</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4606">
+                                                                        <property name="colSpan">4</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingTop">10pt</property>
+                                                                        <data id="4631">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <property name="resultSetColumn">POOL_SERVICE</property>
+                                                                        </data>
+                                                                    </cell>
+                                                                </row>
+                                                                <row id="4618">
+                                                                    <cell id="4671">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <property name="paddingLeft">10pt</property>
+                                                                        <label id="4171">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_entitlement">Entitlement</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4619">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4173">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_inherited_from">Inherited From</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4620">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4175">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_shared_access_policy">Shared Access Policy</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4621">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                        <label id="4201">
+                                                                            <property name="fontWeight">bold</property>
+                                                                            <property name="color">#444E68</property>
+                                                                            <text-property name="text" key="heading_group">Group</text-property>
+                                                                        </label>
+                                                                    </cell>
+                                                                    <cell id="4622">
+                                                                        <property name="borderBottomStyle">solid</property>
+                                                                        <property name="borderBottomWidth">1px</property>
+                                                                    </cell>
+                                                                </row>
+                                                            </header>
+                                                        </group>
+                                                        <detail>
+                                                            <row id="4753">
+                                                                <cell id="4754">
+                                                                    <property name="style">table-details</property>
+                                                                    <property name="paddingLeft">10pt</property>
+                                                                    <data id="4180">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">ENTITLEMENTS</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4755">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4182">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">ROLE_INHERITED</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4756">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4184">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">SA_POLICY</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4757">
+                                                                    <property name="style">table-details</property>
+                                                                    <data id="4202">
+                                                                        <property name="fontWeight">normal</property>
+                                                                        <property name="color">black</property>
+                                                                        <property name="resultSetColumn">GROUP_NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="4758">
+                                                                    <property name="style">table-details</property>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </group>
+                    </table>
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_shared_entitlements_by_Role"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

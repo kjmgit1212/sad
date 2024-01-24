@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<display-name>SampleSSOWar</display-name>
+	<servlet>
+		<description>
+		</description>
+		<display-name>WebCallServlet</display-name>
+		<servlet-name>WebCallServlet</servlet-name>
+		<servlet-class>examples.ws.WebCallServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebCallServlet</servlet-name>
+		<url-pattern>/WebCallServlet/*</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<security-constraint>
+		<display-name>ITIM_CLIENTConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>ITIM_CLIENTCollection</web-resource-name>
+			<url-pattern>/jsp/Login.jsp</url-pattern>
+			<url-pattern>/jsp/Logout.jsp</url-pattern>
+			<url-pattern>/jsp/Home.jsp</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>PUT</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>TRACE</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>OPTIONS</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>
+			Auto generated Authorization Constraint</description>
+			<role-name>ITIM_CLIENT</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/jsp/Login.jsp</form-login-page>
+			<form-error-page>/jsp/Logout.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	<security-role>
+		<description>
+		</description>
+		<role-name>ITIM_CLIENT</role-name>
+	</security-role>
+	
+</web-app>

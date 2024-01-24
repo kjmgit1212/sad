@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H5 ALIGN=CENTER><FONT SIZE=6>Authentication API</FONT></H5>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR>
+<br>
+</P>
+<p>
+<a href="#purpose">Purpose of this Document</a><br>
+<a href="#overview">Overview</a><br>
+<a href="#providerAPI">Provider API Description</a><br>
+</p>
+<a name="purpose"><H2>Purpose of this Document</H2></a>
+<P>The Identity Manager provisioning platform is designed with
+extensibility as a primary goal. Many of the architectural components
+have been built using frameworks that can make use of custom
+extensions. This document describes the framework used within the
+Authentication component of Identity Manager and how it can be
+extended. The part of the framework that will be extended by a client
+will be called the Application Programming Interface (API).</P>
+<a name="overview"><H2>Overview</H2></a>
+<P>The authentication extensible framework and API has been developed
+to satisfy two specific goals. One goal is to enable the use of
+different trusted identity stores. So, for example, a customer may
+want to make use of the identity information stored on a Windows NT
+domain server or an LDAP directory. 
+</P>
+<P ALIGN=CENTER>
+
+<img border="0" src="images/image003.gif" width="263" height="231"><br>
+<b>Figrue 1: Use of Windows NT domain server for identity store</b></P>
+<P>Another goal is to enable the use of different types of keys,
+typically passwords, to unlock the application to the user. For
+example, the use of a SecureID token could be used instead of the
+typical hashed password.</P>
+<P>The java-based framework that satisfies these goals is called by
+the Identity Manager provisioning platform at any time it needs to
+authenticate a user. The interface used by the platform is abstracted
+so that any custom extensions would be hidden, and therefore the
+presence of these extensions will have no impact on the overall
+design of the platform itself. 
+</P>
+<P> The
+ type of client that will use this API is looking to extend the framework to customize the way
+the authentication is performed.</P>
+<a name="providerAPI"><H2>Provider API Description</H2></a>
+<P>The purpose of the Provider API is to allow custom extensions to
+the authentication framework. A client attempting to authenticate a
+user will not use this portion of the API, but instead, a client that
+wishes to override the behavior of the system when other clients
+attempt to authenticate a user.</P>
+<P>The authentication framework consists of the
+SystemAuthenticationAuthority class 
+which makes use of one or more <A HREF="../../api/com/ibm/itim/authentication/AuthenticationProvider.html">AuthenticationProvider</A>
+classes to implement the actual authentication algorithms. The
+SystemAuthenticationAuthority itself merely constructs the correct
+AuthenticationProvider based on the type of credentials being used
+and defers to that provider to perform the actual authentication
+logic. So, to extend or customize the authentication logic to be
+performed, a client would create their own AuthenticationProvider and
+register it with the SystemAuthenticationAuthority.</P>
+<P>The AuthenticationProvider class is a java interface. Its purpose
+is to define the method signatures needed for the
+SystemAuthenticationAuthority to use for authentication. The method
+that is used for this is
+authenticate(Credentials userCredentials). When a class implements the
+AuthenticationProvider interface, it will also need to implement the logic to
+be used within the authenticate method.</P>
+<P>In order to make the implementation of the authentication calls
+totally transparent to a client requesting authentication, the
+SystemAuthenticationAuthority must be able to determine which
+implementation class of the AuthenticationProvider interface to use
+during a request. This is achieved through the use of factories that
+can be specified to the SystemAuthenticationAuthority within the
+enRoleAuthentication.properties file. The client that
+creates the AuthenticationProvider implementation will also provide
+an implementation of the <A HREF="../../api/com/ibm/itim/authentication/AuthenticationProviderFactory.html">AuthenticationProviderFactory</A>
+interface. This interface will be called by the
+SystemAuthenticationAuthority when it needs to create a new
+AuthenticationProvider implementation. Because the details that go
+into setting up the context and constructing an
+AuthenticationProvider may be quite different between
+implementations, the factory’s purpose is to hide those differences
+and perform the construction behind a standard interface. This
+interface is defined with the create method. This create method
+performs its implementation specific construction and returns an
+instance of an AuthenticationProvider interface.</P>
+<P>The  enRoleAuthentication.properties file holds
+assignments of AuthenticationProvider classes to authentication
+mechanisms. Two of the mechanisms are used when a user authenticates
+to the provisioning server, (user id and password) and certificate.
+There is one additional mechanism, service, which is how connectors
+authenticate to the provisioning platform. To assign an
+AuthenticationProvider to one of these mechanisms, place the full
+class name of the corresponding AuthenticationProviderFactory in the
+file. See below for the default Identity
+enRoleAuthentication.properties file that is installed with the
+platform.</P>
+<PRE>###########################################################
+## Authentication information
+###########################################################
+# Indicates the type of credentials required by end-user
+# for authentication. Choices are: simple, certificate
+enrole.authentication.requiredCredentials=simple
+
+# Supported authentication providers
+# simple provider
+enrole.authentication.provider.simple=\
+   factory=com.ibm.itim.authentication.simple.SimpleAuthenticationProviderFactory
+   
+# certificate provider
+#enrole.authentication.provider.certificate=\
+#   factory=com.ibm.itim.authentication.certificate.CertificateAuthenticationProviderFactory
+# service provider
+enrole.authentication.provider.service=\
+   factory=com.ibm.itim.authentication.service.ServiceAuthenticationProviderFactory</PRE>
+</BODY>
+</HTML>

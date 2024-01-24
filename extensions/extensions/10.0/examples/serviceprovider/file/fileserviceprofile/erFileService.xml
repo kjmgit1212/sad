@@ -1,0 +1,23 @@
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<page>
+<body>
+<form action="formvalidator0">
+<formElement name="data.erservicename" label="$erservicename">
+<input name="data.erservicename" size="50" type="text"/>
+</formElement>
+<formElement name="data.erfilename" label="$erfilename">
+<input name="data.erfilename" size="50" type="text"/>
+</formElement>
+</form>
+</body>
+</page>

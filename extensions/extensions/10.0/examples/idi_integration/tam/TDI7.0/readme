@@ -1,0 +1,122 @@
+README for IDI Utility
+
+I. Files contained in the utility
+The IDI utility consists of 4 configuration files for defined tasks. 
+Each configuration file has one matched properties file.
+One configuration file has also an exit file. 
+All the files are listed as the following:
+ 
+ Files for task 1 -Import single domain TAM user data to ITIM server:
+       TAMtoTIMImport.xml
+       TAMtoTIMImport.properties
+
+ Files for task 2 -Import multi domain TAM user data to ITIM server:
+       MDTAMtoTIMImport.xml
+       MDTAMtoTIMImport.properties
+
+ Files for task 3 -Import Directory user data to ITIM server: 
+       DirectorytoTIMImport.xml
+       DirectorytoTIMImport.oroperties
+
+ Files for task 4 - Synchronize ITIM user attributes with TAM users:
+       TIMtoTAMSync.xml
+       TIMtoTAMsync.properties
+       TIMtoTAMsyncexit
+
+II. Before running the utility
+1. To run the task 1, 2 and 3, a DSMLv2 HR feed service must be created in the ITIM 4.5 server.
+2. For all the tasks, the properties files and exit file must be customized. The attribute details are as the following:
+
+a) TAMtoTIMImport.properties
+ TIM_DSMLv2_URL:       
+   The TIM DSMLv2 URL should be customized in the format of:
+     http://hostname:portname/enrole/dsml2_event_handler/tenant
+     The hostname is the host name of the ITIM server.
+     The portname is the port name of the ITIM server, the default is 9080.
+     The tenant is the domain name of the ITIM server.
+ TIM_DSMLv2_Login: ITIM DSMLv2 user ID.
+ TIM_DSMLv2_PW: ITIM DSMLv2 user password.
+ TIM_DSMLv2_SearchBase: the namingContexts defined in the ITIM DSMLv2 service.
+
+ The following parameters required if LDAP is the TAM user registry:
+     TAM_LDAP_URL: The remote ITAM LDAP URL in the format of: //ldap:hostname:portnumber.        
+     TAM_LDAP_Login: The remote ITAM LDAP user ID.
+     TAM_LDAP_PW: The remote ITAM LDAP user password.
+ 
+ The following parameters required if Active Directory is the TAM user registry:
+     TAM_AD_URL: The remote Active Directory URL in the format of: //ldap:hostname:portnumber.        
+     TAM_AD_Username: The remote ITAM Active Directory user ID.
+     TAM_AD_password: The remote ITAM Active Directory password.
+     TAM_AD_SearchBase: The remote ITAM Active Directory domain name In the format of: 
+        cn=Users,cn=default,cn=tivoli pd omains,dc=domainname,dc=com
+        Note: The administrator needs only to replace the domainname here.
+     TAM_AD_SearchFilter:
+     TAM_AD_RetrieveBase: The remote ITAM Active Directory domain name in the format of: 
+        dc=domainname,dc=com
+        Note: The administrator needs only to replace the domainname here.
+ 
+ The following parameters required if Domino server is the TAM user registry:
+     TAM_Domino_Hostname: The remote Domino server host name.       
+     TAM_Domino_UserID: The remote Domino server user id.
+     TAM_Domino_Password: The remote Domino server user password
+     TAM_Domino_Servername: The remote Domino server name.       
+
+b)MDTAMtoTIMImport.properties
+ It contains the following settings as in the previous properties file:
+     TIM_DSMLv2_URL;      
+     TIM_DSMLv2_Login;
+     TIM_DSMLv2_PW;  
+     TIM_DSMLv2_SearchBase;
+     TAM_LDAP_URL;
+     TAM_LDAP_Login;
+     TAM_LDAP_PW.
+     Note: TAM supports multi domains only on LDAP directory.
+
+c)DirectorytoTIMImport.properties
+ It contains the Following settings as in the previous properties file:
+     TIM_DSMLv2_URL;      
+    TIM_DSMLv2_Login;
+    TIM_DSMLv2_PW;  
+    TIM_DSMLv2_SearchBase.
+    The following parameters required if LDAP is the Directory user registry:
+	LDAP_URL;
+	LDAP_Login;
+	LDAP_PW;
+	LDAP_SearchBase.
+    The following parameters required if Active Directory is the Directory user registry:
+	AD_URL;
+	AD_Username;
+	AD_password;
+	AD_SearchBase.
+
+d)SyncTAM.properties
+    TIM_LDAP_URL;
+    TIM_LDAP_Login;
+    TIM_LDAP_PW;
+    TAM_LDAP_URL;
+    TAM_LDAP_Login;
+    TAM_LDAP_PW;
+    Use the following 5 properties for setting Scheduled start time synchronization
+    Use "* " for any value of that variable. 
+    For example,  * * * * 15 defines the scheduled starting time at 15 minutes passed every hour.
+    SYNC_Start_Month;
+    SYNC_Start_Day;
+    SYNC_Start_Weekday;
+    SYNC_Start_Hours;
+    SYNC_Start_Minutes;
+
+    SYNC_Timout: 
+     Specify the maximum time in seconds for the changelog connector to wait for the next new changelog.
+    SYNC_Sleeptime:
+     Specify the number of seconds for the changelog connector to sleep if no new changelog there.
+    Note: 
+     If SYNC_Timout is set to 0 and SYNC_Sleeptime is set to non-zero value, the changelog connector will wait for the new changelog forever. 
+     
+     
+III. Running the utility
+    GUI - Use IDI Admin Tool GUI to view, modify and pre execute the utility, which gives the most detailed information. 
+          It is necessary using Admin Tool to test all the environment settings.    
+    CLI - the utility can also be run using IDI commands: 
+          ibmdisrv -c"Configuration filename" -r"AssemblyLine name" -w. 
+          Using CLI when running importing or synchronizzation with large number of data.
+

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ant build file for custom approver example -->
+
+<!-- Licensed Materials - Property of IBM                              -->
+<!--                                                                   -->
+<!-- Source File Name = build.xml                                      -->
+<!--                                                                   -->
+<!-- (C) COPYRIGHT IBM Corp. 1999, 2009 All Rights Reserved            -->
+<!--                                                                   -->
+<!-- US Government Users Restricted Rights - Use, duplication or       -->
+<!-- disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+
+<project name="Custom Apprver Example" default="build" basedir="../..">
+
+	<property name="all" value="examples" />
+	<property name="dest" value="examples/workflow/bin" />
+	<property name="lib_dir" value="lib" />
+	<property name="src" value="examples/workflow/src" />
+
+	<!-- Create the time stamp and create destination directory-->
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${dest}" />
+		<mkdir dir="${lib_dir}" />
+	</target>
+
+	<!-- set-up the classpath for compiling -->
+	<path id="classpath">
+		<fileset dir="${itim.home}/extensions/{RELEASE_VERSION}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${itim.home}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="deletes the compiled java class files">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${dest}/classes" />
+			<fileset dir="${dest}">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="build" description="Compiles the source code and jars the result" depends="init">
+		<javac debug="on" srcdir="${src}" destdir="${dest}" encoding="ISO8859-1">
+			<classpath refid="classpath" />
+		</javac>
+		<jar jarfile="${lib_dir}/custom_approver.jar" basedir="${dest}" />
+	</target>
+
+	<!-- DB2: creates the tables for the relational database example -->
+	<target name="ddl" description="DB2: creates the tables for the example">
+		<sql driver="COM.ibm.db2.jdbc.app.DB2Driver" 
+			url="jdbc:db2:ENROLE" 
+			userid="enrole" 
+			password="enrole" 
+			src="examples/workflow/customApproval/custom_approver_db2.ddl" />
+	</target>
+	
+	<!-- SQL Server: creates the tables for the relational database example -->
+	<target name="ddl_sql" description="SQL Server: creates the tables for the relational database example">
+		<sql driver="com.microsoft.sqlserver.jdbc.SQLServerDriver" 
+			url="jdbc:sqlserver://localhost:1433;database=enrole" 
+			userid="enrole" 
+			password="enrole" 
+			src="examples/workflow/customApproval/custom_approver_sqlserver.ddl" />
+	</target>
+
+	<!-- Oracle: creates the tables for the relational database example -->
+	<target name="ddl_oracle" description="Oracle: creates the tables for the relational database example">
+		<sql driver="oracle.jdbc.OracleDriver" 
+			url="jdbc:oracle:thin:@localhost:1521:OR92" 
+			userid="enrole" 
+			password="enrole" 
+			src="examples/workflow/customApproval/custom_approver_oracle.ddl" />
+	</target>
+
+</project>

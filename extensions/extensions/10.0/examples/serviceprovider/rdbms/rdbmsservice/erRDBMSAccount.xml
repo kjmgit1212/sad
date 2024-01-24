@@ -1,0 +1,51 @@
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<page>
+<body>
+<form action="formvalidator0">
+<formElement name="data.eruid" label="$eruid" required="true">
+<input name="data.eruid" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint></formElement>
+<formElement name="data.givenname" label="$givenname">
+<input name="data.givenname" size="50" type="text"/>
+</formElement>
+<formElement name="data.initials" label="$initials">
+<input name="data.initials" size="50" type="text"/>
+</formElement>
+<formElement name="data.sn" label="$sn">
+<input name="data.sn" size="50" type="text"/>
+</formElement>
+<formElement name="data.errdbmsgroupmembership" label="$errdbmsgroupmembership">
+<searchFilter type="input">
+<filter>(erRDBMSGroupName&#61;*)</filter>
+<base>contextual</base>
+<attribute>erRDBMSGroupName</attribute>
+<sourceAttribute>erRDBMSGroupName</sourceAttribute>
+<size></size>
+<objectClass>erRDBMSGroup</objectClass>
+<showQueryUI>false</showQueryUI>
+<paginateResults>false</paginateResults>
+</searchFilter>
+</formElement>
+<formElement name="data.errdbmshuid" label="$errdbmshuid" required="true">
+<input name="data.errdbmshuid" size="50" type="text"/>
+<constraint><type>required</type><parameter>true</parameter></constraint>
+</formElement>
+<formElement name="data.mail" label="$mail">
+<input name="data.mail" size="50" type="text"/>
+</formElement>
+<formElement name="data.title" label="$title">
+<input name="data.title" size="50" type="text"/>
+</formElement>
+</form>
+</body>
+</page>

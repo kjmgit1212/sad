@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>README for Self-Registration</title>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<META name="GENERATOR" content="IBM WebSphere Studio Homepage Builder V6.0.2 for Windows">
+<META http-equiv="Content-Style-Type" content="text/css">
+ <link href="../examples.css" type="text/css" rel="stylesheet">
+</head>
+  <body>
+<table cellPadding="0" cellSpacing="0" border="0" width="100%">
+<tr>
+<td align="left">
+  <img border="0" src="../ibm_banner.gif">
+</td>
+<td align="right">
+  <img src="../tivolilogo.gif">
+</td>
+</tr>
+</table>
+<h1>README for Self-Registration</h1>
+  <a href="#Overview%20and%20Clarification">Overview and Clarification</a><br>
+  <a href="#Configuration">Configuration</a><br>
+  <a href="#CompileBuild">Compile and Build</a><br>
+  <a href="#WASInstall">Installation on WebSphere</a><br>
+<br>
+	
+	
+  <h2><a name="Overview%20and%20Clarification"></a>Overview and Clarification</h2>
+  The Self-Registration example demonstrates to IBM Security Identity Manager  
+  administrators  how to use the SelfRegistrationManager 
+  API.
+  <br><br>
+  
+	
+  The self-registration of identities is an important aspect of identity management. 
+  However, administrators might provide this capability 
+  using different methods. The differences might occur in  field validation 
+  or in the authentication process. (For  this example, if an 
+  end user can view the <a href="sr/selfReg.jsp">selfReg.jsp</a>, 
+   validation has occurred.)  Because of these differences, the process to handle self-registering 
+  identities is highly customizable.
+<br>
+<br>The Security 
+  Identity Manager administrator must create the user interface for self-registration.  
+  The <a href="sr/selfReg.jsp">selfReg.jsp</a> provides an example to 
+  the administrator about integrating a customized user interface with specific field 
+  presentation and validation requirements with Security Identity Manager.
+  <br><br>
+	
+	
+  As part of the self-registration process, the administrator can customize the authentication of identities and associated attributes before they are entered into the identity repository. Because  self-registration enables unknown users to define themselves 
+  to the system, the administrator must validate any access-enabling information (Access-enabling information is information that might provide access to resources.) To validate this information the administrator  defines a workflow process that is triggered 
+  after the user submits the information.  This mechanism, &quot;selfRegister&quot;, is available to the administrator as one of the ready-to-use operations provided for identity entities.
+  <br><br>
+  
+	 
+  In this example, the only required fields  are the  last name, full name, and 
+  location of the user. Required fields are denoted by the asterisk (*) symbol on the <a href="sr/selfReg.jsp">selfReg.jsp</a> page.
+  <br><br>  
+
+	 
+  For  this example, the  administrator must create a Location in 
+  Security Identity Manager.  This Location is where the newly self-registered user is placed after 
+  registration.
+  <br><br>
+  
+	 
+  If a Location is not appropriate for placement of the self-registered user, 
+  the administrator can update the <a href="sr/selfReg.jsp">selfReg.jsp</a>
+  file to specify a different type of business unit (For example, a business unit might be Organizational Unit, Admin Domain, and so on.)
+  If a different type of business unit is necessary,
+  the <a href="src/examples/selfregistration/ValidateData.java">ValidateData.java</a> 
+  file and the "selfRegister" operation (system defined entity type) must be updated.
+  <br><br>
+  
+			 
+  The valid attributes of the <a href="sr/selfReg.jsp">selfReg.jsp</a> file are based on the 
+  inetOrgPerson objectClass of LDAP.  An administrator of Security Identity Manager and 
+  self-registration can change the <a href="sr/selfReg.jsp">selfReg.jsp</a> file to request or require 
+  more or fewer attributes based on the inetOrgPerson objectClass.
+  <br>
+
+  <h2><a name="Configuration"></a>Configuration</h2>
+  Before compiling and building the self-registration example, configure the example for your environment.<ul>
+    <li>
+      Edit the <a href="sr/WEB-INF/classes/context.properties">context.properties</a> file.
+	</li>
+	<li>To use the self-registration example in an environment
+	language other than English, install the self-registration example on
+	the WebSphere application server running Security Identity Manager. </li>
+	<li>If you plan to install the self-registration example on a
+	WebSphere application server that is not running Security Identity
+	Manager, change the line that reads <br>
+	<samp>
+	<var><b>appServerURL</b></var>=iiop://localhost</i> to <br>
+	<var>appServerURL</var>=iiop://<var>hostname</var>.
+	</samp><br>
+	The <var>hostname</var> is the host name of WebSphere application server on
+	which Security Identity Manager is running. <br> <b>Note</b> : For cluster environment , this should be same as <samp><var>value of <b>enrole.appServer.url property</b></var>, defined in {ITIM_HOME}/data/enRole.properties  . This should be taken from any one of the cluster node .</samp></li><li><samp>
+				
+			</samp>
+		
+      Set the <b><i>principal</i></b> property to the name of the user who is assigned
+      as the ITIM_CLIENT or ITIM_SYSTEM role. Typically this value is the same
+      as the value of the enrole.appServer.ejbuser.principal or enrole.appServer.clientUser.principal property in
+      the enRole.properties file. The enRole.properties file is located in the
+      <VAR>$ITIM_HOME</VAR>/data/ directory. The  <VAR>$ITIM_HOME</VAR> directory is the directory where Security
+	Identity Manager is installed.</li>
+	<li>
+      Set the <b><i>credential</i></b> property to the password of the user specified in the
+      principal property. Typically this value is the same as the value of the
+      enrole.appServer.ejbuser.credentials or enrole.appServer.clientUser.credentials property in the enRole.properties
+      file. Note: If you have used the
+      Security Identity Manager runConfig command to encrypt the value of the
+      enrole.appServer.ejbuser.credentials property, you must specify the unencrypted password as the value for the credential property.
+
+	<li>Set the <b><i>realm</i></b> property to the name of the realm where  the principal resides. Typically this value is the same as the value of
+	the enrole.appServer.realm  property in the
+	enRole.properties file. </li>
+	</li>
+    <li>
+      Save your changes to <a href="sr/WEB-INF/classes/context.properties">context.properties</a>.
+    </li>
+  </ul> 
+  <br>
+
+  <h2><a name="CompileBuild"></a>Compile and Build</h2>
+  Use the build scripts in the examples directory to compile 
+  the <a href="src/examples/selfregistration/ValidateData.java">ValidateData.java</a> file and create
+  the sr.war in the
+  <var>$ITIM_HOME</var>/extensions/<var>RELEASE_VERSION</var>/examples/selfregistration
+  directory. The <VAR>$ITIM_HOME</VAR> directory is the directory where Security Identity Manager is
+  installed. The
+<VAR>RELEASE_VERSION</VAR> is the version of Security Identity Manager.
+See <a href="../Building.html">Building the Examples</a> for
+  more details about building the examples. To build only the
+  self-registration example, specify <i>selfReg</i> as the target when
+  building the examples. For example, issuing the &quot;<i>build selfReg</i>&quot; command
+  on Windows operating systems, or the &quot;<i>./build.sh selfReg</i>&quot; command on UNIX operating systems,
+   compiles the ValidateData.java and creates sr.war file. The administrator installs this war file  onto WebSphere application server by using the following <a href="#WASInstall">instructions</a>. If the administrator changes the
+  content of the <a href="src/examples/selfregistration/ValidateData.java">ValidateData.java</a> file,
+  the administrator must build the self-registration example again.<br><br>
+
+
+	<h2><a name="WASInstall"></a>Installation on WebSphere</h2>You can install the self-registration example  in the WebSphere
+  environment either:
+<ul>
+	<li>
+	 
+	On a WebSphere application server that is running Security Identity Manager</li>
+	<li>On a WebSphere application server that is not running Security Identity Manager (This installation requires updating the <a
+		href="sr/WEB-INF/classes/context.properties">context.properties</a>
+  file associated with the self-registration example. See <a href="#Configuration">Configuration</a>.) 
+  </li>
+  </ul>
+  If you plan to use this example in an environment language other than English, install the self-registration example on the WebSphere application
+  server running Security Identity Manager.
+	<br>
+	<br>
+
+
+	To install the self-registration example on WebSphere, follow these steps:
+  <ol>
+    <li>
+      If you are installing the self-registration example on a WebSphere
+      application server that is not running Security Identity Manager, copy the sr.war file
+      from the <VAR>$ITIM_HOME</VAR>/extensions/<VAR>RELEASE_VERSION</VAR>/examples/selfregistration
+      directory to the system where the self-registration example is being installed. The <VAR>$ITIM_HOME</VAR> is the directory where Security Identity Manager is
+      installed. The <VAR>RELEASE_VERSION</VAR> is the version of Security Identity Manager.
+    </li>
+    <li>
+      Login to the WebSphere Administrative Console.
+    </li>
+    <li>
+      Click <b>Applications</b> -&gt; <b>Application Types</b> -&gt; <b>WebSphere
+	enterprise applications</b>, click <b>Install</b>.
+    </li>
+    <li>
+      For Path to the new application, select Local file system.
+    </li>
+    <li>
+      For Full path, specify the location of the sr.war file on the
+      system where the self-registration example is being installed.
+    </li>
+    <li>
+      For Context root, type  /sr.
+    </li>
+    <li>
+      Repeatedly click <b>Next</b> until you arrive at the Summary window.
+    </li>
+    <li>
+      On the Summary window click <b>Finish</b>.
+    </li>
+    <li>
+      Save your changes directly to the master configuration.
+    </li>
+    <li>
+      From the list of Enterprise Applications installed on WebSphere,
+      check the sr_war checkbox and click <b>Start</b>.
+    </li>
+    <li>
+      Log out of the WebSphere Administrative Console.
+    </li>
+    <li>
+      Enter the URL http://<VAR>hostname</VAR>:9080/sr in a web browser.
+    The <VAR>hostname</VAR> is the host name of the WebSphere application server on which self-registration example is installed.For cluster environment , hostname will be the node hostname , for which it was configured . </li>
+<P><B>Note:</B> If Java 2 security is enabled for the WebSphere
+Application Server where the self-registration example is installed, follow these additional steps:</P>
+  <LI>Edit the <b>was.policy</b> file in the
+    <VAR>$WAS_HOME</VAR>/profiles/<VAR>$PROFILE_NAME</VAR>/config/cells/<VAR>$CELL_NAME</VAR>/applications/sr_war.ear/deployments/sr_war/META-INF directory.
+    The <VAR>$WAS_HOME</VAR> directory is the directory where WebSphere
+    Application Server is installed. The <VAR>$PROFILE_NAME</VAR> is the name of
+    the WebSphere Application Server profile in which the self-registration
+    example is installed. The <VAR>$CELL_NAME</VAR> is the name of the
+    WebSphere Application Server cell in which the self-registration example
+    is installed.</LI>
+  <LI>Modify the application permissions in the <b>was.policy</b>
+    file:<BR>
+    <SAMP>grant codeBase &quot;file:${application}&quot; {<BR>
+    permission java.security.AllPermission;<BR>
+    };</SAMP></LI>
+  <LI>Restart the WebSphere Application Server on the system where
+    the self-registration example is installed.</LI></ol>
+</body>
+</html>

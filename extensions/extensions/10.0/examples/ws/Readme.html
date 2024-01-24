@@ -1,0 +1,2472 @@
+<html>
+
+<head>
+<title>Running the WebServices API Examples</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Running the WebServices API Examples</h1>
+
+<h2>Overview</h2>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><a name=Overview></a><span style='font-family:"Arial","sans-serif";
+color:black'>The following are working examples that use the WebServices API.
+This API allows access to various operations within the provisioning system. <br>
+<br>
+When working with the WebServices API, it is highly recommended that any
+operations to be performed are first tested manually via the standard IBM
+Security Identity Manager UI. <br>
+<br>
+The source code for the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/src</span></dfn>
+directory. The scripts to run the examples can be found in the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/win</span></dfn>
+directory for Windows and <dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/unix</span></dfn>
+directory for UNIX.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Building the Examples</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><a name=build></a><span
+style='font-family:"Arial","sans-serif";color:black'>To build the examples
+follow the instructions given in <a href="../Building.html">Building the
+Examples</a>.</span></p>
+
+<h2>Installing the Examples on WebSphere</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><a
+name="install_was"></a><span style='font-family:"Arial","sans-serif";
+color:black'>There is nothing additional that needs to be done if the examples
+are executed from their default location (IBM Security Identity Manager
+installation area). The examples can also be configured to run on a separate
+system. The instructions to setup the examples remotely are out of scope of
+this document. Refer to the instructions given in the API Packaging Guide to
+configure the IBM Security Identity Manager WebServices APIs.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Using ws_example_config.properties file</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><a
+name="ws_example_config.properties"></a><span style='font-family:"Arial","sans-serif";
+color:black'>Copy the ws_example_config.properties file from the <dfn><span
+style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples</span></dfn>
+directory to the following locations on Windows and Unix systems: <br>
+<br>
+On Windows: <br>
+<dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/win</span></dfn>
+</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+On Unix:<br>
+<dfn><span style='font-family:"Arial","sans-serif"'>extensions/{RELEASE_VERSION}/examples/ws/bin/unix</span></dfn><br>
+<br>
+Modify the appropriate file and specify the correct host and port values. This
+properties file provides the host and port information to the examples.</span></p>
+
+<div  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'>
+
+<hr size=2 width="100%" align=center>
+
+</span></div>
+
+<h2>Running the Examples</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><a href="#build">Build
+the Examples</a> before running them. Make sure the IBM Security Identity
+Manager server is running. </span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Logging in to IBM
+Security Identity Manager</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The WSSessionServiceClient.java source file demonstrates how to log in IBM
+Security Identity Manager.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Execute the
+accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage: </span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName?login -[argument]?[value]</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-operationName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Name of the operation from the WSSessionServiceClient which is to be
+  executed.</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User ID for logging in to TIM for example &quot;itim manager&quot;<br>
+  -credential&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password for logging in to TIM </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsSessionService -operationName?login -principal?&quot;itim manager&quot;
+  -credential?&quot;secret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The command line
+syntax is a list of name/value pairs in the format &#8211;[argument] ? [value]. All
+the parameters are required for executing the login operation.<br>
+	</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get ISIM
+Version</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSessionServiceClient.java</span></dfn>
+source file demonstrates how to get ISIM's version.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax:<br>
+<br>
+Windows usage: <br>
+<br>
+</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName?getITIMVersion</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsSessionService -operationName?getITIMVersion</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>No arguments are
+required apart from the <i>operationName</i>.</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get ISIM
+Version Info</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSessionServiceClient.java</span></dfn>
+source file demonstrates how to get the ISIM Version Infomation. This method is
+different from the <i>getITIMVersion. </i>The <i>getITIMVersionInfo </i>gives
+the additional details like the build number, fix pack level etc apart from the
+ISIM version.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName?getITIMVersionInfo</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsSessionService -operationName?getITIMVersionInfo</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Challenge Questions</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSessionServiceClient.java</span></dfn>
+source file demonstrates how to retrieve the challenge questions configured in
+ISIM.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName?getChallengeQuestions
+  -principal?&lt;username&gt; -credential? &lt;password&gt;
+  -locale?&lt;language code&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user
+  for logging in to IBM Security Identity Manager.<br>
+  -locale
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language
+  code (For example, en for English). </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsSessionService -operationName?getChallengeQuestions
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot; -locale?&quot;en&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Lost Password Direct Entry</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSessionServiceClient.java</span></dfn>
+source file demonstrates how to login in to IBM Security Identity Manager using
+the challenge responses and new password.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName?lostPasswordLoginDirectEntry
+  -principal?&lt;username&gt; <br>
+  -newCredential?&lt;newpassword of user&gt; -locale?&lt;Language code&gt;
+  -answers?&lt;answer(s) of a challenge question(s)&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -newCredential&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New password of the user.<br>
+  -locale
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language
+  code (For example, en for English).<br>
+  -answers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answers
+  to the challenge questions that are separated by a comma (',').</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsSessionService -operationName?lostPasswordLoginDirectEntry
+  -principal?&quot;jhill&quot; -newCredential?&quot;myNewPassword&quot;
+  -locale?&quot;en&quot; -answers?&quot;Blue&quot;,&quot;Vincent's High School&quot;
+  <br>
+  <br>
+  In the above example, we had two challenge questions set namely: <br>
+  1. Which is your favorite color?<br>
+  2. What is your school name?</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Lost Password Login Reset
+Password</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSessionServiceClient.java</span></dfn>
+source file demonstrates how to login in to IBM Security Identity Manager using
+the challenge responses and reset the password.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSessionService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSessionService -operationName ?lostPasswordLoginResetPassword
+  -principal?&lt;username&gt; <br>
+  -locale?&lt;Language code&gt; -answers?&lt;answer of a challenge&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -locale
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language
+  code (For example, en for English).<br>
+  -answers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answers
+  to the challenge questions.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsSessionService -operationName?lostPasswordLoginResetPassword
+  -principal?&quot;itim manager&quot; -locale?&quot;en&quot; -answers?&quot;Blue&quot;
+  -answers?&quot;Vincent's High School&quot; <br>
+  <br>
+  In the above example, we had two challenge questions set namely: <br>
+  Which is your favorite color?<br>
+  What is your school name?</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Create Person</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to create a person in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?createPerson -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  -cn?&lt;Full Name&gt; -sn?&lt;Last Name&gt; [additional person attributes]
+  -orgContainer?&lt;container name&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -&lt;person attribute&gt;A valid attribute name and value. For multivalued
+  attributes please specify the same attribute name for each value.<br>
+  -orgContainer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the organizational unit in which to create the
+  person</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsPersonService -operationName?createPerson -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot; -cn?&quot;Judith Hill&quot;
+  -sn?&quot;Hill1&quot; -sn?&quot;Hill2&quot; -orgContainer?&quot;Finance&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Modify Person</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to modify a person in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?modifyPerson -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  -filter?&lt;LDAP Filter&gt;
+  -attributeName?&lt;attributeValue&gt;:&lt;modOperationType&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter
+  for searching the person.<br>
+  -attributeName &nbsp;&nbsp;&nbsp;&nbsp;Valid attribute names and their values
+  which are to be modified. For multivalued attributes please specify the same
+  attribute name for each value. The <i>modOperationType</i> argument should be
+  used with values REPLACE, ADD OR REMOVE. This informs the client if the
+  attribute has to be replaced, added (in case of multivalued attributes) OR
+  removed respectively. In case of multivalued attributes you can do a
+  selective remove.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsPersonService -operationName?modifyPerson -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot; -filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot; -mail?&quot;jhill@ibm.com:ADD&quot;
+  -mail?&quot;jhill@personalEmail.com:ADD -employeeNumber?&quot;09A4892&quot;:REMOVE
+  -alias?&quot;judithH&quot;:REPLACE</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>In
+  the above example we are modifying the person Judith Hill by adding a couple
+  of emails to the mail attribute, removing the employeeNumber attribute and
+  replacing all aliases with judithH.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Delete Person</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to delete a person in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?deletePerson -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  -filter?&lt;LDAP Filter&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter
+  for searching the person.<br>
+  <br>
+  Example: wsPersonService -operationName?deletePerson -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot; -filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Restore Person</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to restore a person in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?restorePerson -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  -filter?&lt;LDAP Filter&gt; -restoreAccounts?&lt;true/false&gt;
+  -newPassword?&lt;new password&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter
+  for searching the person.<br>
+  -restoreAccounts &nbsp; Flag indicating if the accounts should be restored
+  while restoring a person.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-newPassword
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New password to be used for restoring
+  accounts</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsPersonService -operationName?restorePerson -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot; -restoreAccounts?&quot;true&quot;
+  -newPassword?&quot;sec001ret&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Suspend Person</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to suspend a person in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?suspendPersonAdvanced
+  -principal?&lt;username&gt; -credential? &lt;password&gt;<br>
+  -filter?&lt;LDAP Filter&gt; -includeAccounts?&lt;true/false&gt;
+  -date?&lt;Date when to suspend the user mm/dd/YYYY&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter
+  for searching the person.<br>
+  -includeAccounts &nbsp; Flag indicating if the accounts should be suspended
+  while suspending a person.<br>
+  -date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date
+  when the person should be suspended. If the person is to be suspended
+  immediately then do not specify any value. <br>
+  <br>
+  Example: wsPersonService -operationName?suspendPersonAdvanced
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot;
+  -filter?&quot;(&amp;(cn=Judith Hill)(sn=Hill))&quot;
+  -includeAccounts?&quot;true&quot; -date?&quot;04/29/2010&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Please
+  note that the date should be specified in mm/dd/YYYY format.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><b><span
+style='font-family:"Arial","sans-serif";color:black'>Synchronize Passwords</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to synchronize passwords for a person accounts in
+IBM Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?synchPasswords -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  -filter?&lt;LDAP Filter&gt; -syncPassword?&lt;password&gt;
+  [-notifyByMail?&lt;true/false&gt;] -date?&lt;Date to schedule synchPassword
+  operation&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user to
+  log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter
+  for searching the person.<br>
+  -syncPassword &nbsp;&nbsp;&nbsp;&nbsp; Password which is to be synchronized
+  for all the accounts of the user.<br>
+  -notifyByMail &nbsp;&nbsp;&nbsp;&nbsp; Flag indicating if the email
+  notification should be send.
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optional
+  attribute if not specified then no email notification will be send.<br>
+  -date
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Date
+  when the password synchronization should be scheduled. If the password
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;synchronization
+  should occur immediately then do not specify any value. <br>
+  <br>
+  Example: wsPersonService -operationName?synchPasswords -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot; -syncPassword?&quot;p00hbear&quot;
+  -notifyByMail?&quot;true&quot; -date?&quot;04/29/2010&quot;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Please
+  note that the date should be specified in mm/dd/YYYY format.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Add roles to
+person</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to assign a person to roles.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+Windows Usage: </span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?addRolesToPerson -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -filter?&lt;LDAP Filter&gt; -filterRole?&lt;LDAP Filter&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&lt;Date when to submit the
+  request mm/dd/YYYY&gt;&quot;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager. (For example, &quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter to search
+  the person.<br>
+  -filterRole &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;LDAP filter to search
+  for the roles to which the person must be assigned.<br>
+  -date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;Date when a person's assignment must be added to the roles.
+  If the person must &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;be assigned to the roles
+  immediately, then do not specify any value.<br>
+  <br>
+  Example: wsPersonService -operationName?addRolesToPerson
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;&nbsp;-filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot;&nbsp;-filterRole?&quot;(errolename=a*)&quot;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/29/2010&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Remove roles
+from person</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to remove assignment of a person from roles.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?removeRolesFromPerson
+  -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -filter?&lt;LDAP Filter&gt; -filterRole?&lt;LDAP Filter&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&lt;Date when to submit the
+  request mm/dd/YYYY&gt;&quot;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager. (For example, &quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter to search
+  the person.<br>
+  -filterRole &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;LDAP filter to search
+  for the roles from which the person's assignment must be
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;removed.<br>
+  -date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;Date when the person's assignment to the roles must be
+  removed. If the person &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;must be
+  removed from the roles immediately, then do not specify any value.<br>
+  <br>
+  Example: wsPersonService -operationName?removeRolesFromPerson
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;&nbsp;-filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot;&nbsp;-filterRole?&quot;(errolename=a*)&quot;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/29/2010&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Transfer
+person</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSPersonServiceClient.java</span></dfn>
+source file demonstrates how to transfer a person to another organization
+container.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsPersonService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsPersonService -operationName?transferPerson -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -filter?&lt;LDAP Filter&gt; -orgContainer?&lt;container name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&lt;Date when to submit the
+  request mm/dd/YYYY&gt;&quot;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager. (For example, &quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP filter to search
+  the person.<br>
+  -orgContainer &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;Name of the organization
+  container in which to transfer the person.<br>
+  -date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;Date when the person transfer must be initiated. If the
+  person must be&nbsp;transfered &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;immediately,
+  then do not specify any value.<br>
+  <br>
+  Example: wsPersonService -operationName?transferPerson -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;&nbsp;-filter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot;&nbsp;-orgContainer?&quot;Test OrgUnit&quot;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/29/2010&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Get Organization Sub-tree</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSOrganizationalContainerServiceClient.java</span></dfn>
+source file demonstrates how to get the organization sub-tree representation of
+an organization container in IBM Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsOrgContainerService -operationName?getOrganizationSubTree
+  -principal?&lt;username&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -parentOrgContainer?&lt;Parent Container Name&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -parentOrgContainer Name of the parent organization container, the sub-tree
+  of which must be&nbsp;retrived.<br>
+  <br>
+  Example: wsOrgContainerService -operationName?getOrganizationSubTree
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot;
+  -parentOrgContainer?&quot;IBM&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Search
+Container by attribute</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSOrganizationalContainerServiceClient.java</span></dfn>
+source file demonstrates how to search for an organization container in IBM
+Security Identity Manager based on an attribute.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsOrgContainerService -operationName?searchContainerByAttribute
+  -principal?&lt;username&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -parentOrgContainer?&lt;Parent Container Name&gt; -attrName?&lt;Name of the
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attribute that must be used for
+  searching the organization&gt;? -attrValue?&lt;Value of the attribute
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which must be used for searching
+  the organization&gt; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user
+  to log in to IBM Security Identity Manager.<br>
+  -parentOrgContainer Name of the parent organization container under which the
+  search must be
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;performed.
+  If no value is specified, the search is performed from the root.<br>
+  -attrName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name of the
+  attribute, which is used for searching the organization container.<br>
+  -attrValue &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Value of the
+  attribute which is used for searching the organization container.<br>
+  <br>
+  <br>
+  Example: wsOrgContainerService -operationName?searchContainerByAttribute -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot;
+  -parentOrgContainer?&quot;IBM&quot; -attrName?&quot;ou&quot;
+  -attrValue?&quot;Test Org Container&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create
+Container</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSOrganizationalContainerServiceClient.java</span></dfn>
+source file demonstrates how to create an organizational container in IBM
+Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsOrgContainerService -operationName?createContainer -principal?&lt;username&gt;
+  -credential?&lt;password&gt; -parentOrgContainer?&lt;Name of the parent
+  container&gt; -attributeName1?attributeValue1
+  [-attributeName2?attributeValue2 ... ]</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -parentOrgContainer&nbsp;Name of the parent container in which the new
+  container must be created.<br>
+  -attributeName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute name for the
+  organization container.<br>
+  -attributeValue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute value.<br>
+  <br>
+  Example: wsOrgContainerService -operationName?createContainer
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot;
+  -parentOrgContainer?&quot;IBM&quot; -ou?&quot;Org Unit1&quot;
+  -description?&quot;Description for Org Unit1&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Remove Container</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSOrganizationalContainerServiceClient.java</span></dfn>
+source file demonstrates how to remove an organization container in IBM
+Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsOrgContainerService -operationName?removeContainer
+  -principal?&lt;username&gt; -credential?&lt;password&gt;
+  -orgContainer?&lt;Name of the organizational container to remove&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -orgContainer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the organization
+  container which must be removed.<br>
+  <br>
+  Example: wsOrgContainerService -operationName?removeContainer
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot;
+  -orgContainer?&quot;Org Unit1&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Lookup Container</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSOrganizationalContainerServiceClient.java</span></dfn>
+source file demonstrates how to lookup for an organization container in IBM
+Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsOrgContainerService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsOrgContainerService -operationName?lookupContainer
+  -principal?&lt;username&gt; -credential?&lt;password&gt;
+  -orgContainer?&lt;Name of the organizational container to lookup&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -orgContainer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the organization
+  container to lookup.<br>
+  <br>
+  Example: wsOrgContainerService -operationName?lookupContainer
+  -principal?&quot;itim manager&quot; -credential?&quot;secret&quot;
+  -orgContainer?&quot;Org Unit1&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Create Account</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to create an account in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName?createAccount -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -date?&lt;Date when the account should be created&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-orgContainer?&lt;name of the
+  container&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-profileName?&lt;Organizational
+  Container profile name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&lt;LDAP filter for
+  searching a service&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-owner ?&lt;Distinguished Name of
+  the account owner&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -orgContainer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the organizational
+  container in which the service resides. Used for
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  searching the service on which the account should be created.<br>
+  -profileName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the
+  organizational profile in which the service resides. Used for
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  searching a service on which the account should be created. (For example,
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OrganizationalUnit
+  if the service resides in an Organizational Unit Container.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching the service.<br>
+  -eruid
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Account user id.<br>
+  -owner
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Person Distinguished Name who will be owning the account.<br>
+  <br>
+  <br>
+  Example: wsAccountService -operationName?createAccount -principal?&quot;itim
+  manager&quot; -credential?&quot;secret&quot;
+  -profileName?&quot;OrganizationalUnit&quot;
+  -filter?&quot;(erServiceName=Payroll App)&quot; -orgContainer?&quot;Org
+  Unit1&quot; -eruid?&quot;jhill&quot; &nbsp;-owner?<br>
+  &quot;erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com</span><span
+  style='font-family:"Arial","sans-serif";color:black'>&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Deprovision
+Account</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to deprovision an account in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName ? deprovisionAccount -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -date? &lt;Date when the account should be deprovisioned&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter? &lt;LDAP filter for searching
+  an account&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching an account.<br>
+  -date
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Date when the account should be deprovisioned. Date should be specified in
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mm/dd/YYYY
+  format<br>
+  <br>
+  Example: wsAccountService -operationName?deprovisionAccount
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/30/2010&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(erUid=jhill)(owner=erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com))&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Restore
+Account</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to restore an account in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName ? &quot;restoreAccount&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -date? &lt;Date when the account should be restored&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter? &lt;LDAP filter for
+  searching an account&gt; -newPassword? &lt;New Password&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching an account.<br>
+  -date
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Date when the account should be restored. Date should be specified in
+  mm/dd/YYYY
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format<br>
+  -newPassword &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New password for the
+  restored account.<br>
+  <br>
+  Example: wsAccountService -operationName?restoreAccount -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/30/2010&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-newPassword?&quot;smartway&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(erUid=jhill)(owner=erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com))&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Suspend
+Account</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to suspend an account in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName ? &quot;suspendAccount&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -date? &lt;Date when the account should be suspended&gt; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter? &lt;LDAP filter for
+  searching an account&gt; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching an account.<br>
+  -date
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Date when the account should be restored. Date should be specified in
+  mm/dd/YYYY
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format<br>
+  <br>
+  Example: wsAccountService -operationName?suspendAccount -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-date?&quot;04/30/2010&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(erUid=jhill)(owner=erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com))&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Orphan Account</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to orphan accounts in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName ? &quot;orphanAccounts&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -filter? &lt;LDAP filter for searching an account&gt; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching an account.<br>
+  <br>
+  Example: wsAccountService -operationName?orphanAccounts -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(erUid=jhill)(owner=erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com))&quot;<br>
+  <br>
+  Please note that this sample orphans accounts of the Principal Person in IBM
+  Security Identity Manager. For example, itim manager. </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Adopt Account</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccountServiceClient.java</span></dfn>
+source file demonstrates how to adopt accounts in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccountService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccountService -operationName ? &quot;adoptAccounts&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -filter? &lt;LDAP filter for searching an account&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-personFilter? &lt;LDAP Filter for
+  searching a person in IBM Security Identity Manager&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  LDAP Filter for searching an account.<br>
+  -personFilter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP Filter for searching
+  an person in IBM Security Identity Manager.<br>
+  <br>
+  Example: wsAccountService -operationName?adoptAccounts -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&quot;secret&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(&amp;(erUid=jhill)(owner=erglobalid=2722133467913424484,ou=0,ou=people,erglobalid=00000000000000000000,ou=org,dc=com))&quot;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-personFilter?&quot;(&amp;(cn=Judith
+  Hill)(sn=Hill))&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Services</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to get all the services defined in IBM Security
+Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsServiceService -operationName?getServices -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  <br>
+  Example: wsServiceService -operationName?getServices -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The method returns
+all the defined services in IBM Security Identity Manager.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Accounts
+for a Service</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to get accounts for a service that match the
+specified account ID.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsServiceService -operationName?getAccountsForService
+  -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -serviceName?&lt;Name of the service&gt; -accountID?&lt;Account user id to
+  match&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -serviceName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the service
+  for which the accounts must be returned.<br>
+  -accountID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accounts
+  that match the specified account ID are returned.<br>
+  <br>
+  Example: wsServiceService -operationName?getAccountsForService
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret
+  -serviceName?&quot;Finance Database&quot; -accountID?&quot;jhill&quot;<br>
+  <br>
+  The above method returns all the accounts that match &quot;jhill&quot; as the
+  account ID on the service &quot;Finance Database&quot;.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Search Service</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to search for services defined in IBM Security
+Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Arial","sans-serif";color:black'>usage:
+  wsServiceService -operationName?search -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -filter?&lt;LDAP Filter for
+  searching for a service&gt; </span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;User name for logging in
+  to IBM Security Identity Manager (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the user
+  to log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP
+  Filter for searching a service.<br>
+  <br>
+  Example: wsServiceService -operationName?search -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret
+  -filter?&quot;(erservicename=Finance Database)&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Get Service for account</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to search for a service when the account ID is
+specified.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsServiceService -operationName?getServiceForAccount
+  -principal?&lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?&lt;password&gt;
+  -accountID?&lt;Account ID&gt; </span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;User name for logging in
+  to IBM Security Identity Manager (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -accountID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Account ID
+  for which the service must be returned.<br>
+  <br>
+  Example: wsServiceService -operationName?getServiceForAccount
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret
+  -accountID?&quot;jhill&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Create Service</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to create a service in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsServiceService -operationName?createService -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -orgContainer?&lt;Parent container
+  name&gt; -profileName?&lt;Service Profile name&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  [[-&lt;attribute1&gt;?&lt;value1&gt;] [-&lt;attribute2&gt;?&lt;value2&gt;]
+  ...]</span><span style='font-family:"Arial","sans-serif";color:black'> </span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;User name for logging in
+  to IBM Security Identity Manager (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -orgContainer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the
+  orgnaization container in which the new service must be created.<br>
+  -profileName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service profile
+  name.<br>
+  -attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute
+  name of the service.<br>
+  -value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute
+  value.<br>
+  <br>
+  Example: wsServiceService -operationName?createService -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret
+  -orgContainer?&quot;Org Unit1&quot; -profileName?WinLocalProfile <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-erservicename?&quot;WinLocal
+  Service1&quot; -erUrl?&quot;http://hostname:45580&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-erUid?agent
+  -erPassword?agent -description?&quot;Description for winLocal service&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Modify Service</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSServiceServiceClient.java</span></dfn>
+source file demonstrates how to modify a service in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsServiceService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsServiceService -operationName?modifyService -principal?&lt;username&gt;
+  -credential?&lt;password&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -serviceName?&lt;Name of the service
+  to modify&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  [[-&lt;attribute1&gt;?&lt;value1&gt;:&lt;modOperationType&gt;]
+  [-&lt;attribute2&gt;?&lt;value2&gt;:&lt;modOperationType&gt;] ...]</span><span
+  style='font-family:"Arial","sans-serif";color:black'> </span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -serviceName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the
+  service that must be modify.<br>
+  -attribute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute
+  name of the service that must be modified.<br>
+  -value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attribute
+  value.<br>
+  -modOperationType Parameter should be used with values REPLACE, ADD OR
+  REMOVE. This informs the client if the attribute has to be replaced, added
+  (in case of multivalued attributes) OR removed respectively. In case of
+  multivalued attributes you can do a selective remove. <br>
+  <br>
+  Example: wsServiceService -operationName?modifyService -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret
+  -serviceName?&quot;WinLocal Service1&quot;
+  -profileName?WinLocalProfile:REPLACE <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-description?&quot;This
+  is the modified description for winLocal service&quot;:ADD</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Lookup Roles</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSRoleServiceClient.java</span></dfn>
+source file demonstrates how to lookup a role defined in IBM Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsRoleService -operationName ? &quot;lookupRole&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -filter?&lt;LDAP filter for looking up roles&gt; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP
+  filter for finding roles in IBM Security Identity Manager.<br>
+  <br>
+  Example: wsRoleService -operationName?lookupRole -principal?&quot;itim manager&quot;
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(errolename=Accountant)&quot;<br>
+  <br>
+  The output will print all the roles in IBM Security Identity Manager matching
+  &quot;Account&quot; </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Lookup System
+Roles</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSRoleServiceClient.java</span></dfn>
+source file demonstrates how to lookup a system role defined in IBM Security
+Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsRoleService -operationName ? &quot;lookupSystemRole&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -filter?&lt;LDAP filter for looking up system roles&gt; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (For example,
+  &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -filter
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LDAP
+  filter for finding system roles in IBM Security Identity Manager.<br>
+  <br>
+  Example: wsRoleService -operationName?lookupRole -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-filter?&quot;(errolename=*)&quot;<br>
+  <br>
+  The output will print all the system roles in IBM Security Identity Manager. </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create Static
+Role</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSRoleServiceClient.java</span></dfn>
+source file demonstrates how to create a static organization role in IBM
+Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsRoleService -operationName ? &quot;createStaticRole&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -roleName? &lt;role name&gt; -roleDescription? &lt;role description&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-orgContainer? &lt;Name of the
+  organizational container in which the role must be created&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager. (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -roleName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of
+  the new role.<br>
+  -roleDescription &nbsp;&nbsp;&nbsp;Description of the new role. If the
+  description is not specified, the role is
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;created
+  without a&nbsp;description.<br>
+  -orgContainer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the organization
+  container in which the role must be created.<br>
+  <br>
+  Example: wsRoleService -operationName?createStaticRole -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret&nbsp;-roleName?&quot;Sample
+  Static Role 1&quot;&nbsp;-roleDescription?&quot;Sample Description
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Static Role
+  1&quot;&nbsp;-orgContainer?&quot;Test Org&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Member
+Roles</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSRoleServiceClient.java</span></dfn>
+source file demonstrates how to get the member roles (child roles) of a role.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsRoleService -operationName ? &quot;getMemberRoles&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -roleName? &lt;role name&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager. (For
+  example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -roleName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of
+  the superior role whose child roles are to be retrieved.<br>
+  <br>
+  Example: wsRoleService -operationName?getMemberRoles -principal?&quot;itim
+  manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret&nbsp;-roleName?&quot;Sample
+  Static Role 1&quot;<br>
+  <br>
+  The output prints all the member roles of the specified role in IBM Security
+  Identity Manager. </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Update Role
+Hierarchy</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSRoleServiceClient.java</span></dfn>
+source file demonstrates how to update the role hierarchy, that is, add and
+remove child roles of the specified role.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsRoleService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsRoleService -operationName ? &quot;updateRoleHierarchy&quot; -principal?
+  &lt;username&gt;<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential? &lt;password&gt;
+  -roleName? &lt;role name&gt;</span><span style='font-family:"Arial","sans-serif";
+  color:black'> </span><span style='font-size:10.0pt;font-family:"Courier New";
+  color:black'>-addMembRoles? &lt;A colon ':' seperated list of role names&gt;
+  -removeMembRoles? &lt;A colon ':' seperated list of role names&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager. (For example, &quot;itim manager&quot;)<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -roleName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of
+  the superior role whose child roles are to be added, removed, or both.<br>
+  -addMembRoles &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list of role names that
+  are to be added as child roles to the current role. Each
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;role
+  must be separated by a colon ':'.<br>
+  -removeMembRoles&nbsp;&nbsp;&nbsp;&nbsp;A list of role names that are to be
+  removed from the current role. Each role must
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;be
+  separated by a colon ':'.<br>
+  <br>
+  Example: wsRoleService -operationName?updateRoleHierarchy
+  -principal?&quot;itim manager&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-credential?secret&nbsp;-roleName?&quot;Sample
+  Static Role 1&quot; -addMembRoles?&quot;Role3:Role4&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-removeMembRoles?&quot;Role1:Role2&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get
+Assignments</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSToDoServiceClient.java</span></dfn>
+source file demonstrates how to get the pending assignments (ToDo items) for a
+principal.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsToDoService -operationName?getAssignments -principal?&lt;username&gt;
+  -credential?&lt;password&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).&nbsp;The
+  user whose pending assignments must be retrieved.<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  <br>
+  Example: wsToDoService -operationName?getAssignments -principal?&quot;itim
+  manager&quot; -credential?secret</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Entity
+detail</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSToDoServiceClient.java</span></dfn>
+source file demonstrates how to get details of the entity in a ToDo activity.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsToDoService -operationName?getEntityDetail -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?&lt;Assignment
+  ID, entity details of must be retrieved&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).
+  The user whose pending assignments must be retrieved.<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -assignmentID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assignment ID of the
+  ToDo activity to get the entity details.<br>
+  <br>
+  Example: wsToDoService -operationName?getEntityDetail -principal?&quot;itim
+  manager&quot; -credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?3806650663097748910</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get RFI</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSToDoServiceClient.java</span></dfn>
+source file demonstrates how to get details of an RFI activity.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsToDoService -operationName?getRFI -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?&lt;RFI
+  Assignment ID&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -assignmentID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assignment ID for the
+  RFI activity.<br>
+  <br>
+  Example: wsToDoService -operationName?getRFI -principal?&quot;itim
+  manager&quot; -credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?3806650663097748910</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Submit RFI</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSToDoServiceClient.java</span></dfn>
+source file demonstrates how to submit (complete) a pending RFI activity.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsToDoService -operationName?submitRFI -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?&lt;RFI
+  Assignment ID, which is to be submitted&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -assignmentID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RFI Assignment ID to
+  complete.<br>
+  <br>
+  Example: wsToDoService -operationName?submitRFI -principal?&quot;itim
+  manager&quot; -credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-assignmentID?3806650663097748910</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'><br>
+<b>Approve or Reject</b><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSToDoServiceClient.java</span></dfn>
+source file demonstrates how to approve or reject a pending approval activity.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsToDoService.cmd</span></dfn>
+file by using the following command syntax and argument list: </span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsToDoService -operationName?approveOrReject -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-approvalStatus?approvalStatus&nbsp;-explanation?explanation</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -approvalStatus&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activity result status,
+  &quot;AA&quot; to approve or &quot;AR&quot; to reject. <br>
+  -explanation &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reviewer's comments.<br>
+  <br>
+  Example: wsToDoService -operationName?approveOrReject -principal?&quot;itim
+  manager&quot; -credential?secret <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-approvalStatus?&quot;AA&quot;
+  -explanation?&quot;approved&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Create Access</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccessServiceClient.java</span></dfn>
+source file demonstrates how to grant a user access to a person.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccessService -operationName?createAccess -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&lt;filter to search
+  person&gt; [[-accessName?&lt;access name&gt;] [-userID?&lt;user id&gt;] [-password?&lt;password&gt;]]</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -person &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;LDAP filter for searching the person.<br>
+  -accessName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access entitlement
+  name to be granted to the user.<br>
+  -userID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The
+  user ID in case of a service based access. <br>
+  -password &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;The password
+  of the specified user.<br>
+  <br>
+  Example: wsAccessService -operationName?createAccess -principal?&quot;itim
+  manager&quot; -credential?secret
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&quot;(&amp;(Judith
+  Hill)(sn=Hill))&quot; -accessName?GroupAccess -userID?Judith
+  -password?Passw0rd</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Accesses</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccessServiceClient.java</span></dfn>
+source file demonstrates how to get user accesses of a person.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccessService -operationName?getAccesses -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&lt;filter to search person&gt;
+  [-accessName?&lt;access name&gt;]</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -person &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;LDAP filter for searching the person.<br>
+  -accessName &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access
+  entitlement name whose user access must be returned. If the value is null,
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all
+  the user access of the person is returned.<br>
+  <br>
+  Example: wsAccessService -operationName?getAccesses -principal?&quot;itim
+  manager&quot; -credential?secret
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&quot;(&amp;(Judith
+  Hill)(sn=Hill))&quot; -accessName?GroupAccess</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Remove Access</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccessServiceClient.java</span></dfn>
+source file demonstrates how to remove user access.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccessService -operationName?removeAccess -principal?&lt;username&gt;
+  -credential?&lt;password&gt;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&lt;filter to search
+  person&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;User name for logging in to IBM Security Identity Manager (</span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -person &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;LDAP filter for searching the person.<br>
+  <br>
+  Example: wsAccessService -operationName?removeAccess -principal?&quot;itim
+  manager&quot; -credential?secret
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-person?&quot;(&amp;(Judith
+  Hill)(sn=Hill))&quot;<br>
+  <br>
+  The user access of a person can be retrieved using getAccesses API, and then
+  it can be passed to removeAccess for removal.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Search
+Available Access Entitlements</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSAccessServiceClient.java</span></dfn>
+source file demonstrates how to search for the access entitlements available to
+a person.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsAccessService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsAccessService -operationName?searchAvailableAccessEntitlements
+  -principal?&lt;username&gt; -credential?&lt;password&gt; -person?&lt;filter
+  to search person&gt; [[-container?&lt;container name&gt;] [-accessType?&lt;access
+  type&gt;] [-accessInfo?&lt;access info&gt;]]</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>For example, </span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  -person &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;LDAP filter for searching the person.<br>
+  -container &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Organization
+  container that represents the parent container to scope the search.
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If
+  the value is null, the search is performed from the root.<br>
+  -accessType&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The
+  entitlement type to scope the search. If the value is null, the access
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;entitlements
+  of all types are returned. <br>
+  -accessInfo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;The access
+  information to scope the search. It is used to match the name and
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description
+  of the access entitlement. If the value is null, all the access
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;entitlements
+  are returned.<br>
+  <br>
+  Example: wsAccessService -operationName?searchAvailableAccessEntitlements
+  -principal?&quot;itim manager&quot; -credential?secret
+  -person?&quot;(&amp;(Judith Hill)(sn=Hill))&quot; -container?Organization
+  -accessType?Application -accessInfo?AuditRole</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get ISIM
+Version Info</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSUnauthServiceClient.java</span></dfn>
+source file demonstrates how to get the Security Identity Manager Version
+Infomation. The <i>getITIMVersionInfo </i>gives the additional details like the
+build number, fix pack level etc apart from the Security Identity Manager
+version.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.cmd</span></dfn>
+file by using the following command syntax:<br>
+<br>
+Windows usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsUnauthService -operationName?getITIMVersionInfo</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>Example:
+  wsUnauthService -operationName?getITIMVersionInfo</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Challenge
+Questions</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSUnauthServiceClient.java</span></dfn>
+source file demonstrates how to retrieve the challenge questions that are
+configured in Security Identity Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsUnauthService -operationName?getChallengeQuestions -principal?&lt;username&gt;
+  -locale?&lt;language code&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to Security Identity Manager (For
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example,
+  &quot;itim manager&quot;).<br>
+  -locale
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language
+  code (For example, en for English). </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsUnauthService -operationName?getChallengeQuestions
+  -principal?&quot;itim manager&quot; -locale?&quot;en&quot;</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Set Challenge
+Questions Answers</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSSystemUserServiceClient.java</span></dfn>
+source file demonstrates how to set the challenge response in Security Identity
+Manager.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsSystemUserService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsSystemUserService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsSystemUserService -operationName?setChallengeResponseInfo
+  -principal?&lt;username&gt; -credential?&lt;password&gt;
+  -crQuestions?&lt;Question1&gt;,&lt;Question2&gt;
+  -crAnswers?&lt;Answer1&gt;,&lt;Answer2&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to Security Identity Manager (For example &quot;itim
+  manager&quot;).<br>
+  -credential&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Password for logging in to Security Identity Manager (For
+  example &quot;secret&quot;).<br>
+  -crQuestions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Challenge Response Questions , seperated by
+  &quot;,&quot; </span><span style='font-family:"Arial","sans-serif";
+  color:black'>.<br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-crAnswers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Answers to Challenge Response Questions , seperated by &quot;,&quot;</span><span
+  style='font-family:"Arial","sans-serif";color:black'>.</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsSystemUserService -operationName?setChallengeResponseInfo
+  -principal?&quot;itim &quot; -credential?&quot;secret&quot;
+  -crQuestions?Q1,Q2 -crAnswers?&quot;Blue&quot;,&quot;High School&quot; </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Lost Password
+Login Reset Password</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSUnauthServiceClient.java</span></dfn>
+source file demonstrates how to login in to Security Identity Manager by using
+the challenge response and reset the password.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsUnauthService -operationName?lostPasswordLoginResetPassword
+  -principal?&lt;username&gt; -locale?&lt;Language code&gt;
+  -answers?&lt;answer(s) of a challenge question(s) separated by comma
+  (',')&gt;</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-principal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  User name for logging in to Security Identity Manager (For
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example,
+  &quot;itim manager&quot;).<br>
+  -locale
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language
+  code (For example, en for English).<br>
+  -answers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answers
+  to the challenge questions that are separated by a comma (',').</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsUnauthService -operationName?lostPasswordLoginResetPassword
+  -principal?&quot;itim manager&quot; -locale?&quot;en&quot;
+  -answers?&quot;Blue&quot;,&quot;Vincent's High School&quot; <br>
+  <br>
+  In the above example, we set the following two challenge questions: <br>
+  Which is your favorite color?<br>
+  What is your school name?</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Self Register</span></b><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSUnauthServiceClient.java</span></dfn>
+source file demonstrates how to self register (create) a new person in the provisioning
+platform without requiring authentication.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.cmd</span></dfn>
+file by using the following command syntax and argument list:</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsUnauthService -operationName ?selfRegister [-tenantId?&lt;tenant id&gt;]
+  -cn?&lt;person name&gt; -sn?&lt;Last Name&gt; -l?&lt;location name&gt;
+  [additional person attributes...]</span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>-tenantId
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the tenant in
+  which the person will be placed. tenant ID is an optional
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parameter. If the tenant
+  ID is not specified, Security Identity Manager uses the
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value of the
+  &quot;enrole.defaulttenant.id&quot; property that is specified in the
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enRole.properties
+  file.<br>
+  -&lt;person attribute&gt;A valid attribute name and value. Specify the same
+  attribute name for each
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multi-valued
+  attribute.<br>
+  -l &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Location name where person will be created</span><span
+  style='font-family:"Arial","sans-serif";color:black'>.<br>
+  </span><span style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+  Example: wsUnauthService -operationName?selfRegister -tenantId?org
+  -cn?&quot;Judith Hill&quot; -sn?Hill -l?&quot;IBM Location&quot;
+  -uid?&quot;Judith Hill&quot; -givenname?Judith</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>&nbsp;</span></p>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Get Self
+Password Change Rules</span></b><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSUnauthServiceClient.java</span></dfn>
+source file demonstrates how to retrieve the password rules for the specified
+Security Identity Manager account.<br>
+<br>
+Execute the accompanying <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.sh</span></dfn>
+or <dfn><span style='font-family:"Arial","sans-serif"'>wsUnauthService.cmd</span></dfn>
+file by using the following command syntax and argument list:<br>
+<br>
+Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsUnauthService -operationName?getSelfPasswordChangeRules
+  -accountID?&lt;account ID&gt;&quot; </span></p>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>accountId
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Security Identity
+  Manager account ID.<br>
+  <br>
+  Example: wsUnauthService -operationName?getSelfPasswordChangeRules
+  -accountID?&quot;jhill&quot; </span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Extend With
+XML</span></b><span style='font-family:"Arial","sans-serif";color:black'><br>
+The <dfn><span style='font-family:"Arial","sans-serif"'>WSExtensionServiceClient</span></dfn><i>.java</i>
+source file demonstrates the extendWithXML method by using a sample business
+logic. The sample business logic gets all the service group names of the
+services which is owned by a specific person. The <i>SampleWSExtension.java</i>
+source file contains the code for the sample logic.<br>
+<br>
+Prerequisites:<br>
+1. Ensure that a person with full name as John Smith exists in Security Identity
+Manager. John Smith must be the owner of one or more services..<br>
+2. Modify the wsExtensions.properties file to add the property
+'extension.class1=sample.extension.SampleWSExtension'. See <a
+href="../Updating_property_files.html">Updating the property files</a>.<br>
+3. Ensure that you have added the <i>extensions/{RELEASE_VERSION}/lib/examples.jar</i>
+file to the class path. For more details, see the <i>extensions/{RELEASE_VERSION}/examples/Classpath.htm</i>l
+file.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Execute the
+accompanying <i>wsExtensionService.sh</i> or <i>wsExtensionService.cmd</i> file
+by using the following command syntax and argument list:<br>
+<br>
+Windows Usage:</span></p>
+
+<table  border=0 cellspacing=0 cellpadding=0
+ style='background:#CCCCCC;border-collapse:collapse'>
+ <tr>
+  <td width=827 valign=top style='width:620.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p><span style='font-size:10.0pt;font-family:"Courier New";color:black'>usage:
+  wsExtensionService -operationName?extendWithXML -principal?&lt;username&gt;
+  -credential?&lt;password&gt;</span></p>
+  <p style='margin-bottom:12.0pt'><span style='font-size:10.0pt;font-family:
+  "Courier New";color:black'>-principal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User name for logging in
+  to IBM Security Identity Manager (</span><span style='font-size:10.0pt;
+  font-family:"Courier New";color:black'>for example,
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+  style='font-size:10.0pt;font-family:"Courier New";color:black'>&quot;itim
+  manager&quot;).<br>
+  -credential &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password of the
+  user to log in to IBM Security Identity Manager.<br>
+  <br>
+  Example: wsExtensionService -operationName?extendWithXML
+  -principal?&quot;itim manager&quot; -credential?secret</span></p>
+  </td>
+ </tr>
+</table>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='color:black'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

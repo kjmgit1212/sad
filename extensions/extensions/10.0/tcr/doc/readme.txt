@@ -1,0 +1,3 @@
+﻿We recommend using IBM Cognos Reports. 
+
+The following link provides information about converting the Business Intelligence and Reporting Tools (BIRT) reports to IBM Cognos reports. You can obtain the reference by using the following link to convert Tivoli Common Reporting reports to IBM Cognos reports. See http://www.ibm.com/support/knowledgecenter/SSH2DF_2.1.1/ttcr_converting_birt_to_cognos.html.

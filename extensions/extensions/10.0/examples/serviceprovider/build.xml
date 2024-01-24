@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM                              -->
+<!--                                                                   -->
+<!-- Source File Name = build.xml                                      -->
+<!--                                                                   -->
+<!-- (C) COPYRIGHT IBM Corp. 1999, 2007 All Rights Reserved            -->
+<!--                                                                   -->
+<!-- US Government Users Restricted Rights - Use, duplication or       -->
+<!-- disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+
+<project name="service provider example" default="all" basedir=".">
+	<target name="all" depends="fileserviceprofile, 
+		  						jndisampleservice,
+								rdbmsservice" />
+
+	<target name="fileserviceprofile" description="Creates the fileserviceprofile.jar file">
+		<jar jarfile="fileserviceprofile.jar">
+			<fileset dir="file">
+				<include name="fileserviceprofile/**" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="jndisampleservice" description="Creates the jndisampleservice.jar file">
+		<jar jarfile="jndisampleservice.jar">
+			<fileset dir="jndi">
+				<include name="jndisampleservice/**" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="rdbmsservice" description="Creates the rdbmsservice.jar file">
+		<jar jarfile="rdbmsservice.jar">
+			<fileset dir="rdbms">
+				<include name="rdbmsservice/**" />
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="clean" description="Deletes the jar files created in a build">
+		<delete file="fileserviceprofile.jar" />
+		<delete file="jndisampleservice.jar" />
+		<delete file="rdbmsservice.jar" />
+	</target>
+</project>

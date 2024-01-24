@@ -1,0 +1,267 @@
+#!/bin/sh
+#/******************************************************************************
+# *
+# * Licensed Materials - Property of IBM
+# *
+# * Source File Name = ibmdir
+# *
+# * (C) COPYRIGHT IBM Corp. 2006, 2008 All Rights Reserved
+# *
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# *
+# *****************************************************************************/
+
+#********************************************************************************************
+#
+#  This file contains sample code. IBM provides this code on an 'AS IS' basis without
+#  warranty of any kind, either expressed or implied, including but not limited to,
+#  the implied warranties of merchantability or
+#  fitness for a particular purpose.
+#
+#********************************************************************************************
+# This information is required by Redhat Linux
+#********************************************************************************************
+# chkconfig: 345 97 28
+# description: Starts and stops the IBM Directory Server daemons ibmdiradmin and ibmslapd
+#
+# processname: ibmdir
+#
+#********************************************************************************************
+#
+# To configure IBM Tivoli Directory Server as a Linux Service so it automatically starts
+#
+#   1. Put this script in the directory /etc/init.d
+#   2. Run this command from the directory /etc/init.d to format the script text to unix
+#      dos2unix ibmdir
+#   3. Run this command to change the script permissions so it is executable
+#      chmod  ugo+rx ibmdir  
+#   4. Run this command to define ibmdir as a Linux service 
+#      chkconfig --add ibmdir
+#
+#********************************************************************************************
+
+# You may need to change the LDAP DB2 Instance name below
+ITIMLDAP_INSTANCE="itimldap"
+
+RETVAL=0
+pid=0
+
+function start()
+{
+    # Start DB2 database manager for IBM Directory Server Administration daemon
+    echo "Starting DB2 database manager:"
+
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    su - $ITIMLDAP_INSTANCE -c db2start
+    RETVAL1=$?
+
+    # Start LDAP DB2 instance
+    echo "Starting DB2 instance $ITIMLDAP_INSTANCE:"
+    su - $ITIMLDAP_INSTANCE -c "db2gcf -u -p 0 -i $ITIMLDAP_INSTANCE"
+    RETVAL2=$?
+
+    # Display LDAP DB2 Instance
+    su - $ITIMLDAP_INSTANCE -c "db2gcf -s -p 0 -i $ITIMLDAP_INSTANCE"
+    RETVAL3=$?
+
+    # Start IBM Directory Server Administration daemon (ibmdiradm)
+    echo "Starting IBM Directory Server Administration daemon (ibmdiradm):"
+    if [ -x /usr/ldap/bin/ibmdiradm ]; then
+        /usr/ldap/bin/ibmdiradm -l
+    elif [ -x /opt/ibm/ldap/V6.1/sbin/ibmdiradm ]; then
+        /opt/ibm/ldap/V6.1/sbin/ibmdiradm -I $ITIMLDAP_INSTANCE
+    else
+        echo "IBM Directory Server is not installed!"
+        RETVAL=1
+        return $RETVAL
+    fi
+    RETVAL4=$?
+
+    # Display status of IBM Directory Server Administration daemon (ibmdiradm)
+    echo ""
+    ibmdiradm_status
+
+    # Start IBM Directory Server daemon (ibmslapd)
+    echo ""
+    echo "Starting IBM Directory Server daemon (ibmslapd):"
+    echo ""
+
+    if [ -x /usr/ldap/bin/ibmslapd ]; then
+        /usr/ldap/bin/ibmslapd
+    elif [ -x /opt/ibm/ldap/V6.1/sbin/ibmslapd ]; then
+            /opt/ibm/ldap/V6.1/sbin/ibmslapd
+    else
+        echo "IBM Directory Server is not installed!"
+        RETVAL=1
+        return $RETVAL
+    fi
+    RETVAL5=$?
+
+    # Display status of IBM Directory Server daemon (ibmslapd)
+    echo ""
+    ibmslapd_status
+
+    [ $RETVAL -eq 0 -a $RETVAL1 -eq 0 -a $RETVAL2 -eq 0 -a $RETVAL3 -eq 0 -a $RETVAL4 -eq 0 -a $RETVAL5 -eq 0 ] || RETVAL=1
+    return $RETVAL
+}	
+
+function stop()
+{
+    echo "Stopping IBM Directory Server (ibmslapd): "
+
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    stop_process "ibmslapd"
+    RETVAL1=$?
+    echo ""
+
+    echo "Stopping IBM Directory Server Admin Daemon (ibmdiradm): "
+    stop_process "ibmdiradm"
+    RETVAL2=$?
+    echo ""
+
+    echo "Stopping DB2 instance $ITIMLDAP_INSTANCE:"
+    su - $ITIMLDAP_INSTANCE -c "db2gcf -d -p 0 -i $ITIMLDAP_INSTANCE"
+    RETVAL3=$?
+
+    [ $RETVAL -eq 0 -a $RETVAL1 -eq 0 -a $RETVAL2 -eq 0 -a $RETVAL3 -eq 0 ] || RETVAL=1
+    return $RETVAL
+}	
+
+function restart()
+{
+    stop
+    echo ""
+    start
+}	
+
+function system_status()
+{
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    ibmdiradm_status 
+
+    ibmslapd_status
+
+    su - $ITIMLDAP_INSTANCE -c "db2gcf -s -p 0 -i $ITIMLDAP_INSTANCE"
+    RETVAL=$?
+    return $RETVAL
+}
+
+function ibmdiradm_status
+{
+    getPID 'ibmdiradm'
+    if [ -n "$pid" ]; then
+        echo "ibmdiradm is active, the PID is ${pid}."
+    else
+        echo "ibmdiradm is not running."
+    fi 
+}
+
+function ibmslapd_status
+{
+    getPID 'ibmslapd'
+    if [ -n "$pid" ]; then
+        echo "ibmslapd is active, the PID is ${pid}."
+    else
+        echo "ibmslapd is not running."
+    fi 
+}
+
+function stop_process
+{
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 is not running." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+
+    kill $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+      
+    kill -QUIT $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi   
+     
+    kill -KILL $pid
+    usleep 1000000 
+
+    getPID "$1"
+    if [ -z "$pid" ]; then
+        echo "$1 has been stopped." 
+        RETVAL=0
+        return $RETVAL
+    fi
+
+    echo "$1 could not be stopped!"        
+    RETVAL=1
+    return $RETVAL
+}
+
+function getPID()
+{
+    pid=`ps aux | grep $1 | grep -v grep | head -1 | awk '{print $2}'`
+}
+
+function check_instance()
+{
+    output=`id -u $ITIMLDAP_INSTANCE 2>&1 | grep -i 'No such user'`
+
+    if [ $? -eq 0 ]; then
+        echo "User $ITIMLDAP_INSTANCE does not exist!" 
+        RETVAL=1
+    else
+        RETVAL=0
+    fi
+
+    return $RETVAL
+}
+
+###################################################################################
+# Mainline Shell script 
+###################################################################################
+
+case "$1" in
+    start)
+        start
+	;;
+    stop)
+        stop
+	;;
+    restart)
+        restart
+	;;
+    status)
+        system_status
+	;;
+    *)
+        echo "Usage: `basename $0` {start|stop|restart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL

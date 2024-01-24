@@ -1,0 +1,577 @@
+<html>
+
+<head>
+<title>Setting up SSL Mutual Authentication for an ITDI Adapter</title>
+<link rel=Stylesheet type="text/css" media=all href="../../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Setting up SSL Mutual Authentication for an ITDI Adapter</h1>
+
+<h2>Contents</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><a href="#intro">Introduction</a>
+<br>
+<a href="#sslTerminology">Some SSL terminology</a> <br>
+<a href="#generateITDIKeystore">Generate a keystore for the ITDI server and
+create a certificate</a> <br>
+<a href="#configrueITDIKeyStore">Configure ITDI to use the Key Store</a> <br>
+<a href="#configrueITDITrustStore">Configure ITDI to use the Trust Store</a> <br>
+<a href="#createCertForWAS">Create a certificate for the SSL client (WAS)</a> <br>
+<a href="#importCertIntoWAS">Import the ITDI server Certificate into the WAS
+Trust Store</a> <br>
+<a href="#importCertIntoITDI">Import the WAS Certificate into the ITDI Trust Store</a>
+<a href="#sslForEventNotification"><br>
+SSL Configuration for Event Notification requests issued from ITDI to the ISIM
+Server</a> <br>
+<a href="#TestingSSL">Testing whether the SSL configuration is correct by using
+one of the ISIM examples</a> </span></p>
+
+<h2><a name=intro>Introduction</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This document
+describes how to set up SSL Mutual Authentication between ISIM 5.0 and an ITDI
+adapter. It also notes where this differs for setting up one-way SSL.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The instructions
+are applicable to both of the protocols used between ISIM and ITDI: DSMLv2 and
+TDI-RMI.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The last part of
+this document describes how to test whether you have set up the configuration
+correctly, by using one of the examples distributed with the ISIM server.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Note that the
+configuration settings described here are actually all settings for Websphere
+and for the ITDI server, and are described in various places in the
+documentation for these products. They are not specific to ISIM, or to the ISIM
+adapters (excepting the example setup).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>These
+instructions have been updated for ITDI 6.1.1 and Websphere 6.1. In particular,
+the steps to configure the WAS Key and Trust Stores are different from the
+instructions for previous WAS versions.</span></p>
+
+<h2><a name=sslTerminology>Some SSL terminology</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For this SSL
+scenario, the ITDI Server side is the <strong><span style='font-family:"Arial","sans-serif"'>SSL
+Server</span></strong>, as it issues the SSL socket &quot;listen&quot; request
+and accepts incoming connections.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The ISIM server
+(or to be more accurate, the WAS Application Server, as ISIM uses the WAS SSL
+code) is the <strong><span style='font-family:"Arial","sans-serif"'>SSL Client</span></strong>,
+as it is issuing a &quot;connect&quot; to the ITDI server's listening SSL socket.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The SSL <strong><span
+style='font-family:"Arial","sans-serif"'>Trust Store</span></strong> contains
+the list of Signer Certificates (also know as CA or Certificate Authority
+certificates) that define which certificates the SSL protocol will Trust. Only
+a certificate issued by one of these listed Trusted Signer's will be accepted.
+For <strong><span style='font-family:"Arial","sans-serif"'>one-way SSL</span></strong>,
+a Trust Store is only required on the SSL client side (i.e. the ISIM Server).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The SSL <strong><span
+style='font-family:"Arial","sans-serif"'>Key Store</span></strong> contains the
+SSL certificate. For <strong><span style='font-family:"Arial","sans-serif"'>one-way
+SSL</span></strong>, a Key Store and certificate is only required on the SSL Server
+side (i.e. the ITDI server).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For <strong><span
+style='font-family:"Arial","sans-serif"'>SSL using Mutual Authentication</span></strong>
+(2-way SSL), both a Key Store with a certificate, and a Trust Store containing
+the signer certificate that issued the other side's certificate, are required
+on BOTH sides (ITDI Server, and WAS Server).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For a <strong><span
+style='font-family:"Arial","sans-serif"'>self-signed certificate</span></strong>
+(the situation we are describing here), the self-signed certificate is both the
+certificate itself, AND it is it's own signer certificate. For normal (non
+self-signed) certificates, there is a separate signer certificate, which is
+typically available for download from the certificate authorities web site (the
+certificate authorities response to your certificate request should specify the
+appropriate link). For better security, note that you would export the self-signed
+certificate's public key (excluding the private key), and use this exported
+certificate for the signer certificate, rather than use the entire self-signed
+certificate (including private key) for the signer certificate. The Ikeyman
+certificate management utility uses the phrase &quot;Extract the Server's
+certificate for client use&quot; to indicate doing this, while &quot;Extract
+... for server use&quot; indicates exporting WITH the private key. The private
+key is not required for a Signer Certificate.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Note that the Key
+Store and Trust Store can be the same physical file.</span></p>
+
+<h2><a name=generateITDIKeystore>Generate a keystore for the ITDI server and
+create a certificate</a></h2>
+
+<h3>Create a Key Store</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>You can use an
+existing Key Store, rather than creating a new one, if you prefer.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Go
+     to the {IDI_HOME}\jvm\jre\bin directory</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Launch
+     the </span><kbd><span style='font-size:10.0pt'>ikeyman.exe</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> file (Windows) or </span><kbd><span
+     style='font-size:10.0pt'>ikeyman.sh</span></kbd><span style='font-family:
+     "Arial","sans-serif"'> (Unix/Linux)</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     Key Database File -&gt; NEW</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     key database type of JKS</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     the keystore File Name: </span><kbd><span style='font-size:10.0pt'>idiserver.jks</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Location:
+     </span><kbd><span style='font-size:10.0pt'>c:\LabFiles\keys</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on Ok button</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Give
+     the keystore a password. Enter a password (for example, </span><kbd><span
+     style='font-size:10.0pt'>secret</span></kbd><span style='font-family:"Arial","sans-serif"'>)
+     and click OK to continue.</span></li>
+</ul>
+
+<h3>Create a certificate for the ITDI server</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>These steps
+describe creating a self-signed certificate, which is a good approach for
+testing.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Alternatively,
+you can purchase a certificate from a well-known authority such as Verisign or
+Thawte, which is the generally preferred approach for production machines. As
+another alternative, you can use a certificate server, such as the one included
+with Microsoft Windows 2003 Advanced Server, to generate your own certificates.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     Create -&gt; New Self Signed certificate</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Set
+     the Key Label to </span><kbd><span style='font-size:10.0pt'>idiserver</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> as this is the server?s
+     certificate.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+     your system name (DNS name) as the Common Name i.e. machine name. <br>
+     Note that by default the DNS name is NOT verified, though it is possible
+     to configure the SSL code to check that it matches the IP address of the
+     connection, so I recommend specifying the correct name.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     your Organization, for example </span><kbd><span style='font-size:10.0pt'>IBM</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     OK to create the self-signed certificate.</span></li>
+</ul>
+
+<h3>Export the ITDI server's certificate</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This is necessary
+so we can import it below into the ISIM server's Trust Store.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Extract
+     the Server's certificate for client use by selecting the Extract
+     Certificate button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     &quot;Binary DER data&quot; as Data type.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     the certificate file name: </span><kbd><span style='font-size:10.0pt'>idiserver.der</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     the location as </span><kbd><span style='font-size:10.0pt'>c:\LabFiles\keys</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on OK button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Copy
+     the idiserver.der certificate file to the machine on which ISIM is
+     installed in say c:/LabFiles/keys</span></li>
+</ul>
+
+<h2><a name=configrueITDIKeyStore>Configure ITDI to use the Key Store</a></h2>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Go
+     to the IDI solution directory</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Edit
+     the IDI </span><kbd><span style='font-size:10.0pt'>solution.properties</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> file</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Edit
+     the following lines under client authentication, uncomment them if
+     necessary, and set the location, password &amp; type of keystore to match
+     the key store you created above:</span></li>
+ <ul type=circle>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.keyStore=c:\LabFiles\keys\idiserver.jks</span></kbd></li>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.keyStorePassword=secret</span></kbd></li>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.keyStoreType=JKS</span></kbd></li>
+ </ul>
+</ul>
+
+<h2><a name=configrueITDITrustStore>Configure ITDI to use the Trust Store</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>[This step is not
+required for one-way SSL.]</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Here, we are also
+using the Key Store generated above as the Trust Store.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>You can create a
+separate Trust Store if you prefer, using the same steps as <strong><span
+style='font-family:"Arial","sans-serif"'>Create a Key Store</span></strong>
+above.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Edit
+     the following lines in the solution.properties file under server
+     authentication, uncomment them if necessary, and set the location, password
+     &amp; type of truststore:</span></li>
+ <ul type=circle>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.trustStore=c:\LabFiles\keys\idiserver.jks</span></kbd></li>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.trustStorePassword=secret</span></kbd></li>
+  <li  style='color:black'><kbd><span style='font-size:10.0pt'>javax.net.ssl.trustStoreType=JKS</span></kbd></li>
+ </ul>
+</ul>
+
+<h2><a name=createCertForWAS>Create a certificate for the SSL client (WAS)</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>[This step is not
+required for one-way SSL.]</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The SSL Client is
+the Websphere Application Server.</span></p>
+
+<h3>Selecting the WAS Secure Sockets Layer configuration to use</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For simplicity,
+these instructions describe using the Node Default Key Store and Node Default
+Trust Store configurations.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>It is possible to
+set up multiple configurations (each with it's own Key and Trust Stores) at
+almost any granularity, down to a specific destination machine and port number
+combination. For details on how to do this, see the IBM Websphere Application
+Server InfoCenter documentation. Search for the section:</span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><cite><span
+style='font-family:"Arial","sans-serif";color:black'>Associating a Secure
+Socket Layer configuration dynamically with an outbound protocol and remote
+secure endpoint</span></cite><span style='font-family:"Arial","sans-serif";
+color:black'> </span></p>
+
+<h3>Create a SSL client certificate</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Again, these
+steps describe how to create a self-signed certificate.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>As described above,
+you can alternatively use a well known authority or your own certificate server
+to generate a certificate. For these cases, you would use the </span><kbd><span
+style='font-size:10.0pt;color:black'>Personal certificates requests</span></kbd><span
+style='font-family:"Arial","sans-serif";color:black'> option under the </span><kbd><span
+style='font-size:10.0pt;color:black'>NodeDefaultKeyStore</span></kbd><span
+style='font-family:"Arial","sans-serif";color:black'> step below to produce a
+certificate request to send to the well known authority or to your certificate
+server. You would then use the </span><kbd><span style='font-size:10.0pt;
+color:black'>accept</span></kbd><span style='font-family:"Arial","sans-serif";
+color:black'> option under </span><kbd><span style='font-size:10.0pt;
+color:black'>Personal certificates</span></kbd><span style='font-family:"Arial","sans-serif";
+color:black'> to load the data sent by the certificate authority in response to
+the request.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Connect
+     to the WAS administrative console</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to:</span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Security
+      -&gt;</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>SSL
+      certificate and key management -&gt;</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Key
+      stores and certificates</span></li>
+ </ul>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     </span><kbd><span style='font-size:10.0pt'>NodeDefaultKeyStore</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     </span><kbd><span style='font-size:10.0pt'>Personal certificates</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     </span><kbd><span style='font-size:10.0pt'>Create a self-signed
+     certificate</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     appropriate values for the certificate fields:</span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Set
+      the Alias to </span><kbd><span style='font-size:10.0pt'>client</span></kbd><span
+      style='font-family:"Arial","sans-serif"'> as this is the SSL client's
+      certificate.</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Common
+      name: your machine's DNS name. <br>
+      Note that by default the DNS name is NOT verified, though it is possible
+      to configure the SSL code to check that it matches the IP address of the
+      connection, so I recommend specifying the correct name.</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Organization:
+      your organization's name</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Fill
+      in other optional fields if you want</span></li>
+ </ul>
+</ul>
+
+<h3>Export the client certificate</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>We need to export
+the certificate (without private key) so we can import it below into the ITDI
+Trust Store.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Check
+     the checkbox for the created certificate, and select </span><kbd><span
+     style='font-size:10.0pt'>Extract</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     a file name: </span><kbd><span style='font-size:10.0pt'>c:\LabFiles\keys\client.der</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     Data type: </span><kbd><span style='font-size:10.0pt'>Binary DER data</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     OK.</span></li>
+</ul>
+
+<h2><a name=importCertIntoWAS>Import the ITDI server Certificate into the WAS
+Trust Store</a></h2>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Navigate
+     to the WAS console </span><kbd><span style='font-size:10.0pt'>Key stores
+     and certificates</span></kbd><span style='font-family:"Arial","sans-serif"'>
+     -&gt; </span><kbd><span style='font-size:10.0pt'>NodeDefaultKeyStore</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> area as above.</span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+      </span><kbd><span style='font-size:10.0pt'>Signer certificates</span></kbd></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+      on the </span><kbd><span style='font-size:10.0pt'>Add</span></kbd><span
+      style='font-family:"Arial","sans-serif"'> button</span></li>
+  <ul type=square>
+   <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+       </span><kbd><span style='font-size:10.0pt'>idiserver</span></kbd><span
+       style='font-family:"Arial","sans-serif"'> as the Alias.</span></li>
+   <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Specify
+       the filename of the exported IDI server certificate: </span><kbd><span
+       style='font-size:10.0pt'>c:\LabFiles\keys\idiserver.der</span></kbd></li>
+   <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+       </span><kbd><span style='font-size:10.0pt'>Binary DER data</span></kbd><span
+       style='font-family:"Arial","sans-serif"'> as the Data Type.</span></li>
+   <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+       OK to continue.</span></li>
+  </ul>
+ </ul>
+</ul>
+
+<h2>Restart WAS</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The WebSphere
+application server now needs to be restarted for the changes to take effect.</span></p>
+
+<h2><a name=importCertIntoITDI>Import the WAS Certificate into the ITDI Trust
+Store</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>[This step is not
+required for one-way SSL.]</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Copy
+     the client.der file to the machine on which IDI is installed in say </span><kbd><span
+     style='font-size:10.0pt'>c:\LabFiles\keys</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Go
+     to the </span><kbd><span style='font-size:10.0pt'>{IDI_HOME}\jvm\jre\bin
+     directory</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Launch
+     the </span><kbd><span style='font-size:10.0pt'>ikeyman.exe</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> file (Windows) or </span><kbd><span
+     style='font-size:10.0pt'>ikeyman.sh</span></kbd><span style='font-family:
+     "Arial","sans-serif"'> (Unix / Linux)</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     Key Database File -&gt; Open</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     key database type of </span><kbd><span style='font-size:10.0pt'>JKS</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Enter
+     the keystore File Name: </span><kbd><span style='font-size:10.0pt'>idiserver.jks</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Location:
+     </span><kbd><span style='font-size:10.0pt'>c:\LabFiles\keys</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on Ok button</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     the </span><kbd><span style='font-size:10.0pt'>Add</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> button</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     </span><kbd><span style='font-size:10.0pt'>Binary DER data</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> as the Data Type.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+     the browse button to select the client.der file stored in </span><kbd><span
+     style='font-size:10.0pt'>c:\LabFiles\keys</span></kbd></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Use
+     </span><kbd><span style='font-size:10.0pt'>client</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> as the label.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     OK to continue.</span></li>
+</ul>
+
+<h2><a name=sslForEventNotification>SSL Configuration for Event Notification
+requests issued from ITDI to the ISIM Server</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For such
+requests, where the request originates from the ITDI server, rather than from
+the ISIM Server, there are two notable differences compared with the scenario
+described above. These are:</span></p>
+
+<h3>The SSL server and client roles are reversed</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>ITDI originates
+the SSL connection. Hence, ITDI is the SSL Client, and WAS is the SSL Server.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>When using SSL
+Mutual Authentication, this doesn't really change the steps described above,
+except the description references to &quot;SSL client&quot; and &quot;SSL
+server&quot; are backwards.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>But for one-way
+SSL, the requirement for which side needs a Key Store and certificate, and which
+side needs a Trust Store and signer certificate, is reversed. So WAS needs a
+certificate in it's Key Store, and ITDI needs this certificate's Signer
+Certificate in it's Trust Store.</span></p>
+
+<h3>The Web Server, not Application Server, is the SSL endpoint</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>If you are using
+a separate Web Server for HTTPS connections in front of the Websphere
+Application Server, then it is actually the Web Server that you need to set up
+the Key Store and Trust Store for, not the Websphere Application Server. This
+is because it is the Web Server that accepts &quot;https&quot; and
+&quot;http&quot; requests, unless you bypass it by going directly to the
+Websphere Application Server's HTTPS/HTTP transport ports (default port numbers
+9443 / 9080).</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For this
+scenario, you will need to consult your Web server's documentation for the
+equivalent steps to those described here.</span></p>
+
+<h2><a name=TestingSSL>Testing whether the SSL configuration is correct by
+using one of the ISIM examples</a></h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This describes
+how to use one of the ITDI examples distributed with the ISIM server to test
+the SSL setup.</span></p>
+
+<h3>Set up ITDI example configuration</h3>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Copy
+     the example configuration file </span><kbd><span style='font-size:10.0pt'>{ITIM_HOME}\extensions\{RELEASE_VERSION}\examples\idi_integration\HRFeedCSV\hrfeed_server.xml</span></kbd><span
+     style='font-family:"Arial","sans-serif"'>, and the example input data file
+     </span><kbd><span style='font-size:10.0pt'>{ITIM_HOME}\extensions\{RELEASE_VERSION}\examples\idi_integration\HRFeedCSV\people1.csv</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> to the ITDI solutions directory.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Open
+     the example configuration </span><kbd><span style='font-size:10.0pt'>hrfeed_server.xml</span></kbd><span
+     style='font-family:"Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on the AssemblyLines -&gt; processSearch -&gt; People</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Set
+     the File System Connector file path to the </span><kbd><span
+     style='font-size:10.0pt'>people1.csv</span></kbd><span style='font-family:
+     "Arial","sans-serif"'> input file.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on the AssemblyLine -&gt; TIM Listener</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on the </span><kbd><span style='font-size:10.0pt'>dsmlv2server</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> -&gt; Connection tab.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Change
+     DSML port number to an appropriate value such as </span><kbd><span
+     style='font-size:10.0pt'>4443</span></kbd><span style='font-family:"Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     the </span><kbd><span style='font-size:10.0pt'>Require client
+     authentication</span></kbd><span style='font-family:"Arial","sans-serif"'>
+     checkbox. <br>
+     Alternatively, for one-way SSL, select the </span><kbd><span
+     style='font-size:10.0pt'>Use SSL</span></kbd><span style='font-family:
+     "Arial","sans-serif"'> checkbox instead.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Run
+     the AssemblyLine by clicking on the execute button.</span></li>
+</ul>
+
+<h3>Create an ISIM Service and issue a &quot;Test&quot; to the ITDI example
+service</h3>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Log
+     in to IBM Security Identity Manager as </span><kbd><span style='font-size:
+     10.0pt'>itim manager</span></kbd><span style='font-family:"Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     </span><kbd><span style='font-size:10.0pt'>Manage Services</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> in the task bar.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on </span><kbd><span style='font-size:10.0pt'>Create</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+     the service type as </span><kbd><span style='font-size:10.0pt'>IDI data
+     feed</span></kbd><span style='font-family:"Arial","sans-serif"'>.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on continue button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Specify
+     a service name such as </span><kbd><span style='font-size:10.0pt'>idi</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> in the service name field.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Specify
+     </span><kbd><span style='font-size:10.0pt'>https://idiservername:4443</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> in the URL field. The port
+     number, 4443, must match the port number used for the ISIM Listener in the
+     previous section above.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Specify
+     </span><kbd><span style='font-size:10.0pt'>agent</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> in the &quot;User Id&quot; and
+     &quot;password&quot; fields.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Specify
+     the Naming Context, </span><kbd><span style='font-size:10.0pt'>dc=HRLoad</span></kbd><span
+     style='font-family:"Arial","sans-serif"'>, as specified in the IDI Example
+     configuration -&gt; AssemblyLine -&gt; TIM Listener config tab.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+     on </span><kbd><span style='font-size:10.0pt'>Test</span></kbd><span
+     style='font-family:"Arial","sans-serif"'> button.</span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Test
+     should be successful.</span></li>
+</ul>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><cite><span
+style='font-family:"Arial","sans-serif";color:black'>[Document last updated
+July 12, 2007]</span></cite><span style='font-family:"Arial","sans-serif";
+color:black'> </span></p>
+
+</div>
+
+</body>
+
+</html>

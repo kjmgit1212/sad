@@ -1,0 +1,2817 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chaiti Ghatnekar</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="units">in</property>
+    <property name="includeResource">itim_common/properties/itim_common</property>
+    <text-property name="title" key="title_shared_access">Shared Access History Report</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">10487</property>
+            <expression name="value">var s= Packages.java.lang.StringBuffer();
+var where= Packages.java.lang.StringBuffer();
+var start = getDateGMTString(getStartDateFromGroupNames("Report Period","Begin Date","End Date"));
+var end = getDateGMTString(getEndDateFromGroupNames("Report Period","Begin Date","End Date"));
+
+var s_a= Packages.java.lang.StringBuffer();
+s_a.append(" ( select AUDIT_EVENT.ENTITY_DN, AUDIT_EVENT.ENTITY_NAME, AUDIT_EVENT.ACTION,");
+s_a.append(" AUDIT_EVENT.INITIATOR_NAME, AUDIT_EVENT.INITIATOR_DN, AUDIT_EVENT.TIMESTAMP, AUDIT_EVENT.ID,");
+s_a.append(" AUDIT_MGMT_LEASE.JUSTIFICATION, AUDIT_MGMT_LEASE.EVENT_ID, AUDIT_EVENT.COMMENTS from AUDIT_EVENT");
+s_a.append(" left outer join AUDIT_MGMT_LEASE on AUDIT_EVENT.ID = AUDIT_MGMT_LEASE.EVENT_ID");
+s_a.append(" left outer join PROCESS on PROCESS.ID = AUDIT_EVENT.WORKFLOW_PROCESS_ID")
+s_a.append(" where((AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialManagement' or AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialLeaseManagement')");
+s_a.append("  and AUDIT_EVENT.ENTITY_TYPE like 'Credential')");
+s_a.append(" and (AUDIT_EVENT.ACTION like 'Checkout' or AUDIT_EVENT.ACTION like 'NotifyExpiredLease' or AUDIT_EVENT.ACTION like 'NotifyCheckinExpiredLease' or AUDIT_EVENT.ACTION like 'GetPassword'");
+s_a.append(" or ( AUDIT_EVENT.ACTION like 'Checkin' and (PROCESS.RESULT_SUMMARY like 'SS' OR AUDIT_EVENT.RESULT_SUMMARY like 'FAILURE')))");
+s_a.append(" and (AUDIT_MGMT_LEASE.POOL_DN IS NULL OR AUDIT_MGMT_LEASE.POOL_DN LIKE '')");
+if(!(params["Entitlement"].value == null || params["Entitlement"].value == "" || params["Entitlement"].value == "%")){
+var cred= params["Entitlement"];
+s_a.append(" and AUDIT_EVENT.ENTITY_NAME like '"+cred+"'");
+}
+s_a.append(" and(");
+s_a.append("AUDIT_EVENT.TIMESTAMP > '"+start+"'");
+s_a.append(" and AUDIT_EVENT.TIMESTAMP  &lt;= '"+end+"'");
+s_a.append(")");
+s_a.append(" )EventInfo ");
+
+var s_c= Packages.java.lang.StringBuffer();
+s_c.append(" inner join (");
+s_c.append(" Select CREDENTIALANDLEASE.SELFDN,SA_EVALUATION_CREDENTIAL.DN AS CDN, SA_EVALUATION_CREDENTIAL.SERVICE_DN,");
+s_c.append(" CAST(SA_EVALUATION_CREDENTIAL.IS_EXCLUSIVE AS CHAR) AS IS_EXCLUSIVE,");
+s_c.append(" Person.DN AS PDN, ORGANIZATIONALCONT0.DN AS BDN, Person_cn.CN AS OWNER_NAME,");
+s_c.append(" ORGANIZATIONALCONT0.NAME AS OWNER_BU from Person");
+s_c.append(" inner join Person_cn on Person.DN = Person_cn.DN");
+s_c.append(" inner join ORGANIZATIONALCONT0 on Person.CONTAINERDN = ORGANIZATIONALCONT0.DN");
+s_c.append(" inner join CREDENTIALANDLEASE on Person.DN = CREDENTIALANDLEASE.SELFDN");
+s_c.append(" inner join SA_EVALUATION_CREDENTIAL on CREDENTIALANDLEASE.DN = SA_EVALUATION_CREDENTIAL.DN");
+s_c.append(" where Person.DN NOT LIKE 'DUMMYDN'");
+if (!(params["Entitlement Owner"].value == null || params["Entitlement Owner"].value == "" || params["Entitlement Owner"].value == "%")) {
+var owner = params["Entitlement Owner"];
+s_c.append(" and Person_cn.CN like '"+owner+"'");
+}
+if (!(params["Entitlement Owner Business Unit"].value == null || params["Entitlement Owner Business Unit"].value == "" || params["Entitlement Owner Business Unit"].value == "%")) {
+var bu = params["Entitlement Owner Business Unit"];
+s_c.append(" and ORGANIZATIONALCONT0.NAME like '"+bu+"'");
+}
+s_c.append(" )CredOwnerBU ");
+s_c.append(" on EventInfo.ENTITY_DN = CredOwnerBU.CDN");
+
+
+var s_s = Packages.java.lang.StringBuffer();
+s_s.append(" inner join (");
+s_s.append(" select ServiceBU.NAME AS BU_NAME,CredService.NAME AS SERVICE_NAME,CredService.DN, ServiceBU.DN AS BU_DN");
+s_s.append(" from SA_EVALUATION_SERVICE CredService, SA_EVALUATION_BU ServiceBU ");
+s_s.append(" where ServiceBU.DN=CredService.BU_DN");
+if (!(params["Service Business Unit"].value == null || params["Service Business Unit"].value == "" || params["Service Business Unit"].value == "%")) {
+	var bu = convertAnyToSql(params["Service Business Unit"]);
+	s_s.append(" and ServiceBU.NAME like '"+bu+"'");
+}
+if (!(params["Service"].value == null || params["Service"].value == "" || params["Service"].value == "%")) {
+	var service = convertAnyToSql(params["Service"]);
+	s_s.append(" and CredService.NAME like '"+service+"'");
+}
+s_s.append(" )ServiceAndBU on CredOwnerBU.SERVICE_DN=ServiceAndBU.DN");
+
+s.append(" select distinct C_ALL.ENTITY_DN, C_ALL.ENTITY_NAME, C_ALL.ACTION, C_ALL.INITIATOR_NAME, C_ALL.INITIATOR_DN, C_ALL.TIMESTAMP,");
+s.append(" C_ALL.SELFDN, C_ALL.IS_EXCLUSIVE, C_ALL.BU_NAME,C_ALL.SERVICE_NAME,C_ALL.SERVICE_DN,C_ALL.JUSTIFICATION, C_ALL.COMMENTS from (");
+
+s.append(" select * from ");
+s.append(s_a);
+s.append(s_c);
+s.append(s_s);
+s.append(" )C_ALL order by C_ALL.ENTITY_NAME, C_ALL.TIMESTAMP").toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">10487</property>
+        </structure>
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">10486</property>
+            <expression name="value">var s= Packages.java.lang.StringBuffer();
+var where= Packages.java.lang.StringBuffer();
+var start = getDateGMTString(getStartDateFromGroupNames("Report Period","Begin Date","End Date"));
+var end = getDateGMTString(getEndDateFromGroupNames("Report Period","Begin Date","End Date"));
+
+var s_a= Packages.java.lang.StringBuffer();
+var where_a = Packages.java.lang.StringBuffer();
+
+s_a.append(" ( select AUDIT_EVENT.ENTITY_DN, AUDIT_EVENT.ENTITY_NAME, AUDIT_EVENT.ACTION, AUDIT_EVENT.INITIATOR_NAME,");
+s_a.append(" AUDIT_EVENT.INITIATOR_DN, AUDIT_EVENT.TIMESTAMP, AUDIT_EVENT.ID, AUDIT_MGMT_LEASE.POOL_DN, AUDIT_EVENT.COMMENTS,");
+s_a.append(" AUDIT_MGMT_LEASE.POOL_NAME, AUDIT_MGMT_LEASE.JUSTIFICATION, AUDIT_MGMT_LEASE.EVENT_ID");
+s_a.append(" from AUDIT_EVENT left outer join AUDIT_MGMT_LEASE on AUDIT_EVENT.ID=AUDIT_MGMT_LEASE.EVENT_ID");
+s_a.append(" left outer join PROCESS on PROCESS.ID = AUDIT_EVENT.WORKFLOW_PROCESS_ID");
+s_a.append(" where ((AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialManagement' or AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialLeaseManagement')");
+s_a.append(" and AUDIT_EVENT.ENTITY_TYPE like 'Credential')");
+s_a.append(" and (AUDIT_EVENT.ACTION like 'Checkout' or AUDIT_EVENT.ACTION like 'NotifyExpiredLease' or AUDIT_EVENT.ACTION like 'NotifyCheckinExpiredLease' or AUDIT_EVENT.ACTION like 'GetPassword'");
+s_a.append(" or ( AUDIT_EVENT.ACTION like 'Checkin' and (PROCESS.RESULT_SUMMARY like 'SS' OR AUDIT_EVENT.RESULT_SUMMARY like 'FAILURE')))");
+s_a.append(" and (AUDIT_MGMT_LEASE.POOL_DN IS NOT NULL OR AUDIT_MGMT_LEASE.POOL_DN NOT LIKE '')");
+s_a.append(" and(");
+s_a.append("AUDIT_EVENT.TIMESTAMP > '"+start+"'");
+s_a.append(" and AUDIT_EVENT.TIMESTAMP  &lt;= '"+end+"'");
+s_a.append(")");
+if(!(params["Entitlement"].value == null || params["Entitlement"].value == "" || params["Entitlement"].value == "%")){
+var cred= params["Entitlement"];
+s_a.append(" and AUDIT_MGMT_LEASE.POOL_NAME like '"+cred+"'");
+}
+s_a.append(" )EventInfo ");
+
+var s_c = Packages.java.lang.StringBuffer();
+s_c.append(" inner join (Select SA_EVALUATION_CREDENTIAL_POOL.DN AS CP_DN, SA_EVALUATION_CREDENTIAL_POOL.SERVICE_DN ");
+s_c.append("from SA_EVALUATION_CREDENTIAL_POOL ");
+s_c.append(")CredPool on EventInfo.POOL_DN=CredPool.CP_DN");
+
+var s_s = Packages.java.lang.StringBuffer();
+s_s.append(" inner join (");
+s_s.append("select ServiceBU.NAME AS BU_NAME,CredService.NAME AS SERVICE_NAME,CredService.DN, ServiceBU.DN AS BU_DN");
+s_s.append(" from SA_EVALUATION_SERVICE CredService, SA_EVALUATION_BU ServiceBU ");
+s_s.append(" where ServiceBU.DN=CredService.BU_DN");
+	if (!(params["Service Business Unit"].value == null || params["Service Business Unit"].value == "" || params["Service Business Unit"].value == "%")) {
+		var bu = convertAnyToSql(params["Service Business Unit"]);
+		s_s.append(" and ServiceBU.NAME like '"+bu+"'");
+	}
+	if (!(params["Service"].value == null || params["Service"].value == "" || params["Service"].value == "%")) {
+		var service = convertAnyToSql(params["Service"]);
+		s_s.append(" and CredService.NAME like '"+service+"'");
+	}
+s_s.append(")ServiceAndBU on CredPool.SERVICE_DN=ServiceAndBU.DN");
+
+s.append("select * from (");
+s.append("Select EventInfo.POOL_DN, EventInfo.POOL_NAME, EventInfo.ENTITY_DN, EventInfo.ENTITY_NAME, EventInfo.ACTION, EventInfo.INITIATOR_NAME, EventInfo.INITIATOR_DN, ");
+s.append("EventInfo.TIMESTAMP, EventInfo.JUSTIFICATION, EventInfo.COMMENTS, ServiceAndBU.BU_NAME, ServiceAndBU.SERVICE_NAME, CredPool.SERVICE_DN from "); 
+s.append(s_a);
+s.append(s_c);
+s.append(s_s);
+s.append(" )CP");
+
+
+var s_main= Packages.java.lang.StringBuffer();
+s_main.append("select distinct CP_ALL.POOL_DN, CP_ALL.POOL_NAME, CP_ALL.ENTITY_DN, CP_ALL.ENTITY_NAME, CP_ALL.ACTION, CP_ALL.INITIATOR_NAME, CP_ALL.INITIATOR_DN,");
+s_main.append(" CP_ALL.TIMESTAMP, CP_ALL.JUSTIFICATION, CP_ALL.BU_NAME, CP_ALL.SERVICE_NAME, CP_ALL.SERVICE_DN, CP_ALL.COMMENTS ");
+s_main.append(" from (")
+s_main.append(s);
+
+if ((params["Entitlement Owner"].value != null &amp;&amp; params["Entitlement Owner"].value != "" &amp;&amp; params["Entitlement Owner"].value != "%") || 
+(params["Entitlement Owner Business Unit"].value != null &amp;&amp; params["Entitlement Owner Business Unit"].value != "" &amp;&amp; params["Entitlement Owner Business Unit"].value != "%") ) {
+	var s_o = Packages.java.lang.StringBuffer();
+
+	s_o.append("( select distinct SA_CREDPOOL_OWNER.DN AS POOL from SA_CREDPOOL_OWNER, (");
+	s_o.append("( select ROLE.DN AS ODN, ROLE.CONTAINERDN AS BDN, ROLE.ERROLENAME AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Role' as TYPE ");
+	s_o.append(" from ROLE, ORGANIZATIONALCONT0 where ORGANIZATIONALCONT0.DN=ROLE.CONTAINERDN) ");
+	s_o.append("UNION ");
+	s_o.append("( select PersonData.DN AS ODN, ORGANIZATIONALCONT0.DN AS BDN,PersonData.CN AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Person' as TYPE from (");
+	s_o.append("SELECT Person_cn.CN, Person.DN, Person.CONTAINERDN FROM Person_cn,Person WHERE Person.DN = Person_cn.DN ");
+	
+	s_o.append(")PersonData, ORGANIZATIONALCONT0 where ORGANIZATIONALCONT0.DN=PersonData.CONTAINERDN )");
+	s_o.append(" )PersonOrRoleOwnerForBU ");
+	s_o.append("where SA_CREDPOOL_OWNER.OWNER=PersonOrRoleOwnerForBU.ODN ");
+	if (!(params["Entitlement Owner Business Unit"].value == null || params["Entitlement Owner Business Unit"].value == "" || params["Entitlement Owner Business Unit"].value == "%")) {
+		var bu = params["Entitlement Owner Business Unit"];
+		s_o.append(" and PersonOrRoleOwnerForBU.NAME like '"+bu+"'");
+	}
+	if (!(params["Entitlement Owner"].value == null || params["Entitlement Owner"].value == "" || params["Entitlement Owner"].value == "%")) {	
+		var owner = params["Entitlement Owner"];
+		s_o.append(" and PersonOrRoleOwnerForBU.OWNER_NAME like '"+owner+"'");
+	}	
+    s_o.append(")Owner ")
+		
+	s_main.append(" inner join ");
+	s_main.append(s_o);
+	s_main.append("on Owner.POOL=CP.POOL_DN ");
+}		
+
+s_main.append(") CP_ALL order by CP_ALL.POOL_NAME, CP_ALL.TIMESTAMP");
+s_main.toString();</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">10486</property>
+        </structure>
+    </list-property>
+    <method name="initialize"><![CDATA[//
+// Set up logging.  Uncomment next line to enable in Designer tool.
+reportContext.setPersistentGlobalVariable("logfileName", "accesses_0.log");
+setupLogging();
+logInitialize();
+// Add closeLogger(); to afterRender/afterFactory to close logger object.
+setReportTitle("title_shared_access_audit");]]></method>
+    <method name="afterFactory"><![CDATA[debugLogger("afterFactory");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <method name="afterRender"><![CDATA[debugLogger("afterRender");
+// Close logger if it is enabled
+closeLogger();]]></method>
+    <property name="theme">TivoliCommonReporting_v1.TCRTheme_v1</property>
+    <text-property name="displayName" key="title_shared_access_history">Shared Access History Report</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">tcr_common/lib/TivoliCommonReporting_v1.0.rptlibrary</property>
+            <property name="namespace">TivoliCommonReporting_v1</property>
+        </structure>
+        <structure>
+            <property name="fileName">itim_common/lib/itim.rptlibrary</property>
+            <property name="namespace">itim</property>
+        </structure>
+    </list-property>
+    <list-property name="includeScripts">
+        <property>tcr_common/scripts/DateTime.js</property>
+        <property>tcr_common/scripts/Logger.js</property>
+        <property>tcr_common/scripts/ReportUtils.js</property>
+        <property>itim_common/scripts/itim.js</property>
+    </list-property>
+    <parameters>
+        <parameter-group name="Date Range" id="1713" extends="TivoliCommonReporting_v1.Date Range"/>
+        <scalar-parameter name="Service Business Unit" id="13581">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_service_business_unit"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Service" id="13582">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_service"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Entitlement Owner Business Unit" id="13585">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_shared_access_owner_business_unit"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Entitlement Owner" id="13586">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_shared_access_owner"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Entitlement" id="13587">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_shared_access"></text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="1647"
+ extends="itim.ITIM Database"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UserNameBasedOnUsersParameter" id="1699"
+ extends="itim.UserNameBasedOnUsersParameter">
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="PersonAndBU" id="10306">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PERSON_DN</property>
+                    <property name="displayName">PERSON_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ITIMDN</property>
+                    <property name="displayName">ITIMDN</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">PERSON_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ITIMDN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">bu_dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">person_dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">itim_eruid</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">PERSON_DN</property>
+                    <property name="nativeName">PERSON_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ITIMDN</property>
+                    <property name="nativeName">ITIMDN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ORGANIZATIONALCONT0.NAME,ORGANIZATIONALCONT0.DN,
+PersonData.CN, PersonData.DN "PERSON_DN", PersonData.ITIMDN
+	from
+	(
+	SELECT Person_cn.CN, Person.DN, Person.CONTAINERDN, ITIMACCOUNT.DN "ITIMDN"
+        FROM    Person_cn, 
+                Person, ITIMACCOUNT
+        WHERE (Person.DN = Person_cn.DN and Person.DN &lt;> 'DUMMYDN')
+        AND  Person.DN = ITIMACCOUNT.SELFDN
+	)PersonData, ORGANIZATIONALCONT0
+where ORGANIZATIONALCONT0.DN=PersonData.CONTAINERDN
+AND ORGANIZATIONALCONT0.DN like ?
+AND PersonData.DN like ?
+AND PersonData.ITIMDN like ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>2</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>3</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="CredentialPoolHistory" id="10486">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">POOL_DN</property>
+                    <property name="displayName">POOL_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">POOL_NAME</property>
+                    <property name="displayName">POOL_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENTITY_DN</property>
+                    <property name="displayName">ENTITY_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENTITY_NAME</property>
+                    <property name="displayName">ENTITY_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACTION</property>
+                    <property name="displayName">ACTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">INITIATOR_NAME</property>
+                    <property name="displayName">INITIATOR_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">INITIATOR_DN</property>
+                    <property name="displayName">INITIATOR_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TIMESTAMP</property>
+                    <property name="displayName">TIMESTAMP</property>
+                </structure>
+                <structure>
+                    <property name="columnName">JUSTIFICATION</property>
+                    <property name="displayName">JUSTIFICATION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">BU_NAME</property>
+                    <property name="displayName">BU_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_NAME</property>
+                    <property name="displayName">SERVICE_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_DN</property>
+                    <property name="displayName">SERVICE_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">COMMENTS</property>
+                    <property name="displayName">COMMENTS</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">POOL_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">POOL_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ENTITY_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ENTITY_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ACTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">INITIATOR_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">INITIATOR_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">TIMESTAMP</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">JUSTIFICATION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">BU_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">SERVICE_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">SERVICE_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">COMMENTS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="rowFetchLimit">5000</property>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">POOL_DN</property>
+                    <property name="nativeName">POOL_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">POOL_NAME</property>
+                    <property name="nativeName">POOL_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ENTITY_DN</property>
+                    <property name="nativeName">ENTITY_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ENTITY_NAME</property>
+                    <property name="nativeName">ENTITY_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ACTION</property>
+                    <property name="nativeName">ACTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">INITIATOR_NAME</property>
+                    <property name="nativeName">INITIATOR_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">INITIATOR_DN</property>
+                    <property name="nativeName">INITIATOR_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">TIMESTAMP</property>
+                    <property name="nativeName">TIMESTAMP</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">JUSTIFICATION</property>
+                    <property name="nativeName">JUSTIFICATION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">BU_NAME</property>
+                    <property name="nativeName">BU_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">SERVICE_NAME</property>
+                    <property name="nativeName">SERVICE_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">SERVICE_DN</property>
+                    <property name="nativeName">SERVICE_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">COMMENTS</property>
+                    <property name="nativeName">COMMENTS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct  CP_ALL.POOL_DN, CP_ALL.POOL_NAME, CP_ALL.ENTITY_DN, CP_ALL.ENTITY_NAME, CP_ALL.ACTION, CP_ALL.INITIATOR_NAME, CP_ALL.INITIATOR_DN, 
+CP_ALL.TIMESTAMP, CP_ALL.JUSTIFICATION, CP_ALL.BU_NAME, CP_ALL.SERVICE_NAME, CP_ALL.SERVICE_DN, CP_ALL.COMMENTS
+from 
+( 
+	select * from
+		(
+			select EventInfo.POOL_DN, EventInfo.POOL_NAME, EventInfo.ENTITY_DN, EventInfo.ENTITY_NAME, EventInfo.ACTION, EventInfo.INITIATOR_NAME, EventInfo.INITIATOR_DN, 
+				EventInfo.TIMESTAMP, EventInfo.JUSTIFICATION, EventInfo.COMMENTS, 
+				ServiceAndBU.BU_NAME, ServiceAndBU.SERVICE_NAME, CredPool.SERVICE_DN 
+			from
+			(
+			select AUDIT_EVENT.ENTITY_DN, AUDIT_EVENT.ENTITY_NAME, AUDIT_EVENT.ACTION, AUDIT_EVENT.INITIATOR_NAME, 
+			AUDIT_EVENT.INITIATOR_DN, AUDIT_EVENT.TIMESTAMP, AUDIT_EVENT.ID , AUDIT_EVENT.COMMENTS, 
+			AUDIT_MGMT_LEASE.POOL_DN, AUDIT_MGMT_LEASE.POOL_NAME, AUDIT_MGMT_LEASE.JUSTIFICATION, AUDIT_MGMT_LEASE.EVENT_ID
+			from AUDIT_EVENT left outer join AUDIT_MGMT_LEASE on AUDIT_EVENT.ID=AUDIT_MGMT_LEASE.EVENT_ID
+			left outer join PROCESS on PROCESS.ID = AUDIT_EVENT.WORKFLOW_PROCESS_ID
+			where (AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialManagement' and AUDIT_EVENT.ENTITY_TYPE like 'Credential') 
+			and (AUDIT_EVENT.ACTION like 'Checkout' or AUDIT_EVENT.ACTION like 'NotifyExpiredLease' or AUDIT_EVENT.ACTION like 'GetPassword'
+			or AUDIT_EVENT.ACTION like 'NotifyCheckinExpiredLease'
+			or ( AUDIT_EVENT.ACTION like 'Checkin' and (PROCESS.RESULT_SUMMARY like 'SS' OR AUDIT_EVENT.RESULT_SUMMARY like 'FAILURE')))
+			and (AUDIT_MGMT_LEASE.POOL_DN IS NOT NULL OR AUDIT_MGMT_LEASE.POOL_DN NOT LIKE '')			
+			)EventInfo
+			
+			inner join
+			(Select SA_EVALUATION_CREDENTIAL_POOL.DN AS CP_DN,SA_EVALUATION_CREDENTIAL_POOL.NAME CP_NAME, SA_EVALUATION_CREDENTIAL_POOL.SERVICE_DN
+			from SA_EVALUATION_CREDENTIAL_POOL
+			)CredPool 
+			on EventInfo.POOL_DN=CredPool.CP_DN
+	
+			inner join
+			(
+			select ServiceBU.NAME "BU_NAME",CredService.NAME "SERVICE_NAME",
+			CredService.DN, ServiceBU.DN "BU_DN"
+			from SA_EVALUATION_SERVICE CredService, SA_EVALUATION_BU ServiceBU 
+			where ServiceBU.DN=CredService.BU_DN
+			)ServiceAndBU 
+			on CredPool.SERVICE_DN=ServiceAndBU.DN
+			
+		)CP 
+
+	left outer join
+		(	
+			select distinct SA_CREDPOOL_OWNER.DN AS POOL from SA_CREDPOOL_OWNER,
+			(
+			(select ROLE.DN, ROLE.CONTAINERDN, ROLE.ERROLENAME AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Role' as TYPE
+		 	from ROLE, ORGANIZATIONALCONT0
+		 	where ORGANIZATIONALCONT0.DN=ROLE.CONTAINERDN
+		 	)
+			UNION
+			(select Person.DN, ORGANIZATIONALCONT0.DN, Person_cn.CN AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Person' as TYPE
+				from Person
+				inner join Person_cn on Person.DN = Person_cn.DN
+				inner join ORGANIZATIONALCONT0 on Person.CONTAINERDN = ORGANIZATIONALCONT0.DN	
+				where Person.DN NOT LIKE 'DUMMYDN'
+			 )
+			)PersonOrRoleOwnerForBU 
+			
+			where SA_CREDPOOL_OWNER.OWNER=PersonOrRoleOwnerForBU.DN
+
+		)Owner
+	on CP.POOL_DN=Owner.POOL
+
+)CP_ALL order by CP_ALL.POOL_DN, CP_ALL.TIMESTAMP</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="CredentialsHistory" id="10487">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ENTITY_DN</property>
+                    <property name="displayName">ENTITY_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENTITY_NAME</property>
+                    <property name="displayName">ENTITY_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACTION</property>
+                    <property name="displayName">ACTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">INITIATOR_NAME</property>
+                    <property name="displayName">INITIATOR_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">INITIATOR_DN</property>
+                    <property name="displayName">INITIATOR_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TIMESTAMP</property>
+                    <property name="displayName">TIMESTAMP</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SELFDN</property>
+                    <property name="displayName">SELFDN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">IS_EXCLUSIVE</property>
+                    <property name="displayName">IS_EXCLUSIVE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">BU_NAME</property>
+                    <property name="displayName">BU_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_NAME</property>
+                    <property name="displayName">SERVICE_NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SERVICE_DN</property>
+                    <property name="displayName">SERVICE_DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">JUSTIFICATION</property>
+                    <property name="displayName">JUSTIFICATION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">COMMENTS</property>
+                    <property name="displayName">COMMENTS</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ENTITY_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ENTITY_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ACTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">INITIATOR_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">INITIATOR_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">TIMESTAMP</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">SELFDN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">IS_EXCLUSIVE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">BU_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">SERVICE_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">SERVICE_DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">JUSTIFICATION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">COMMENTS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="rowFetchLimit">5000</property>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ENTITY_DN</property>
+                    <property name="nativeName">ENTITY_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ENTITY_NAME</property>
+                    <property name="nativeName">ENTITY_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ACTION</property>
+                    <property name="nativeName">ACTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">INITIATOR_NAME</property>
+                    <property name="nativeName">INITIATOR_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">INITIATOR_DN</property>
+                    <property name="nativeName">INITIATOR_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">TIMESTAMP</property>
+                    <property name="nativeName">TIMESTAMP</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">SELFDN</property>
+                    <property name="nativeName">SELFDN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">IS_EXCLUSIVE</property>
+                    <property name="nativeName">IS_EXCLUSIVE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">BU_NAME</property>
+                    <property name="nativeName">BU_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">SERVICE_NAME</property>
+                    <property name="nativeName">SERVICE_NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">SERVICE_DN</property>
+                    <property name="nativeName">SERVICE_DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">JUSTIFICATION</property>
+                    <property name="nativeName">JUSTIFICATION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">COMMENTS</property>
+                    <property name="nativeName">COMMENTS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">Select distinct C_ALL.ENTITY_DN, C_ALL.ENTITY_NAME, C_ALL.ACTION, C_ALL.INITIATOR_NAME, C_ALL.INITIATOR_DN, C_ALL.TIMESTAMP,
+C_ALL.SELFDN, C_ALL.IS_EXCLUSIVE, C_ALL.BU_NAME,C_ALL.SERVICE_NAME, C_ALL.SERVICE_DN, C_ALL.JUSTIFICATION, C_ALL.COMMENTS
+from
+(
+	
+	Select * from	
+	( 
+		select AUDIT_EVENT.ENTITY_DN, AUDIT_EVENT.ENTITY_NAME, AUDIT_EVENT.ACTION, 
+		AUDIT_EVENT.INITIATOR_NAME, AUDIT_EVENT.INITIATOR_DN, AUDIT_EVENT.TIMESTAMP, AUDIT_EVENT.ID,
+		AUDIT_MGMT_LEASE.JUSTIFICATION, AUDIT_MGMT_LEASE.EVENT_ID, AUDIT_MGMT_LEASE.POOL_DN, AUDIT_EVENT.COMMENTS
+		from AUDIT_EVENT 
+		left outer join AUDIT_MGMT_LEASE on AUDIT_EVENT.ID = AUDIT_MGMT_LEASE.EVENT_ID
+		left outer join PROCESS on PROCESS.ID = AUDIT_EVENT.WORKFLOW_PROCESS_ID
+		where ((AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialManagement' or AUDIT_EVENT.ITIM_EVENT_CATEGORY like 'CredentialLeaseManagement')and AUDIT_EVENT.ENTITY_TYPE like 'Credential') 
+		and (AUDIT_EVENT.ACTION like 'Checkout' or AUDIT_EVENT.ACTION like 'NotifyExpiredLease' or AUDIT_EVENT.ACTION like 'GetPassword'
+		or AUDIT_EVENT.ACTION like 'NotifyCheckinExpiredLease'
+		or ( AUDIT_EVENT.ACTION like 'Checkin' and (PROCESS.RESULT_SUMMARY like 'SS' OR AUDIT_EVENT.RESULT_SUMMARY like 'FAILURE'))
+		)		
+		and (AUDIT_MGMT_LEASE.POOL_DN IS NULL OR AUDIT_MGMT_LEASE.POOL_DN LIKE '')
+	)EventInfo 
+			
+	inner join 
+	(
+		Select CREDENTIALANDLEASE.SELFDN,
+		SA_EVALUATION_CREDENTIAL.DN AS CDN, SA_EVALUATION_CREDENTIAL.SERVICE_DN,
+		CAST(SA_EVALUATION_CREDENTIAL.IS_EXCLUSIVE AS CHAR) AS IS_EXCLUSIVE,
+		Person.DN AS PDN, ORGANIZATIONALCONT0.DN AS BDN, Person_cn.CN AS OWNER_NAME, 
+		ORGANIZATIONALCONT0.NAME AS OWNER_BU
+		from Person
+		inner join Person_cn on Person.DN = Person_cn.DN
+		inner join ORGANIZATIONALCONT0 on Person.CONTAINERDN = ORGANIZATIONALCONT0.DN	
+		inner join CREDENTIALANDLEASE on Person.DN = CREDENTIALANDLEASE.SELFDN
+		inner join SA_EVALUATION_CREDENTIAL on CREDENTIALANDLEASE.DN =  SA_EVALUATION_CREDENTIAL.DN
+		where Person.DN NOT LIKE 'DUMMYDN'
+	 )CredOwnerBU
+	 on EventInfo.ENTITY_DN = CredOwnerBU.CDN
+		 
+	inner join
+	(
+		select SA_EVALUATION_BU.NAME "BU_NAME",SA_EVALUATION_SERVICE.NAME "SERVICE_NAME",
+		SA_EVALUATION_SERVICE.DN, SA_EVALUATION_BU.DN "BU_DN"
+		from SA_EVALUATION_SERVICE ,SA_EVALUATION_BU 
+		where SA_EVALUATION_BU.DN=SA_EVALUATION_SERVICE.BU_DN
+	)ServiceAndBU 
+	on CredOwnerBU.SERVICE_DN=ServiceAndBU.DN
+			
+)C_ALL order by C_ALL.ENTITY_NAME, C_ALL.TIMESTAMP
+
+</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="CredPoolOwnerDetails" id="13617">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">POOL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">OWNERDN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">OWNER_NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">TYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">pool_dn</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">POOL</property>
+                    <property name="nativeName">POOL</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">OWNERDN</property>
+                    <property name="nativeName">OWNERDN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">OWNER_NAME</property>
+                    <property name="nativeName">OWNER_NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">TYPE</property>
+                    <property name="nativeName">TYPE</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select * from
+	(
+		select SA_CREDPOOL_OWNER.DN AS POOL, SA_CREDPOOL_OWNER.OWNER AS OWNERDN, 
+				PersonOrRoleOwnerForBU.OWNER_NAME, PersonOrRoleOwnerForBU.NAME, PersonOrRoleOwnerForBU.TYPE
+		from SA_CREDPOOL_OWNER,
+		(
+			(select ROLE.DN, ROLE.CONTAINERDN, ROLE.ERROLENAME AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Role' as TYPE
+		 	from ROLE inner join ORGANIZATIONALCONT0
+		 	on ORGANIZATIONALCONT0.DN=ROLE.CONTAINERDN
+		 	)
+			UNION
+			(  select Person.DN, ORGANIZATIONALCONT0.DN, Person_cn.CN AS OWNER_NAME, ORGANIZATIONALCONT0.NAME, 'Person' as TYPE
+				from Person
+				inner join Person_cn on Person.DN = Person_cn.DN
+				inner join ORGANIZATIONALCONT0 on Person.CONTAINERDN = ORGANIZATIONALCONT0.DN	
+				where Person.DN NOT LIKE 'DUMMYDN'
+			 )
+		)PersonOrRoleOwnerForBU 
+	
+		where SA_CREDPOOL_OWNER.OWNER=PersonOrRoleOwnerForBU.DN
+
+) Owner
+where Owner.POOL like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="CredPoolsCredentialOwner" id="13764">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">OWNERDN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">cred_dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">OWNERDN</property>
+                    <property name="nativeName">OWNERDN</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select CREDENTIALANDLEASE.SELFDN AS OWNERDN
+from CREDENTIALANDLEASE
+where CREDENTIALANDLEASE.DN like ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>OWNERDN</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>OWNERDN</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>OWNERDN</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="CredExclusivity" id="13806">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">IS_EXCLUSIVE</property>
+                    <property name="displayName">IS_EXCLUSIVE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">IS_EXCLUSIVE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">entity_dn</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">IS_EXCLUSIVE</property>
+                    <property name="nativeName">IS_EXCLUSIVE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select CAST(SA_EVALUATION_CREDENTIAL.IS_EXCLUSIVE AS CHAR) AS IS_EXCLUSIVE
+from SA_EVALUATION_CREDENTIAL 
+where SA_EVALUATION_CREDENTIAL.DN like ?</property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2" extends="TivoliCommonReporting_v1.TCR Master Page">
+            <overridden-values>
+                <ref-entry baseId="9" id="9"/>
+                <ref-entry baseId="10" id="10"/>
+                <ref-entry baseId="11" id="11"/>
+                <ref-entry baseId="12" id="12"/>
+                <ref-entry baseId="13" id="13"/>
+                <ref-entry baseId="14" id="14"/>
+                <ref-entry baseId="38" id="38"/>
+                <ref-entry baseId="19" id="19"/>
+                <ref-entry baseId="20" id="20"/>
+                <ref-entry baseId="301" id="301"/>
+                <ref-entry baseId="21" id="21"/>
+                <ref-entry baseId="22" id="22"/>
+                <ref-entry baseId="23" id="23"/>
+                <ref-entry baseId="1719" name="NewText3" id="1719"/>
+                <ref-entry baseId="24" id="24"/>
+                <ref-entry baseId="25" id="25"/>
+                <ref-entry baseId="26" id="26"/>
+                <ref-entry baseId="27" id="27"/>
+                <ref-entry baseId="28" id="28"/>
+                <ref-entry baseId="29" id="29"/>
+                <ref-entry baseId="30" id="30"/>
+                <ref-entry baseId="31" id="31"/>
+                <ref-entry baseId="32" id="32"/>
+                <ref-entry baseId="33" id="33"/>
+                <ref-entry baseId="34" id="34"/>
+                <ref-entry baseId="35" id="35"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid name="Report Introduction" id="223">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Report Introduction"</expression>
+            <column id="224"/>
+            <row id="225">
+                <cell id="226">
+                    <text name="Report Title" id="44">
+                        <property name="style">main-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="title_shared_access_history"><![CDATA[Report Title]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="231">
+                <cell id="232">
+                    <grid id="3765">
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">15px</property>
+                        <property name="width">100%</property>
+                        <column id="3766">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="3767">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="3768">
+                            <property name="width">25%</property>
+                        </column>
+                        <column id="3769">
+                            <property name="width">25%</property>
+                        </column>
+                        <row id="4600">
+                            <cell id="4601">
+                                <label id="4705">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_date_range">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="4602">
+                                <data id="4614">
+                                    <property name="style">parameter-value</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">3px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Report Period</property>
+                                            <expression name="expression">getNLS(params["Report Period"])</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Report Period</property>
+                                </data>
+                            </cell>
+                            <cell id="4603"/>
+                            <cell id="4604"/>
+                        </row>
+                        <row id="3770">
+                            <cell id="3771">
+                                <label id="3805">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_start_date">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3772">
+                                <text id="10765">
+                                    <property name="style">parameter-value</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getStartDateFromGroupNames("Report Period","Begin Date","End Date")</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3773">
+                                <label id="2475">
+                                    <property name="style">parameter-name</property>
+                                    <text-property name="text" key="parameter_end_date">Date Here ...</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3774">
+                                <text id="8815">
+                                    <property name="style">parameter-value</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<VALUE-OF>getEndDateFromGroupNames("Report Period","Begin Date","End Date")</VALUE-OF>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="13528">
+                            <cell id="13529">
+                                <property name="paddingTop">1pt</property>
+                                <text name="Label_ServiceBU" id="9347">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="parameter_service_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="13530">
+                                <data id="13584">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Service Business Unit</property>
+                                            <expression name="expression">convertSplatToNLS(params["Service Business Unit"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Service Business Unit</property>
+                                </data>
+                            </cell>
+                            <cell id="13531">
+                                <text name="Label_Service" id="9345">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="heading_service"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="13532">
+                                <data id="13583">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Service</property>
+                                            <expression name="expression">convertSplatToNLS(params["Service"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Service</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="10084">
+                            <cell id="10085">
+                                <property name="paddingTop">1pt</property>
+                                <text name="Label_EntitlementOwnerBU" id="13336">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="parameter_shared_access_owner_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="10086">
+                                <data id="13619">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">Entitlement Owner Business Unit</property>
+                                            <expression name="expression">convertSplatToNLS(params["Entitlement Owner Business Unit"]);</expression>
+                                            <property name="dataType">any</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">Entitlement Owner Business Unit</property>
+                                </data>
+                            </cell>
+                            <cell id="10087">
+                                <text name="Label_EntitlementOwner" id="10489">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="parameter_shared_access_owner"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="10088">
+                                <data id="13545">
+                                    <property name="dataSet">UserNameBasedOnUsersParameter</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">User Dn</property>
+                                            <expression name="expression">convertAnyToSql(params["Entitlement Owner"])</expression>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">CN</property>
+                                            <expression name="expression">convertSplatToNLS(params["Entitlement Owner"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">CN</property>
+                                </data>
+                            </cell>
+                        </row>
+                        <row id="9743">
+                            <cell id="9744">
+                                <property name="paddingTop">1pt</property>
+                                <text name="Label_Entitlement" id="9346">
+                                    <property name="style">parameter-name</property>
+                                    <property name="paddingTop">3px</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content" key="parameter_shared_access"><![CDATA[Bussiness Unit]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="9745">
+                                <data id="13550">
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">ENTITLEMENT</property>
+                                            <expression name="expression">convertSplatToNLS(params["Entitlement"]);</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">ENTITLEMENT</property>
+                                </data>
+                            </cell>
+                            <cell id="9746"/>
+                            <cell id="9747"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Section 1" id="1593">
+            <property name="width">100%</property>
+            <expression name="bookmark">"Section 1"</expression>
+            <column id="1594"/>
+            <row id="1595">
+                <cell id="1596">
+                    <property name="paddingTop">10pt</property>
+                    <text name="Section Heading Sub-title" id="1597">
+                        <property name="style">section-title</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="sub_title_section_1_shared_access_history_by_entitlements"><![CDATA[Section 1 Sub-Title Text]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="1598">
+                <cell id="1599">
+                    <property name="paddingTop">10pt</property>
+                    <property name="textAlign">center</property>
+                </cell>
+            </row>
+            <row id="396">
+                <cell id="397">
+                    <property name="paddingTop">10pt</property>
+                    <table name="table_credentialDetails" id="10947">
+                        <property name="style">group-table-with-section</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="canShrink">true</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">CredentialsHistory</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setTotalCount(Total.count());
+setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">ENTITY_DN</property>
+                                <expression name="expression">dataSetRow["ENTITY_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ENTITY_NAME</property>
+                                <expression name="expression">dataSetRow["ENTITY_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ACTION</property>
+                                <expression name="expression">convertSAActionsToNLS(dataSetRow["ACTION"])</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">INITIATOR_NAME</property>
+                                <expression name="expression">if((dataSetRow["INITIATOR_NAME"] ==null || dataSetRow["INITIATOR_NAME"]==" ") &amp;&amp; ((dataSetRow["ACTION"]=="NotifyExpiredLease") || (dataSetRow["ACTION"]=="NotifyCheckinExpiredLease")))
+{
+	getNLS("workflow_system");
+}else{
+	dataSetRow["INITIATOR_NAME"];
+}</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">INITIATOR_DN</property>
+                                <expression name="expression">dataSetRow["INITIATOR_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TIMESTAMP</property>
+                                <expression name="expression">dataSetRow["TIMESTAMP"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SELFDN</property>
+                                <expression name="expression">dataSetRow["SELFDN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">IS_EXCLUSIVE</property>
+                                <expression name="expression">dataSetRow["IS_EXCLUSIVE"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">BU_NAME</property>
+                                <expression name="expression">dataSetRow["BU_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICE_NAME</property>
+                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICE_DN</property>
+                                <expression name="expression">dataSetRow["SERVICE_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">JUSTIFICATION</property>
+                                <expression name="expression">wrap(dataSetRow["JUSTIFICATION"],35);</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Column Binding</property>
+                                <expression name="expression">row["SELFDN"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COMMENTS</property>
+                                <expression name="expression">dataSetRow["COMMENTS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <expression name="bookmark">row["SERVICE_NAME"]</expression>
+                        <column id="11002">
+                            <property name="width">1%</property>
+                        </column>
+                        <column id="11003">
+                            <property name="width">2%</property>
+                            <property name="textTransform">none</property>
+                        </column>
+                        <column id="11132">
+                            <property name="width">15%</property>
+                            <property name="repeat">1</property>
+                        </column>
+                        <column id="13787">
+                            <property name="width">20%</property>
+                            <property name="repeat">1</property>
+                        </column>
+                        <column id="11005">
+                            <property name="width">20%</property>
+                            <property name="repeat">1</property>
+                        </column>
+                        <column id="11006">
+                            <property name="width">20%</property>
+                        </column>
+                        <column id="11008">
+                            <property name="width">15%</property>
+                        </column>
+                        <column id="13834">
+                            <property name="width">20%</property>
+                        </column>
+                        <header>
+                            <row id="13503">
+                                <cell id="13504">
+                                    <property name="colSpan">8</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <label id="12845">
+                                        <property name="style">section-title</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="color">#444E68</property>
+                                        <text-property name="text" key="sub_title_shared_access_history_by_credentials">Credentilal Section</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="13283">
+                            <property name="groupName">groupService</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["SERVICE_DN"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["SERVICE_NAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="13284">
+                                    <cell id="13285">
+                                        <property name="colSpan">8</property>
+                                        <property name="rowSpan">1</property>
+                                        <grid id="13314">
+                                            <property name="marginTop">15px</property>
+                                            <property name="marginLeft">0px</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="width">100%</property>
+                                            <column id="13315">
+                                                <property name="width">1.6041666667in</property>
+                                            </column>
+                                            <column id="13316"/>
+                                            <row id="13317">
+                                                <cell id="13318">
+                                                    <text name="Label_ServiceBU0" id="13319">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="parameter_service_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13320">
+                                                    <data id="13321">
+                                                        <property name="resultSetColumn">BU_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="13322">
+                                                <cell id="13323">
+                                                    <text name="Label_Service0" id="13324">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="heading_service"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13325">
+                                                    <data id="13326">
+                                                        <property name="resultSetColumn">SERVICE_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </header>
+                        </group>
+                        <group id="11011">
+                            <property name="groupName">credentials</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["ENTITY_DN"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["ENTITY_NAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="11012">
+                                    <cell id="11013">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                    </cell>
+                                    <cell id="13560">
+                                        <property name="colSpan">7</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">1px</property>
+                                        <grid name="grid_credList" id="11033">
+                                            <property name="marginTop">15px</property>
+                                            <property name="marginBottom">8px</property>
+                                            <property name="width">100%</property>
+                                            <column id="11034">
+                                                <property name="width">1.604in</property>
+                                            </column>
+                                            <column id="11035"/>
+                                            <row id="11037">
+                                                <cell id="11038">
+                                                    <text name="Label_Cred" id="11110">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="Credential"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="11039">
+                                                    <data id="11032">
+                                                        <property name="resultSetColumn">ENTITY_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="11111">
+                                                <cell id="11112">
+                                                    <text name="Label_Entitlement21" id="11115">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="heading_credential_owner"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="11113">
+                                                    <table id="11250">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="marginBottom">5px</property>
+                                                        <property name="width">30%</property>
+                                                        <property name="dataSet">PersonAndBU</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">person_dn</property>
+                                                                <expression name="expression">row["SELFDN"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CN</property>
+                                                                <expression name="expression">dataSetRow["CN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DN</property>
+                                                                <expression name="expression">dataSetRow["DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="11254">
+                                                            <property name="width">40%</property>
+                                                        </column>
+                                                        <column id="13791">
+                                                            <property name="width">60%</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="13818">
+                                                                <cell id="13819">
+                                                                    <label id="13797">
+                                                                        <text-property name="text" key="name">OWNER_NAME</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="13820">
+                                                                    <label id="13796">
+                                                                        <text-property name="text" key="parameter_business_unit">NAME</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="11251">
+                                                                <cell id="11252">
+                                                                    <data id="11255">
+                                                                        <property name="resultSetColumn">CN</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="13790">
+                                                                    <data id="13792">
+                                                                        <property name="resultSetColumn">NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                            <row id="13228">
+                                                <cell id="13229">
+                                                    <label id="10964">
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="color">#444E68</property>
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="marginBottom">0px</property>
+                                                        <text-property name="text" key="heading_exclusive_access">IS_EXCLUSIVE</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="13230">
+                                                    <text id="13825">
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">!isExclusiveAccess(row["IS_EXCLUSIVE"]);</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <text-property name="content" key="yes"><![CDATA[]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="12831">
+                                    <cell id="12832"/>
+                                    <cell id="12833">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                    </cell>
+                                    <cell id="12834">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <label id="10954">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action">ACTION</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13783">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <label id="13789">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <property name="marginTop">0pt</property>
+                                            <text-property name="text" key="heading_justification">ACTION</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="12835">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <label id="11247">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action_owner">INITIATOR_NAME</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="12836">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="10958">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action_owner_business_unit">INITIATOR_DN</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="12837">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <label id="10960">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_time_of_action">TIMESTAMP</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13832">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <text id="13835">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="content" key="comments"><![CDATA[]]></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                        </group>
+                        <detail>
+                            <row id="10969">
+                                <cell id="10972"/>
+                                <cell id="10974">
+                                    <property name="style">table-details</property>
+                                </cell>
+                                <cell id="11129">
+                                    <property name="style">table-details</property>
+                                    <data id="10975">
+                                        <property name="resultSetColumn">ACTION</property>
+                                    </data>
+                                </cell>
+                                <cell id="13784">
+                                    <property name="style">table-details</property>
+                                    <data id="13788">
+                                        <property name="resultSetColumn">JUSTIFICATION</property>
+                                    </data>
+                                </cell>
+                                <cell id="10978">
+                                    <property name="style">table-details</property>
+                                    <data id="11248">
+                                        <property name="marginTop">0pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="resultSetColumn">INITIATOR_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="10980">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <table id="13505">
+                                        <property name="width">0.7395833333in</property>
+                                        <property name="dataSet">PersonAndBU</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">itim_eruid</property>
+                                                <expression name="expression">row["INITIATOR_DN"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">NAME</property>
+                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">CN</property>
+                                                <expression name="expression">dataSetRow["CN"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DN</property>
+                                                <expression name="expression">dataSetRow["DN"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="13509">
+                                            <property name="width">0.7395833333in</property>
+                                        </column>
+                                        <detail>
+                                            <row id="13506">
+                                                <cell id="13507">
+                                                    <data id="13508">
+                                                        <property name="resultSetColumn">NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                                <cell id="10984">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <text id="13827">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF>getDateFromString(row["TIMESTAMP"])</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="13833">
+                                    <property name="style">table-details</property>
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="paddingLeft">3px</property>
+                                    <data id="13836">
+                                        <property name="resultSetColumn">COMMENTS</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <table name="table_credentialPoolDetails" id="12913">
+                        <property name="style">group-table-with-section</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="canShrink">true</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">CredentialPoolHistory</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">setTotalCount(Total.count());
+setRowCount(Total.count());
+isRowCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">POOL_DN</property>
+                                <expression name="expression">dataSetRow["POOL_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">POOL_NAME</property>
+                                <expression name="expression">dataSetRow["POOL_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ENTITY_DN</property>
+                                <expression name="expression">dataSetRow["ENTITY_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ENTITY_NAME</property>
+                                <expression name="expression">dataSetRow["ENTITY_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ACTION</property>
+                                <expression name="expression">convertSAActionsToNLS(dataSetRow["ACTION"])</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">INITIATOR_NAME</property>
+                                <expression name="expression">if((dataSetRow["INITIATOR_NAME"] ==null || dataSetRow["INITIATOR_NAME"]==" ") &amp;&amp; ((dataSetRow["ACTION"]=="NotifyExpiredLease")|| (dataSetRow["ACTION"]=="NotifyCheckinExpiredLease")))
+{
+	getNLS("workflow_system");
+}else{
+	dataSetRow["INITIATOR_NAME"];
+}</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">INITIATOR_DN</property>
+                                <expression name="expression">dataSetRow["INITIATOR_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TIMESTAMP</property>
+                                <expression name="expression">dataSetRow["TIMESTAMP"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">JUSTIFICATION</property>
+                                <expression name="expression">wrap(dataSetRow["JUSTIFICATION"],35);</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">BU_NAME</property>
+                                <expression name="expression">dataSetRow["BU_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICE_NAME</property>
+                                <expression name="expression">dataSetRow["SERVICE_NAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">SERVICE_DN</property>
+                                <expression name="expression">dataSetRow["SERVICE_DN"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">rownum2</property>
+                                <expression name="expression">row.__rownum</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">COMMENTS</property>
+                                <expression name="expression">dataSetRow["COMMENTS"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <expression name="bookmark">row["SERVICE_NAME"]</expression>
+                        <column id="12977">
+                            <property name="width">1%</property>
+                        </column>
+                        <column id="13049">
+                            <property name="width">2%</property>
+                        </column>
+                        <column id="12980">
+                            <property name="width">8%</property>
+                        </column>
+                        <column id="13761">
+                            <property name="width">10%</property>
+                        </column>
+                        <column id="13804">
+                            <property name="width">5%</property>
+                        </column>
+                        <column id="12981">
+                            <property name="width">10%</property>
+                        </column>
+                        <column id="12982">
+                            <property name="width">10%</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="canShrink">true</property>
+                        </column>
+                        <column id="12983">
+                            <property name="width">10%</property>
+                        </column>
+                        <column id="12984">
+                            <property name="width">10%</property>
+                        </column>
+                        <column id="12985">
+                            <property name="width">15%</property>
+                        </column>
+                        <column id="13850">
+                            <property name="width">10%</property>
+                        </column>
+                        <header>
+                            <row id="12914">
+                                <cell id="12915">
+                                    <property name="colSpan">11</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <label id="13205">
+                                        <property name="style">section-title</property>
+                                        <property name="fontWeight">normal</property>
+                                        <text-property name="text" key="sub_title_shared_access_history_by_credential_pools">Credential Pool Section</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="13052">
+                            <property name="groupName">groupService</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["SERVICE_DN"]</expression>
+                            <expression name="bookmark">SERVICE_NAME</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["SERVICE_NAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="13053">
+                                    <cell id="13054">
+                                        <property name="colSpan">11</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <grid id="13082">
+                                            <property name="marginTop">15px</property>
+                                            <property name="marginLeft">0px</property>
+                                            <property name="marginBottom">0pt</property>
+                                            <property name="width">100%</property>
+                                            <column id="13083">
+                                                <property name="width">1.604in</property>
+                                            </column>
+                                            <column id="13084"/>
+                                            <row id="13094">
+                                                <cell id="13095">
+                                                    <text name="Label_ServiceBU1" id="13096">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="parameter_service_business_unit"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13097">
+                                                    <data id="13098">
+                                                        <property name="resultSetColumn">BU_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="13099">
+                                                <cell id="13100">
+                                                    <text name="Label_Service1" id="13101">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="heading_service"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13102">
+                                                    <data id="13103">
+                                                        <property name="resultSetColumn">SERVICE_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="13590">
+                                    <property name="height">0.26in</property>
+                                    <cell id="13591"/>
+                                    <cell id="13592"/>
+                                    <cell id="13593"/>
+                                    <cell id="13760"/>
+                                    <cell id="13803"/>
+                                    <cell id="13594"/>
+                                    <cell id="13595"/>
+                                    <cell id="13596"/>
+                                    <cell id="13597"/>
+                                    <cell id="13598"/>
+                                    <cell id="13849"/>
+                                </row>
+                            </footer>
+                        </group>
+                        <group id="12989">
+                            <property name="groupName">groupPool</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["POOL_DN"]</expression>
+                            <expression name="bookmark">POOL_NAME</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["POOL_NAME"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <header>
+                                <row id="12990">
+                                    <cell id="12991">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="13565">
+                                        <property name="colSpan">10</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <grid id="13104">
+                                            <property name="marginTop">15px</property>
+                                            <property name="marginLeft">0px</property>
+                                            <property name="marginBottom">3px</property>
+                                            <property name="width">100%</property>
+                                            <column id="13105">
+                                                <property name="width">1.6041666667in</property>
+                                            </column>
+                                            <column id="13106"/>
+                                            <row id="13107">
+                                                <cell id="13108">
+                                                    <text name="Label_Service111111" id="13109">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="Credential_Pool"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13110">
+                                                    <data id="13111">
+                                                        <property name="resultSetColumn">POOL_NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="13112">
+                                                <cell id="13113">
+                                                    <text name="Label_Entitlement211111" id="13114">
+                                                        <property name="style">parameter-name</property>
+                                                        <property name="paddingTop">3px</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content" key="heading_credential_pool_owner"><![CDATA[Bussiness Unit]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="13115">
+                                                    <table id="13657">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="marginLeft">0pt</property>
+                                                        <property name="marginBottom">5px</property>
+                                                        <property name="marginRight">1px</property>
+                                                        <property name="width">40%</property>
+                                                        <property name="dataSet">CredPoolOwnerDetails</property>
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">setRowCount(Total.count());
+isRowCountZero();</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">pool_dn</property>
+                                                                <expression name="expression">row["POOL_DN"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">POOL</property>
+                                                                <expression name="expression">dataSetRow["POOL"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">OWNERDN</property>
+                                                                <expression name="expression">dataSetRow["OWNERDN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">OWNER_NAME</property>
+                                                                <expression name="expression">dataSetRow["OWNER_NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">TYPE</property>
+                                                                <expression name="expression">convertOwnerTypeToNLS(dataSetRow["TYPE"]);</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="13688">
+                                                            <property name="width">25%</property>
+                                                        </column>
+                                                        <column id="13690">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="13752">
+                                                            <property name="width">40%</property>
+                                                        </column>
+                                                        <header>
+                                                            <row id="13821">
+                                                                <cell id="13822">
+                                                                    <label id="13664">
+                                                                        <text-property name="text" key="name">OWNER_NAME</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="13823">
+                                                                    <label id="13668">
+                                                                        <text-property name="text" key="type">TYPE</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="13824">
+                                                                    <label id="13753">
+                                                                        <text-property name="text" key="parameter_business_unit">NAME</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="13669">
+                                                                <cell id="13674">
+                                                                    <data id="13675">
+                                                                        <property name="resultSetColumn">OWNER_NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="13678">
+                                                                    <data id="13679">
+                                                                        <property name="resultSetColumn">TYPE</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="13751">
+                                                                    <data id="13754">
+                                                                        <property name="resultSetColumn">NAME</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="13572">
+                                    <cell id="13573"/>
+                                    <cell id="13574">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                    </cell>
+                                    <cell id="13575">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <text name="Label_Cred1" id="13197">
+                                            <property name="style">parameter-name</property>
+                                            <property name="paddingTop">3px</property>
+                                            <property name="contentType">auto</property>
+                                            <text-property name="content" key="Credential"><![CDATA[Bussiness Unit]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="13758">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <text name="Label_Entitlement211" id="13762">
+                                            <property name="style">parameter-name</property>
+                                            <property name="marginTop">0pt</property>
+                                            <property name="paddingTop">3px</property>
+                                            <property name="contentType">auto</property>
+                                            <text-property name="content" key="heading_credential_owner"><![CDATA[Bussiness Unit]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="13801">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13805">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_exclusive_access">IS_EXCLUSIVE</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13576">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13198">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action">ACTION</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13577">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13199">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <property name="marginTop">0pt</property>
+                                            <text-property name="text" key="heading_justification">ACTION</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13578">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13200">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action_owner">INITIATOR_NAME</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13579">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13201">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_action_owner_business_unit">INITIATOR_DN</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13580">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <label id="13202">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="heading_time_of_action">TIMESTAMP</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="13847">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">1px</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <text id="13851">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#444E68</property>
+                                            <text-property name="content" key="comments"></text-property>
+                                        </text>
+                                    </cell>
+                                </row>
+                            </header>
+                        </group>
+                        <detail>
+                            <row id="12939">
+                                <property name="style">table-details</property>
+                                <cell id="12940"/>
+                                <cell id="13046"/>
+                                <cell id="12946">
+                                    <data id="12947">
+                                        <property name="resultSetColumn">ENTITY_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="13759">
+                                    <table id="13765">
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">CredPoolsCredentialOwner</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">cred_dn</property>
+                                                <expression name="expression">row["ENTITY_DN"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">OWNERDN</property>
+                                                <expression name="expression">dataSetRow["OWNERDN"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="13774"/>
+                                        <detail>
+                                            <row id="13769">
+                                                <cell id="13770">
+                                                    <table id="13775">
+                                                        <property name="marginTop">0pt</property>
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">PersonAndBU</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">person_dn</property>
+                                                                <expression name="expression">row["OWNERDN"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CN</property>
+                                                                <expression name="expression">dataSetRow["CN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DN</property>
+                                                                <expression name="expression">dataSetRow["DN"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <column id="13779"/>
+                                                        <detail>
+                                                            <row id="13776">
+                                                                <cell id="13777">
+                                                                    <data id="13778">
+                                                                        <property name="resultSetColumn">CN</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                                <cell id="13802">
+                                    <table id="13807">
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">CredExclusivity</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">entity_dn</property>
+                                                <expression name="expression">row["ENTITY_DN"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">IS_EXCLUSIVE</property>
+                                                <expression name="expression">dataSetRow["IS_EXCLUSIVE"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="13816"/>
+                                        <detail>
+                                            <row id="13811">
+                                                <cell id="13812">
+                                                    <text id="13826">
+                                                        <list-property name="visibility">
+                                                            <structure>
+                                                                <property name="format">all</property>
+                                                                <expression name="valueExpr">!isExclusiveAccess(row["IS_EXCLUSIVE"]);</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <text-property name="content" key="yes"><![CDATA[]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                                <cell id="12948">
+                                    <data id="12949">
+                                        <property name="resultSetColumn">ACTION</property>
+                                    </data>
+                                </cell>
+                                <cell id="12950">
+                                    <property name="paddingTop">1pt</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">true</property>
+                                    <data id="13204">
+                                        <property name="widows">2</property>
+                                        <property name="resultSetColumn">JUSTIFICATION</property>
+                                    </data>
+                                </cell>
+                                <cell id="12952">
+                                    <data id="12951">
+                                        <property name="resultSetColumn">INITIATOR_NAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="12954">
+                                    <table id="13183">
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">PersonAndBU</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">itim_eruid</property>
+                                                <expression name="expression">row["INITIATOR_DN"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">NAME</property>
+                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">CN</property>
+                                                <expression name="expression">dataSetRow["CN"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DN</property>
+                                                <expression name="expression">dataSetRow["DN"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="13187"/>
+                                        <detail>
+                                            <row id="13184">
+                                                <cell id="13185">
+                                                    <data id="13186">
+                                                        <property name="resultSetColumn">NAME</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                                <cell id="12956">
+                                    <text id="13828">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF>getDateFromString(row["TIMESTAMP"])</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="13848">
+                                    <data id="13853">
+                                        <property name="resultSetColumn">COMMENTS</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <grid name="Information Message Dialog" id="1748" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <property name="marginTop">15px</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">!isTotalCountZero();</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="42"/>
+                            <ref-entry baseId="43" id="43"/>
+                            <ref-entry baseId="44" id="1749"/>
+                            <ref-entry baseId="45" id="45"/>
+                            <ref-entry baseId="46" name="NewImage2" id="46"/>
+                            <ref-entry baseId="47" id="47"/>
+                            <ref-entry baseId="52" name="NewText2" id="52">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_no_report_data");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_no_report_data");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                    <grid name="Information Message Dialog Max Rows Reached" id="8868" extends="TivoliCommonReporting_v1.Information Message Dialog">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">getTotalCount()&lt;10000</expression>
+                            </structure>
+                        </list-property>
+                        <overridden-values>
+                            <ref-entry baseId="42" id="8869"/>
+                            <ref-entry baseId="43" id="8870"/>
+                            <ref-entry baseId="44" id="8871"/>
+                            <ref-entry baseId="45" id="8872"/>
+                            <ref-entry baseId="46" name="NewImage21" id="8873"/>
+                            <ref-entry baseId="47" id="8874"/>
+                            <ref-entry baseId="52" name="NewText21" id="8875">
+                                <property name="content">&lt;b>&lt;font color="#444E68" style="bold">&lt;VALUE-OF>getNLS("header_message_report_data_limit");&lt;/VALUE-OF>&lt;/font>&lt;/b>&lt;br/> &lt;VALUE-OF>getNLS("message_report_data_limit");&lt;/VALUE-OF>&lt;br/></property>
+                                <property name="contentType">html</property>
+                            </ref-entry>
+                        </overridden-values>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid name="Description" id="322">
+            <property name="width">100%</property>
+            <column id="323"/>
+            <row id="326">
+                <cell id="327">
+                    <text name="Description Text" id="329">
+                        <property name="style">description-text</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content" key="description_shared_access_history"><![CDATA[Description here.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

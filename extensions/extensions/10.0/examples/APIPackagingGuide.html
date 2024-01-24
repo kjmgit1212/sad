@@ -1,0 +1,520 @@
+<html>
+
+<head>
+<title>API Packaging Guide</title>
+<link rel=Stylesheet type="text/css" media=all href=examples.css>
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src=tivolilogo.gif></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>API Packaging Guide</h1>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><a
+href="#Overview"><u>Overview</u></a><br>
+<a href="#DevelopingRunning"><u>Developing and Running Simple Command Line
+Applications</u></a><br>
+<a href="#ITIMAPIJar"><u>ISIM API JAR Files</u></a><br>
+<a href="#WASGlobalSecurity"><u>WebSphere Global Security</u></a><br>
+<a href="#CommonCriteria"><u>Special Considerations for Common Criteria</u></a><br>
+<a href="#UpgradeITIM"><u>Upgrade to ITIM 5.1</u></a><br>
+<a href="#ClientTypes"><u>Supported Client Types</u></a><br>
+<a href="#ClientExamples"><u>Client Examples</u></a></span></p>
+
+<h2><a name=Overview></a>Overview</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>This document describes
+the details involved in setting up an environment for the IBM's Tivoli Identity
+Manager (ITIM) or IBM Security Identity Manager (ISIM) Application Programming
+Interfaces (APIs) for use by custom-built ISIM applications. The ISIM API is a
+library that exposes the common programming functions to remote applications,
+custom user interfaces and portals. The ISIM API details can be found in the <a
+href="../doc/applications/applications.html"><u>Application API</u></a>
+document. </span></p>
+
+<h2><a name=DevelopingRunning></a>Developing and Running Simple Command Line
+Applications</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Install the
+WebSphere Application Client on the system where the command line applications
+will be developed and run. Make sure the versions of the WebSphere Application
+Client and the WebSphere Application Server where the ISIM Server is installed
+are at the same level.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The <a
+href="../doc/applications/applications.html"><u>Application API</u></a>
+document has the neccessary details for programming with the ISIM APIs. For
+quick reference, see the API Example at the end of the document.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To build and run
+the simple command line applications that use the ISIM APIs, follow the
+instructions given in the WebSphere Information Center for <i>developing thin
+application client code on a client machine</i> (WebSphere Application Server,
+Version 6.1/7.0 -&gt; Developing and deploying applications -&gt; Developing
+WebSphere applications -&gt; Client applications -&gt; Running Thin application
+client code -&gt; Running Thin application client code on a client machine).
+The link to the WebSphere Information Center can be located from where the
+WebSphere Application Client has been installed.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The following
+ISIM related jar files are required on a client's classpath:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>api_ejb.jar
+     </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>itim_api.jar
+     </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>itim_common.jar
+     </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>itim_server_api.jar
+     </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>com.ibm.cv.kmip.ext.jar
+     </span></li>
+</ul>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In addition, the
+ISIM login module has to be specified in the wsjaas_client.conf file:</span></p>
+
+<p><samp><span style='color:black'>ITIM {</span></samp><span style='font-family:
+"Courier New";color:black'><br>
+<samp>com.ibm.ws.security.common.auth.module.proxy.WSLoginModuleProxy required
+delegate=com.ibm.itim.apps.jaas.spi.PlatformLoginModule;</samp><br>
+<samp>};</samp></span><span style='font-family:"Arial","sans-serif";color:black'>
+</span></p>
+
+<p><strong><span style='font-family:"Arial","sans-serif";color:black'>Note: </span></strong><span
+style='font-family:"Arial","sans-serif";color:black'>The login module config
+file is specified as the <strong><span style='font-family:"Arial","sans-serif"'>-Djava.security.auth.login.config</span></strong>
+argument to the client JVM.</span></p>
+
+<h2><a name=ITIMAPIJar></a>ISIM API JAR Files</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The two required
+JAR files listed above contain the following classes:</span></p>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>File</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Location</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>api_ejb.jar</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$ITIM_HOME/lib</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Contains stubs and other
+  deployment classes for the session bean interfaces (Home and Remote) used by
+  the ISIM API.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>itim_api.jar</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$ITIM_HOME/lib</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Contains ISIM API
+  classes (MO's and Managers). These are all the classes in apps.impl,
+  apps.identity, apps.provisioning, apps.policy, apps.recon, apps.search,
+  apps.workflow and apps.jaas. </span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>itim_common.jar</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$ITIM_HOME/lib</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Contains ISIM data and
+  value object classes common to API and server. These classes are used by ISIM
+  API to encapsulate the data in its communication with the server. They also
+  include all descendants of DirectoryObject.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>itim_server_api.jar</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$ITIM_HOME/lib</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Contains class
+  definitions for Home and Remote interface implementations for session beans
+  used by the API as well as Exceptions thrown by same.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>com.ibm.cv.kmip.ext.jar</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>$ITIM_HOME/lib</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Contains credential
+  vault message files and the client classes.</span></p>
+  </td>
+ </tr>
+</table>
+
+<h2><a name=WASGlobalSecurity></a>WebSphere Global Security</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>For enabling ISIM
+Server side security, see the <dfn><span style='font-family:"Arial","sans-serif"'>Optionally
+configuring security for Tivoli Identity Manager</span></dfn> section of <dfn><span
+style='font-family:"Arial","sans-serif"'>Chapter 4. (Installing and configuring
+WebSphere Application Server)</span></dfn> of the <dfn><span style='font-family:
+"Arial","sans-serif"'>ManagerServer Installation and Configuration Guide for
+WebSphere Environment</span></dfn>s</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>When the Global Security
+is enabled on WebSphere Application Server running ISIM, make sure you set the
+EJB user and the EJB password when you create the InitialPlatformContext on the
+ISIM Client.<br>
+<br>
+</span><code><span style='font-size:10.0pt;color:black'>env.put(PlatformContext.PLATFORM_PRINCIPAL,
+&quot;ejbuser&quot;);</span></code><span style='font-size:10.0pt;font-family:
+"Courier New";color:black'><br>
+<code>env.put(PlatformContext.PLATFORM_CREDENTIALS, &quot;ejbpassword&quot;);</code><br>
+<br>
+<code>PlatformContext platform = <b>new</b> InitialPlatformContext(env);</code></span></p>
+
+<h2><a name=CommonCriteria></a>Special Considerations for Common Criteria</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Tivoli Identity
+Manager shields its core functionality with a layer of manager enterprise Java
+beans (EJBs). When a client communicates with the Tivoli Identity Manager
+Server, every manager EJB method takes a signed token from the caller to verify
+the caller's identity, except when the method itself does the authentication.
+The caller obtains this signed token after authenticating with the Tivoli
+Identity Manager Server. For more details please refer to the <dfn><span
+style='font-family:"Arial","sans-serif"'>Customization planning -&gt; Ensuring
+secure communication with custom applications</span></dfn> section of <dfn><span
+style='font-family:"Arial","sans-serif"'>Chapter 3. (Planning your Tivoli
+Identity Manager installation)</span></dfn> of the<dfn><span style='font-family:
+"Arial","sans-serif"'> Planning for Deployment Guide</span></dfn> document.</span></p>
+
+<h4>ISIM Server Side Configuration</h4>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>This section
+gives the details on how to create an EJB user and map it to the ITIM_CLIENT
+EJB role that is authorized to call only manager EJB methods in the
+unprivileged layer.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Make sure you
+have enabled WebSphere Application Server security and Java 2 security by
+following the steps in the <dfn><span style='font-family:"Arial","sans-serif"'>Optionally
+configuring security for Tivoli Identity Manager</span></dfn> section of <dfn><span
+style='font-family:"Arial","sans-serif"'>Chapter 4. (Installing and configuring
+WebSphere Application Server)</span></dfn> of the <dfn><span style='font-family:
+"Arial","sans-serif"'>ManagerServer Installation and Configuration Guide for
+WebSphere Environment</span></dfn>s.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In addition to
+that, the following are required for a Common Criteria compliant environment:</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>For
+     single-node deployments, create or select an administrative user in the
+     user registry of your operating system. In subsequent examples, the user
+     is called the unprivileged EJB user or itimnonadmin. </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>For
+     multi-node deployments, depending on the directory server, create the
+     itimnonadmin organizational Person object. In subsequent examples, the
+     user is called the unprivileged EJB user or itimnonadmin.<br>
+     <br>
+     <b><u>IBM Tivoli Directory Server</u></b><br>
+     <br>
+     Create an ePerson. For example, create
+     (cn=itimnonadmin,ou=WasSecurity,dc=com). Set the following fields and
+     values:</span></li>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>sn=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>cn=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>uid=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>userPassword=itimnonadminpwd</span></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+You can also import the following LDIF file, updating the baseDN with a value
+such as dc=com and userPassword variables for your environment. An example file
+contains these statements:<br>
+<br>
+dn:cn=itimnonadmin,ou=WasSecurity,baseDN<br>
+userPassword:userPassword<br>
+uid:itimnonadmin<br>
+objectclass:top<br>
+objectclass:person<br>
+objectclass:ePerson<br>
+sn:itimnonadmin<br>
+cn:itimnonadmin<br>
+<br>
+<b><u>Sun ONE Directory Server</u></b><br>
+<br>
+Create an inetOrgPerson. For example, create
+(uid=itimnonadmin,ou=WasSecurity,dc=com). Set the following fields and values:</span></p>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>sn=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>cn=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>uid=itimnonadmin</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>userPassword=itimnonadminpwd</span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>givenName=itimnonadminpwd</span></li>
+ </ul>
+</ul>
+
+<p  style='margin-left:.5in'><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+You can also import the following LDIF file, updating the baseDN with a value such
+as dc=com and userPassword variables for your environment. An example file
+contains these statements:<br>
+<br>
+dn:uid=itimnonadmin,ou=WasSecurity,baseDN<br>
+userPassword:userPassword<br>
+uid:itimnonadmin<br>
+givenName:itimnonadmin<br>
+objectClass:inetorgperson<br>
+objectClass:organizationalPerson<br>
+objectClass:person<br>
+objectClass:top<br>
+sn:itimnonadmin<br>
+cn:itimnonadmin</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Map
+     an itimnonadmin user to a Tivoli Identity Manager role with these steps: </span></li>
+</ul>
+
+<ul type=disc>
+ <ul type=circle>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>On
+      the WebSphere administrative console, click Applications -&gt; Enterprise
+      Applications. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+      enRole. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>In
+      Additional Properties, scroll down and click Map security roles to
+      users/groups. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+      the check box for ITIM_CLIENT. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+      Lookup users. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+      Search. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Select
+      the EJB User (itimnonadmin) from the list. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Click
+      OK. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>To
+      prevent unauthorized access, clear the Everyone? or All Authenticated?
+      check boxes. </span></li>
+  <li  style='color:black'><span style='font-family:"Arial","sans-serif"'>Save
+      the configuration changes. </span></li>
+ </ul>
+</ul>
+
+<h4>ISIM Client Side Configuration</h4>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>It is recommended
+for security reasons that the custom applications using the ISIM APIs, running
+from a remote system, use the user(s) configured for the ITIM_CLIENT EJB role
+to authenticate against the ISIM platform. This user is called the unprivileged
+EJB user or itimnonadmin in the <dfn><span style='font-family:"Arial","sans-serif"'>ISIM
+Server Side Configuration</span></dfn> section above.</span></p>
+
+<h2><a name=UpgradeITIM></a>Upgrade to ITIM 5.1</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>When you upgrade
+ISIM make sure that the jar files api_ejb.jar and itim_api.jar used by the
+client applications are replaced by the current versions of these files on the
+ISIM server ($ITIM_HOME/lib). The version information is contained in the
+Manifest.mf file packaged with these jar files. The contents of the Manifest.mf
+file will be similar to the sample shown below:</span></p>
+
+<p><samp><span style='color:black'>Manifest-Version: 1.0</span></samp><span
+style='font-family:"Courier New";color:black'><br>
+<samp>Ant-Version: Apache Ant 1.7.0</samp><br>
+<samp>Created-By: 2.3 (IBM Corporation)</samp><br>
+<samp>Class-Path: itim_common.jar itim_server_api.jar</samp><br>
+<samp>Name: IdentityManagerServiceability</samp><br>
+<samp>Build-Jar: itim_api.jar</samp><br>
+<samp>Build-Number: 1480</samp><br>
+<samp>Build-Date: May 27 2009</samp><br>
+<samp>Build-Time: 15:51:38 EDT</samp><br>
+<samp>Build-User: lib2</samp><br>
+<samp>Build-Server: buildsvr</samp><br>
+<samp>Build-Maintenance-Level: 1480</samp><br>
+<samp>Build-Product-Version: 5.1.0.0</samp></span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Also make sure
+that the WebSphere Application Server/Client is upgraded to the same level as
+the WebSphere Application Server where ISIM is installed.</span></p>
+
+<h2><a name=ClientTypes></a>Supported Client Types</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The list of
+supported client types are given in the table below:</span></p>
+
+<table  border=1 cellpadding=0>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Client Type</span></b></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><b><span
+  style='font-family:"Arial","sans-serif";color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Stand-alone Java client</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Deployed as a WebSphere
+  Application Server thin client.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Web application</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Deployed as a separate
+  WAR inside ITIM.ear.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Enterprise Application,
+  same JVM</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Deployed in the same
+  server instance (ITIM.ear) as the ISIM Server.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Enterprise Application, separate
+  JVM</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Deployed on the same
+  machine as the ISIM Server, but on a separate server instance.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Servlets/JSPs</span></p>
+  </td>
+  <td style='padding:.75pt .75pt .75pt .75pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Servlets/JSPs not
+  deployed in the context of a Web Application, on a separate machine running
+  WebSphere Application Server.</span></p>
+  </td>
+ </tr>
+</table>
+
+<p><b><span style='font-family:"Arial","sans-serif";color:black'>Note:</span></b><span
+style='font-family:"Arial","sans-serif";color:black'> This is not an exhaustive
+list of the client types supported by ISIM.</span></p>
+
+<h2><a name=ClientExamples></a>Client Examples</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The following are
+references to the client examples which call the ISIM APIs.</span></p>
+
+<ul type=disc>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="self_care/Readme.html"><u>Self-Care Web Application (WAR)</u></a> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="selfregistration/Readme.html"><u>Self-Registration Web Application
+     (WAR)</u></a> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="apps/Readme.html"><u>Command-line examples (Java application thin
+     client)</u></a> </span></li>
+ <li  style='color:black'><span style='font-family:"Arial","sans-serif"'><a
+     href="ws/SSOSample/Readme.html"><u>Single Sign-On Application(WAR)</u></a>
+     </span></li>
+</ul>
+
+</div>
+
+</body>
+
+</html>

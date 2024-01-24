@@ -1,0 +1,4203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<MetamergeConfig created="Mon Mar 10 13:53:14 CST 2003" createdBy="sam" modified="Thu May 22 17:32:59 CDT 2003" modifiedBy="sam" version="1.0">
+<Folder name="AssemblyLines">
+<AssemblyLine name="synctambychangelog">
+<PrologInit><![CDATA[// Get the task parameter for the last changenumber (subtract 0 to 
+// convert from JS String to number).
+//
+try 
+{
+	lastChangeNum = task.getParam("LastChangeNum") - 0;
+}
+catch (msg)
+{
+	lastChangeNum = 0;
+}
+
+// Set up the Changelog iterator
+//
+timldapchangelog.connector.setParam("nsChangenumber", lastChangeNum + 1);
+task.logmsg("");
+task.logmsg("---> Starting Changelog processing at changenumber : " + timldapchangelog.connector.getParam("nsChangenumber"));
+]]></PrologInit>
+<Epilog/>
+<Settings>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="get_history">TIMTAMIntegration\TIMtoTAMSyncExit</parameter>
+<parameter name="includeGlobalPrologs">false</parameter>
+<parameter name="nullBehavior">Empty String</parameter>
+<parameter name="set_history">TIMTAMIntegration\TIMtoTAMSyncExit</parameter>
+</Settings>
+<IOSettings>
+<InputParameters/>
+<OutputParameters/>
+</IOSettings>
+<Connectors>
+<Connector name="timldapchangelog">
+<InheritFrom>/Connectors/timldapchangelog</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPassword">@PROPERTY{TIM_LDAP_PW}</parameter>
+<parameter name="ldapSearchBase">cn=changelog</parameter>
+<parameter name="ldapUrl">@PROPERTY{TIM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TIM_LDAP_Login}</parameter>
+<parameter name="nsChangenumber">1</parameter>
+<parameter name="nsSleepInterval">@PROPERTY{SYNC_Sleeptime}</parameter>
+<parameter name="nsTimeout">@PROPERTY{SYNC_Timout}</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>changenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>changenumber</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_getnext</Name>
+<Script><![CDATA[//filter out the TIM user changes only
+
+var tdn=conn.getString("targetdn");
+if ((!tdn.startsWith("ERGLOBALID"))&&(!tdn.startsWith("ergloblid")))
+    system.skipEntry();
+else{ 
+  	task.setParam("LastChangeNum", conn.getString("changenumber"));
+	task.logmsg("---> Changenumber to process and save : " +
+			            	task.getParam("LastChangeNum"));
+    task.logmsg("---> TIM user change found. The TIM DN is: " + tdn);
+}]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>before_initialize</Name>
+<Script><![CDATA[var num=task.getParam("changenumber");
+timldapchangelog.connector.setParam("nsChangenumber", num);]]></Script>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>get_ok</Name>
+<Script/>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamaccountlookup">
+<InheritFrom>/Connectors/tamaccountlookup</InheritFrom>
+<ConnectorMode>Lookup</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{TIM_LDAP_PW}</parameter>
+<parameter name="ldapSearchFilter">(&amp;(objectClass=erTAMAccount)(!(erIsDeleted=*)))</parameter>
+<parameter name="ldapUrl">@PROPERTY{TIM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TIM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>erparent</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>erparent</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>ertamdn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>ertamdn</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings>
+<InheritFrom>[no inheritance]</InheritFrom>
+</DeltaSettings>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f390b4ca97</Key>
+<Attribute>erparent</Attribute>
+<Operator>equals</Operator>
+<Value>$targetdn</Value>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_lookup</Name>
+<Script><![CDATA[//filter out the orphans account
+
+var pdn=conn.getString("$dn");
+if (pdn.indexOf("ou=orphans",0)> 0)
+    system.skipEntry();
+else     
+    task.logmsg("---> TAM account found and the TAM DN is: " +
+			            	conn.getString("ertamdn"));]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>before_lookup</Name>
+<Script/>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_multiple</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_ok</Name>
+<Script/>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="timldapuserdatalookup">
+<InheritFrom>/Connectors/timldapuserdatalookup</InheritFrom>
+<ConnectorMode>Lookup</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{TIM_LDAP_PW}</parameter>
+<parameter name="ldapSearchFilter">objectClass=erPersonItem</parameter>
+<parameter name="ldapUrl">@PROPERTY{TIM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TIM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 commonName attribute, which contains a name of an object.  If the object corresponds to a person, it is typically the persons full name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erglobalid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erparent</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erpersonstatus</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erroles</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 surname attribute, which contains the family name of a person.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uid</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Typically a user shortname or userid.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37d8110df</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value>$erparent</Value>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>lookup_multiple</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_nomatch</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_ok</Name>
+<Script>task.logmsg("---&gt; TIM user data is read.");</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamldapupdate">
+<InheritFrom>/Connectors/tamldapupdate</InheritFrom>
+<ConnectorMode>Update</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="ldapPassword">@PROPERTY{TAM_LDAP_PW}</parameter>
+<parameter name="ldapSearchBase">ou=tivoli</parameter>
+<parameter name="ldapUrl">@PROPERTY{TAM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TAM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>givenName</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timgivenname</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homephone</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timhomephone</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homepostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timhomepostaladdress</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mail</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timmail</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mobile</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timmobile</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>pager</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpager</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpostaladdress</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postalcode</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpostalcode</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>roomnumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script><![CDATA[var rnum=work.getString("timroomnumber");
+ret.value=rnum;]]></Script>
+<Simple>timroomnumber</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>st</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timst</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>street</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timstreet</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>telephonenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timtelephonenumber</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>title</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timtitle</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37da0256a</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value>$ertamdn</Value>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_close</Name>
+<Script/>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>after_update</Name>
+<Script/>
+<Enabled>false</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>update_multiple</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>update_ok</Name>
+<Script>task.logmsg("---&gt; TAM user data is synched.");</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="testout1.dsml">
+<InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Disabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="fileAppend">false</parameter>
+<parameter name="filePath">synctam.dsml</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>system:/Parsers/ibmdi.DSML</InheritFrom>
+<parameter name="dnattribute">$dn</parameter>
+<parameter name="isnamespaceaware">false</parameter>
+<parameter name="isvalidating">false</parameter>
+<parameter name="omitxmldeclaration">false</parameter>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>ertamdn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>changenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>changenumber</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>erparent</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>erparent</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings>
+<InheritFrom>[no inheritance]</InheritFrom>
+</DeltaSettings>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+</Connectors>
+</AssemblyLine>
+<AssemblyLine name="synctamdirect">
+<Settings>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="includeGlobalPrologs">true</parameter>
+<parameter name="nullBehavior">Default Behavior</parameter>
+</Settings>
+<IOSettings>
+<InputParameters/>
+<OutputParameters/>
+</IOSettings>
+<Connectors>
+<Connector name="tamaccounts">
+<InheritFrom>/Connectors/tamaccounts</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{TIM_LDAP_PW}</parameter>
+<parameter name="ldapSearchFilter">(&amp;(objectClass=erTAMAccount)(!(erIsDeleted=*)))</parameter>
+<parameter name="ldapUrl">@PROPERTY{TIM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TIM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_getnext</Name>
+<Script><![CDATA[var pdn=conn.getString("$dn");
+if (pdn.indexOf("ou=orphans",0)> 0)
+     system.skipEntry();
+else{
+   task.logmsg("---> TAM account found and the TAM DN is: " +
+			            	conn.getString("ertamdn"));
+   task.logmsg("---> The DN of TIM user who owns this TAM account is: " +
+			            	conn.getString("erparent"));
+}]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="timldapuserdatalookup">
+<InheritFrom>/Connectors/timldapuserdatalookup</InheritFrom>
+<ConnectorMode>Lookup</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{TIM_LDAP_PW}</parameter>
+<parameter name="ldapSearchBase">DC=COM</parameter>
+<parameter name="ldapSearchFilter">objectClass=erPersonItem</parameter>
+<parameter name="ldapUrl">@PROPERTY{TAM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TIM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>timgivenname</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>givenName</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timhomepostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>homePostalAddress</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timpostalcode</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>postalcode</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 commonName attribute, which contains a name of an object.  If the object corresponds to a person, it is typically the persons full name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>displayname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraliases</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erglobalid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erparent</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erpersonstatus</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erroles</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homephone</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homepostaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mail</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Identifies a users primary email address (the email address retrieved and displayed by white-pages lookup applications).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mobile</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys mobile or cellular phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ou</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pager</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys pager phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalcode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>registeredaddress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomnumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 surname attribute, which contains the family name of a person.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>st</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the full name of a state or province (stateOrProvinceName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>street</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/This attribute contains the physical address of the object to which the entry corresponds, such as an address for package delivery (streetAddress).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephonenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>title</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the title, such as Vice President, of a person in their organizational context. The personalTitle attribute would be used for a persons title independent of their job function.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uid</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Typically a user shortname or userid.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userpassword</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37d8110df</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value>$erparent</Value>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>lookup_nomatch</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_ok</Name>
+<Script>task.logmsg("---&gt; TIM user data is read.");</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamldapupdate">
+<InheritFrom>/Connectors/tamldapupdate</InheritFrom>
+<ConnectorMode>Update</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="ldapPassword">@PROPERTY{TAM_LDAP_PW}</parameter>
+<parameter name="ldapSearchBase">ou=tivoli</parameter>
+<parameter name="ldapUrl">@PROPERTY{TAM_LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{TAM_LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>givenName</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timgivenname</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homephone</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timhomephone</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homepostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timhomepostaladdress</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mail</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timmail</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mobile</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timmobile</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>pager</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpager</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpostaladdress</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postalcode</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timpostalcode</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>roomnumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>task.logmsg("---&gt; Trn after is: " + conn.getString("roomnumber"));</Script>
+<Simple>timroomnumber</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>st</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timst</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>street</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timstreet</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>telephonenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timtelephonenumber</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>title</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>timtitle</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accessHint</Name>
+<NativeSyntax>MAY/DN/DN pointer to an accessRole or accessGroup.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accountHint</Name>
+<NativeSyntax>MAY/DN/DN pointer to an account directory object.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>audio</Name>
+<NativeSyntax>MAY/Binary/Contains a sound file in binary format.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>businessCategory</Name>
+<NativeSyntax>MAY/Directory String/This attribute describes the kind of business performed by an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>c</Name>
+<NativeSyntax>MAY/String/This attribute contains a two-letter ISO 3166 country code (countryName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>carLicense</Name>
+<NativeSyntax>MAY/Directory String/vehicle license plate tag</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 commonName attribute, which contains a name of an object.  If the object corresponds to a person, it is typically the persons full name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>configPtr</Name>
+<NativeSyntax>MAY/DN/DN pointer to a cimConfiguration-derived directory entry such as an ePropertySet.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>departmentNumber</Name>
+<NativeSyntax>MAY/Directory String/identifies a department within an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<NativeSyntax>MAY/Directory String/Attribute common to CIM and LDAP schema to provide lengthy description of a directory object entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>destinationIndicator</Name>
+<NativeSyntax>MAY/Directory String/This attribute is used for the telegram service.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>displayName</Name>
+<NativeSyntax>MAY/Directory String/A name used in displaying an entry in a one-line summary list.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeNumber</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys employee number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeType</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys type of employment.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>facsimileTelephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the fax number at which the entry can be reached.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>generationQualifier</Name>
+<NativeSyntax>MAY/String/Contains the part of the name which typically is the suffix, as in IIIrd.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenName</Name>
+<NativeSyntax>MAY/String/Used to hold the part of a persons name which is not their surname nor middle name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homeFax</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys home fax number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePhone</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys home phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePostalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys home mailing address. This field is  intended to include multiple lines, but each line within the  entry should be separated by a dollar sign (\24). To represent  an actual dollar sign (\24) or backslash (\) within this text, use  the escaped hex values \24 and \5c respectively.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homephone</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homepostaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>initials</Name>
+<NativeSyntax>MAY/String/The initials attribute contains the initials of some or all of an individuals names, but not the surname(s).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>internationalISDNNumber</Name>
+<NativeSyntax>MAY/IA5 String/Contains the ISDN number of the entry. This is in the internationally agreed format for ISDN addresses given in CCITT Rec. E. 164.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>jpegPhoto</Name>
+<NativeSyntax>MAY/Binary/Contains a JPEG photo of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>l</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of a locality, such as a city, county or other geographic region (localityName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>labeledURI</Name>
+<NativeSyntax>MAY/Directory String/Uniform Resource Identifier with optional label as defined in RFC2079.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mail</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Identifies a users primary email address (the email address retrieved and displayed by white-pages lookup applications).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>manager</Name>
+<NativeSyntax>MAY/DN/Identifies the distinguished name of the entrys manager.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>middleName</Name>
+<NativeSyntax>MAY/String/Identifies the entrys middle name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mobile</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys mobile or cellular phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>o</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectClass</Name>
+<NativeSyntax>MUST/OID/The values of the objectClass attribute describe the kind of object which an entry represents.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>organizationalStatus</Name>
+<NativeSyntax>MAY/Directory String/Specifies a category by which a person is often referred to in an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>otherMailbox</Name>
+<NativeSyntax>MAY/Directory String/Specifies values for electronic mailbox types other than X.400 and rfc822.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ou</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pager</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys pager phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>personalTitle</Name>
+<NativeSyntax>MAY/Directory String/Specifies a personal title for a person. Examples of personal titles are  Mr, Ms, Dr, Prof and Rev.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>photo</Name>
+<NativeSyntax>MAY/Binary/Contains a photo, in binary form, of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>physicalDeliveryOfficeName</Name>
+<NativeSyntax>MAY/Directory String/Physcial delivery office number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postOfficeBox</Name>
+<NativeSyntax>MAY/Directory String/Post office box number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s mailing address. This field is intended to include multiple lines. When represented in LDIF format, each line should be separated by a dollar sign (\24).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalCode</Name>
+<NativeSyntax>MAY/Directory String/Postal code.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalcode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredDeliveryMethod</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s preferred contact or delivery method.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredLanguage</Name>
+<NativeSyntax>MAY/Directory String/A persons preferred written or spoken language</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>registeredAddress</Name>
+<NativeSyntax>MAY/String/This attribute contains a postal address for receiving telegrams or expedited documents. The recipient\27s signature is usually required on delivery.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomNumber</Name>
+<NativeSyntax>MAY/Directory String/Specifies the room number of an object. Note that the commonName attribute should be used for naming room  objects.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomnumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>secretary</Name>
+<NativeSyntax>MAY/DN/Identifies the entrys secretary or administrative assistant.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>seeAlso</Name>
+<NativeSyntax>MAY/String/Identifies another directory server entry that may contain information related to this entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 surname attribute, which contains the family name of a person.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>st</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the full name of a state or province (stateOrProvinceName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>street</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/This attribute contains the physical address of the object to which the entry corresponds, such as an address for package delivery (streetAddress).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Telephone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephonenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>teletexTerminalIdentifier</Name>
+<NativeSyntax>MAY/Directory String/Teletex terminal identifier.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telexNumber</Name>
+<NativeSyntax>MAY/Directory String/Telex number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>thumbNailLogo</Name>
+<NativeSyntax>MAY/Binary/Thumbnail logo assoicated with a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>thumbNailPhoto</Name>
+<NativeSyntax>MAY/Binary/Thumbnail photo associated with a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>title</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the title, such as Vice President, of a person in their organizational context. The personalTitle attribute would be used for a persons title independent of their job function.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uid</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Typically a user shortname or userid.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uniqueIdentifier</Name>
+<NativeSyntax>MAY/Directory String/Specifies a unique identifier for an object represented in the Directory. The domain within which the identifier is unique, and the exact semantics of the identifier, are for local definition.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userCertificate</Name>
+<NativeSyntax>MAY/Binary/Used to represent certificates from one or more Certification Authorities representing a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPKCS12</Name>
+<NativeSyntax>MAY/Binary/PKCS \2312 PFX PDU for exchange of personal identity information</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPassword</Name>
+<NativeSyntax>MAY/Binary/Holds a password value for a distinguished name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userSMIMECertificate</Name>
+<NativeSyntax>MAY/Binary/Signed message used to support S/MIME</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userpassword</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x121Address</Name>
+<NativeSyntax>MAY/IA5 String/Defines the X.121 address of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x500UniqueIdentifier</Name>
+<NativeSyntax>MAY/Binary/Used to distinguish between objects when a distinguished name has been reused. This is a different attribute type from both the uid and uniqueIdentifier types.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37da0256a</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value>$ertamdn</Value>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>update_multiple</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>update_ok</Name>
+<Script>task.logmsg("---&gt; TAM user attributes is synched.");</Script>
+<Enabled>true</Enabled>
+<DebugBreak>true</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="synclogfile">
+<InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="fileAppend">false</parameter>
+<parameter name="filePath">synctam.dsml</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>system:/Parsers/ibmdi.DSML</InheritFrom>
+<parameter name="dnattribute">$dn</parameter>
+<parameter name="isnamespaceaware">false</parameter>
+<parameter name="isvalidating">false</parameter>
+<parameter name="omitxmldeclaration">false</parameter>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>ertamdn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>erparent</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>erparent</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings>
+<InheritFrom>[no inheritance]</InheritFrom>
+</DeltaSettings>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+</Connectors>
+</AssemblyLine>
+</Folder>
+<Folder name="Connectors">
+<Connector name="timldapchangelog">
+<InheritFrom>system:/Connectors/ibmdi.IBMDirectoryServerChangelog</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Anonymous</parameter>
+<parameter name="ldapPassword"/>
+<parameter name="ldapUrl">ldap://localhost:389</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername"/>
+<parameter name="nsChangenumber">50</parameter>
+<parameter name="nsSleepInterval">0</parameter>
+<parameter name="nsTimeout">2</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>targetdn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>targetdn</Simple>
+<NullBehavior>Null</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>aclentry</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>aclpropagate</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>associatedname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>changenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>changes</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>changetime</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>changetype</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>entryowner</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ibm-changeinitiatorsname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ownerpropagate</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>targetdn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userstate</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>usertype</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_getnext</Name>
+<Script><![CDATA[var tdn=conn.getString("targetdn");
+if ((!tdn.startsWith("ERGLOBALID"))&&(!tdn.startsWith("ergloblid")))
+    system.skipEntry();]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="timldapuserdatalookup">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Lookup</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">@PROPERTY{LDAP_PW}</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">dc=com</parameter>
+<parameter name="ldapSearchFilter">objectClass=person</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">@PROPERTY{LDAP_URL}</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">@PROPERTY{LDAP_Login}</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>timgivenname</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple><![CDATA[timgivenname
+givenName]]></Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timhomephone</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>homephone</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timhomepostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple><![CDATA[timhomepostaladdress
+homePostalAddress]]></Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timmail</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>mail</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timmobile</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>mobile</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timou</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>ou</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timpager</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>pager</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timpostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>postaladdress</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timpostalcode</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple><![CDATA[timpostalcode
+postalcode]]></Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timregisteredaddress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>registeredaddress</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timroomnumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>roomnumber</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timst</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>st</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timstreet</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>street</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timtelephonenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>telephonenumber</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timtitle</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>title</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>timuid</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>uid</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>audio</Name>
+<NativeSyntax>MAY/Binary/Contains a sound file in binary format.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>businessCategory</Name>
+<NativeSyntax>MAY/Directory String/This attribute describes the kind of business performed by an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>carLicense</Name>
+<NativeSyntax>MAY/Directory String/vehicle license plate tag</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 commonName attribute, which contains a name of an object.  If the object corresponds to a person, it is typically the persons full name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>departmentNumber</Name>
+<NativeSyntax>MAY/Directory String/identifies a department within an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<NativeSyntax>MAY/Directory String/Attribute common to CIM and LDAP schema to provide lengthy description of a directory object entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>destinationIndicator</Name>
+<NativeSyntax>MAY/Directory String/This attribute is used for the telegram service.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>displayName</Name>
+<NativeSyntax>MAY/Directory String/A name used in displaying an entry in a one-line summary list.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>displayname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeNumber</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys employee number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeType</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys type of employment.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erAcl</Name>
+<NativeSyntax>MAY/Binary</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erAliases</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erAuthorizationOwner</Name>
+<NativeSyntax>MAY/DN</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erCustomDisplay</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erGlobalId</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erIsDeleted</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erLastModifiedTime</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erParent</Name>
+<NativeSyntax>MAY/DN</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erPersonStatus</Name>
+<NativeSyntax>MAY/INTEGER</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erRoles</Name>
+<NativeSyntax>MAY/DN</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erSharedSecret</Name>
+<NativeSyntax>MAY/Directory String</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erSupervisor</Name>
+<NativeSyntax>MAY/DN</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraliases</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erglobalid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erparent</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erpersonstatus</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erroles</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>facsimileTelephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the fax number at which the entry can be reached.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenName</Name>
+<NativeSyntax>MAY/String/Used to hold the part of a persons name which is not their surname nor middle name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenname</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePhone</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys home phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePostalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys home mailing address. This field is  intended to include multiple lines, but each line within the  entry should be separated by a dollar sign (\24). To represent  an actual dollar sign (\24) or backslash (\) within this text, use  the escaped hex values \24 and \5c respectively.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homephone</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>initials</Name>
+<NativeSyntax>MAY/String/The initials attribute contains the initials of some or all of an individuals names, but not the surname(s).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>internationalISDNNumber</Name>
+<NativeSyntax>MAY/IA5 String/Contains the ISDN number of the entry. This is in the internationally agreed format for ISDN addresses given in CCITT Rec. E. 164.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>jpegPhoto</Name>
+<NativeSyntax>MAY/Binary/Contains a JPEG photo of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>l</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of a locality, such as a city, county or other geographic region (localityName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>labeledURI</Name>
+<NativeSyntax>MAY/Directory String/Uniform Resource Identifier with optional label as defined in RFC2079.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mail</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Identifies a users primary email address (the email address retrieved and displayed by white-pages lookup applications).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>manager</Name>
+<NativeSyntax>MAY/DN/Identifies the distinguished name of the entrys manager.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mobile</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys mobile or cellular phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>o</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectClass</Name>
+<NativeSyntax>MUST/OID/The values of the objectClass attribute describe the kind of object which an entry represents.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ou</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pager</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys pager phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>photo</Name>
+<NativeSyntax>MAY/Binary/Contains a photo, in binary form, of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>physicalDeliveryOfficeName</Name>
+<NativeSyntax>MAY/Directory String/Physcial delivery office number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postOfficeBox</Name>
+<NativeSyntax>MAY/Directory String/Post office box number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s mailing address. This field is intended to include multiple lines. When represented in LDIF format, each line should be separated by a dollar sign (\24).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalCode</Name>
+<NativeSyntax>MAY/Directory String/Postal code.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalcode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredDeliveryMethod</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s preferred contact or delivery method.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredLanguage</Name>
+<NativeSyntax>MAY/Directory String/A persons preferred written or spoken language</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>registeredAddress</Name>
+<NativeSyntax>MAY/String/This attribute contains a postal address for receiving telegrams or expedited documents. The recipient\27s signature is usually required on delivery.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>registeredaddress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomNumber</Name>
+<NativeSyntax>MAY/Directory String/Specifies the room number of an object. Note that the commonName attribute should be used for naming room  objects.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomnumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>secretary</Name>
+<NativeSyntax>MAY/DN/Identifies the entrys secretary or administrative assistant.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>seeAlso</Name>
+<NativeSyntax>MAY/String/Identifies another directory server entry that may contain information related to this entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 surname attribute, which contains the family name of a person.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>st</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the full name of a state or province (stateOrProvinceName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>street</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/This attribute contains the physical address of the object to which the entry corresponds, such as an address for package delivery (streetAddress).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Telephone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephonenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>teletexTerminalIdentifier</Name>
+<NativeSyntax>MAY/Directory String/Teletex terminal identifier.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telexNumber</Name>
+<NativeSyntax>MAY/Directory String/Telex number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>title</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the title, such as Vice President, of a person in their organizational context. The personalTitle attribute would be used for a persons title independent of their job function.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uid</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Typically a user shortname or userid.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userCertificate</Name>
+<NativeSyntax>MAY/Binary/Used to represent certificates from one or more Certification Authorities representing a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPKCS12</Name>
+<NativeSyntax>MAY/Binary/PKCS \2312 PFX PDU for exchange of personal identity information</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPassword</Name>
+<NativeSyntax>MAY/Binary/Holds a password value for a distinguished name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userSMIMECertificate</Name>
+<NativeSyntax>MAY/Binary/Signed message used to support S/MIME</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userpassword</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x121Address</Name>
+<NativeSyntax>MAY/IA5 String/Defines the X.121 address of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x500UniqueIdentifier</Name>
+<NativeSyntax>MAY/Binary/Used to distinguish between objects when a distinguished name has been reused. This is a different attribute type from both the uid and uniqueIdentifier types.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37d8110df</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value/>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamldapupdate">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Update</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">root</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">ou=tivoli</parameter>
+<parameter name="ldapSearchFilter">objectClass=person</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">@PROPERTY{LDAP_URL}</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">cn=root</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>givenName</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>givenName</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homephone</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>homephone</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>homepostaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>homepostaladdress</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mail</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>mail</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>mobile</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>mobile</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>pager</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>pager</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postaladdress</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>postaladdress</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>postalcode</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>postalcode</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>roomnumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>roomnumber</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>st</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>st</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>street</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>street</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>telephonenumber</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>telephonenumber</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>title</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>title</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accessHint</Name>
+<NativeSyntax>MAY/DN/DN pointer to an accessRole or accessGroup.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accountHint</Name>
+<NativeSyntax>MAY/DN/DN pointer to an account directory object.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>audio</Name>
+<NativeSyntax>MAY/Binary/Contains a sound file in binary format.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>businessCategory</Name>
+<NativeSyntax>MAY/Directory String/This attribute describes the kind of business performed by an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>c</Name>
+<NativeSyntax>MAY/String/This attribute contains a two-letter ISO 3166 country code (countryName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>carLicense</Name>
+<NativeSyntax>MAY/Directory String/vehicle license plate tag</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 commonName attribute, which contains a name of an object.  If the object corresponds to a person, it is typically the persons full name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>configPtr</Name>
+<NativeSyntax>MAY/DN/DN pointer to a cimConfiguration-derived directory entry such as an ePropertySet.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>departmentNumber</Name>
+<NativeSyntax>MAY/Directory String/identifies a department within an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>departmentnumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<NativeSyntax>MAY/Directory String/Attribute common to CIM and LDAP schema to provide lengthy description of a directory object entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>destinationIndicator</Name>
+<NativeSyntax>MAY/Directory String/This attribute is used for the telegram service.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>displayName</Name>
+<NativeSyntax>MAY/Directory String/A name used in displaying an entry in a one-line summary list.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeNumber</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys employee number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeeType</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys type of employment.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>employeetype</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>facsimileTelephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the fax number at which the entry can be reached.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>generationQualifier</Name>
+<NativeSyntax>MAY/String/Contains the part of the name which typically is the suffix, as in IIIrd.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenName</Name>
+<NativeSyntax>MAY/String/Used to hold the part of a persons name which is not their surname nor middle name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homeFax</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys home fax number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePhone</Name>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys home phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homePostalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entrys home mailing address. This field is  intended to include multiple lines, but each line within the  entry should be separated by a dollar sign (\24). To represent  an actual dollar sign (\24) or backslash (\) within this text, use  the escaped hex values \24 and \5c respectively.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homephone</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>homepostaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>initials</Name>
+<NativeSyntax>MAY/String/The initials attribute contains the initials of some or all of an individuals names, but not the surname(s).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>internationalISDNNumber</Name>
+<NativeSyntax>MAY/IA5 String/Contains the ISDN number of the entry. This is in the internationally agreed format for ISDN addresses given in CCITT Rec. E. 164.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>jpegPhoto</Name>
+<NativeSyntax>MAY/Binary/Contains a JPEG photo of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>l</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of a locality, such as a city, county or other geographic region (localityName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>labeledURI</Name>
+<NativeSyntax>MAY/Directory String/Uniform Resource Identifier with optional label as defined in RFC2079.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mail</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Identifies a users primary email address (the email address retrieved and displayed by white-pages lookup applications).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>manager</Name>
+<NativeSyntax>MAY/DN/Identifies the distinguished name of the entrys manager.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>middleName</Name>
+<NativeSyntax>MAY/String/Identifies the entrys middle name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>mobile</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys mobile or cellular phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>o</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectClass</Name>
+<NativeSyntax>MUST/OID/The values of the objectClass attribute describe the kind of object which an entry represents.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>organizationalStatus</Name>
+<NativeSyntax>MAY/Directory String/Specifies a category by which a person is often referred to in an organization.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>otherMailbox</Name>
+<NativeSyntax>MAY/Directory String/Specifies values for electronic mailbox types other than X.400 and rfc822.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ou</Name>
+<NativeSyntax>MAY/String/This attribute contains the name of an organization (organizationName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pager</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Telephone Number/Identifies the entrys pager phone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>personalTitle</Name>
+<NativeSyntax>MAY/Directory String/Specifies a personal title for a person. Examples of personal titles are  Mr, Ms, Dr, Prof and Rev.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>photo</Name>
+<NativeSyntax>MAY/Binary/Contains a photo, in binary form, of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>physicalDeliveryOfficeName</Name>
+<NativeSyntax>MAY/Directory String/Physcial delivery office number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postOfficeBox</Name>
+<NativeSyntax>MAY/Directory String/Post office box number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalAddress</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s mailing address. This field is intended to include multiple lines. When represented in LDIF format, each line should be separated by a dollar sign (\24).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalCode</Name>
+<NativeSyntax>MAY/Directory String/Postal code.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postaladdress</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postalcode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>postofficebox</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredDeliveryMethod</Name>
+<NativeSyntax>MAY/Directory String/Identifies the entry\27s preferred contact or delivery method.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>preferredLanguage</Name>
+<NativeSyntax>MAY/Directory String/A persons preferred written or spoken language</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>registeredAddress</Name>
+<NativeSyntax>MAY/String/This attribute contains a postal address for receiving telegrams or expedited documents. The recipient\27s signature is usually required on delivery.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomNumber</Name>
+<NativeSyntax>MAY/Directory String/Specifies the room number of an object. Note that the commonName attribute should be used for naming room  objects.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>roomnumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>secretary</Name>
+<NativeSyntax>MAY/DN/Identifies the entrys secretary or administrative assistant.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>seeAlso</Name>
+<NativeSyntax>MAY/String/Identifies another directory server entry that may contain information related to this entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MUST/String/This is the X.500 surname attribute, which contains the family name of a person.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>st</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the full name of a state or province (stateOrProvinceName).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>street</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/This attribute contains the physical address of the object to which the entry corresponds, such as an address for package delivery (streetAddress).</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephoneNumber</Name>
+<NativeSyntax>MAY/Telephone Number/Telephone number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telephonenumber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>teletexTerminalIdentifier</Name>
+<NativeSyntax>MAY/Directory String/Teletex terminal identifier.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>telexNumber</Name>
+<NativeSyntax>MAY/Directory String/Telex number.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>thumbNailLogo</Name>
+<NativeSyntax>MAY/Binary/Thumbnail logo assoicated with a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>thumbNailPhoto</Name>
+<NativeSyntax>MAY/Binary/Thumbnail photo associated with a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>title</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/String/This attribute contains the title, such as Vice President, of a person in their organizational context. The personalTitle attribute would be used for a persons title independent of their job function.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uid</Name>
+<Syntax>java.lang.String</Syntax>
+<NativeSyntax>MAY/Directory String/Typically a user shortname or userid.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uniqueIdentifier</Name>
+<NativeSyntax>MAY/Directory String/Specifies a unique identifier for an object represented in the Directory. The domain within which the identifier is unique, and the exact semantics of the identifier, are for local definition.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userCertificate</Name>
+<NativeSyntax>MAY/Binary/Used to represent certificates from one or more Certification Authorities representing a user.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPKCS12</Name>
+<NativeSyntax>MAY/Binary/PKCS \2312 PFX PDU for exchange of personal identity information</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPassword</Name>
+<NativeSyntax>MAY/Binary/Holds a password value for a distinguished name.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userSMIMECertificate</Name>
+<NativeSyntax>MAY/Binary/Signed message used to support S/MIME</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userpassword</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x121Address</Name>
+<NativeSyntax>MAY/IA5 String/Defines the X.121 address of the entry.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>x500UniqueIdentifier</Name>
+<NativeSyntax>MAY/Binary/Used to distinguish between objects when a distinguished name has been reused. This is a different attribute type from both the uid and uniqueIdentifier types.</NativeSyntax>
+<DefaultValue>null</DefaultValue>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f37da0256a</Key>
+<Attribute>$dn</Attribute>
+<Operator>equals</Operator>
+<Value/>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamaccounts">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">@PROPERTY{LDAP_</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">DC=COM</parameter>
+<parameter name="ldapSearchFilter">objectClass=erTAMAccount</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">@PROPERTY{LDAP_URL}</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">@PROPERTY{LDAP_Login}</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>erparent</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>erparent</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>ertamdn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>ertamdn</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraccountcompliance</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraccountstatus</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erglobalid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erparent</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erservice</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamauthentication</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamdn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamgroupmemeber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertammaxfailedlogon</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamsinglesign</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eruid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>owner</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_getnext</Name>
+<Script><![CDATA[var pdn=conn.getString("$dn");
+if (pdn.indexOf("ou=orphans",0)> 0)
+system.skipEntry();]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="tamaccountlookup">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Lookup</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">@PROPERTY{LDAP_</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">dc=com</parameter>
+<parameter name="ldapSearchFilter">objectClass=erTAMAccount</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">@PROPERTY{LDAP_URL}</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">@PROPERTY{LDAP_Login}</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>description</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraccountcompliance</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eraccountstatus</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erglobalid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erparent</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>erservice</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamauthentication</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamdn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamgroupmemeber</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertammaxfailedlogon</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>ertamsinglesign</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>eruid</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectclass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>owner</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+<LinkCriteriaItem>
+<Key>f390b4ca97</Key>
+<Attribute>erparent</Attribute>
+<Operator>equals</Operator>
+</LinkCriteriaItem>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>after_lookup</Name>
+<Script><![CDATA[var pdn=conn.getString("$dn");
+if (pdn.indexOf("ou=orphans",0)> 0)
+system.skipEntry();]]></Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_multiple</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+<Hook>
+<Name>lookup_nomatch</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+</Folder>
+<Folder name="Parsers"/>
+<Folder name="EventHandlers">
+<EventHandler name="ScheduleSync">
+<ScriptEngine>javascript</ScriptEngine>
+<Configuration>
+<InheritFrom>system:/EventHandlers/ibmdi.Timer</InheritFrom>
+<parameter name="assemblyLine">/AssemblyLines/synctambychangelog</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="enabled">true</parameter>
+<parameter name="schedule">@PROPERTY{SYNC_Start}</parameter>
+</Configuration>
+<ActionMaps/>
+</EventHandler>
+</Folder>
+<Folder name="Scripts"/>
+<JavaLibraries/>
+<JavaProperties/>
+<Folder name="Includes"/>
+<ExternalProperties>
+<Path>C:\Program Files\ibm\IBMDirectoryIntegrator\TIMTAMIntegration\TIMtoTAMSync.properties</Path>
+<Encrypted>false</Encrypted>
+</ExternalProperties>
+</MetamergeConfig>

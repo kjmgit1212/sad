@@ -1,0 +1,138 @@
+<%@ page import="java.io.File" %>
+<%@ page import="java.io.FileInputStream" %>
+<%@ page import="java.util.Hashtable" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.Properties" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="javax.security.auth.Subject" %>
+
+<%@ page import="com.ibm.itim.apps.identity.PersonMO"%>
+<%@ page import="com.ibm.itim.apps.InitialPlatformContext" %>
+<%@ page import="com.ibm.itim.apps.PlatformContext" %>
+<%@ page import="com.ibm.itim.common.AttributeValue"%>
+<%@ page import="com.ibm.itim.dataservices.model.domain.Person"%>
+<%@ page import="com.ibm.itim.dataservices.model.DistinguishedName"%>
+<%@ page import="com.ibm.itim.webclient.util.FormData" %>
+
+<%!
+	//Retrieves the authenticated subject from the session
+	private Subject getSubject(HttpSession session)
+	{
+		return (Subject)session.getAttribute("subject");
+	}
+	//Retrieves the browser's locale from the session
+	private Locale getLocale(HttpSession session)
+	{
+		return (Locale)session.getAttribute("locale");
+	}
+	//XML element used by the subform to track its state	
+	public String printStatusInfo(HttpServletRequest request)
+	{
+		//Retrieves the permissions (readonly/readwrite) from the session
+		Map permissions=(Map)request.getSession(false).getAttribute("permissions");
+		String fieldName=(String)request.getParameter("fieldname");
+		String attrName=fieldName.substring(fieldName.lastIndexOf('.')+1);
+		boolean isReadOnly="r".equals(permissions.get(attrName));
+		//Form submission indicates user is saving and closing the subform
+		boolean isSaving=request.getParameterMap().containsKey("name");
+		return "<status isReadOnly='"+isReadOnly+"' isSaving='"+isSaving+"'/>";
+	}
+	//XML element used by the subform to represent the emergency contact info of the user
+	public String printContactInfo(HttpServletRequest request) 
+	{
+		//Attempt to retrieve form values from the request
+		String name=(String)request.getParameter("name");
+		String telephone=(String)request.getParameter("telephone");
+		String relationship=(String)request.getParameter("relationship");		
+		//Retrieve the value from the session  
+		AttributeValue valueAV=(AttributeValue)request.getSession(false).getAttribute("subFormAttrValue");
+		//If loading for the first time we will display empty info or a previous value if available.
+		if(name==null)//LOADING FOR THE FIRST TIME
+		{
+			if(valueAV==null || valueAV.isValueEmpty())
+				return "<emergency-contact name='' telephone='' relationship=''/>";
+			return valueAV.getString();
+		}
+		//If we got this far than it is a form submission, so we will save the new value in the session		
+		String value="<emergency-contact name='"+name+"' telephone='"+telephone+"' relationship='"+relationship+"'/>";
+		String fieldName=(String)request.getParameter("fieldname");
+		String attrName=fieldName.substring(fieldName.lastIndexOf('.')+1);
+		valueAV=new AttributeValue(attrName,value);
+		request.getSession(false).setAttribute("subFormAttrValue",valueAV);//ADDING VALUE TO SESSION
+		return value;
+	}
+	//Retrieves the current user's name using the ITIM API
+	public String getUserName(HttpServletRequest request)
+	{
+		//The target_dn param in the request represents the current user on Person Modify scenarios
+		String personDN=(String)request.getParameter("target_dn");
+		if(personDN==null)return "New User";//Person Create scenarios will not have target_dn specified
+		PlatformContext context=null;
+		try
+		{
+			context=getPlatformContext();
+			Subject subject=getSubject(request.getSession(false));
+			//Using the ITIM Person API to find the current user and retrieve the name attribute
+			PersonMO personMO=new PersonMO(context,subject,new DistinguishedName(personDN));
+			Person personObject=personMO.getData();
+			return personObject.getName();
+		}catch(Throwable t){t.printStackTrace();}
+		finally {
+			if(context != null) {
+				context.close();
+				context = null;
+			}
+		}
+		return "User";//Default for whenever there might be communications errors with the ITIM API
+	}
+	//Composing the PlatformContext using ITIM's configuration property files
+	public PlatformContext getPlatformContext() throws Exception
+	{
+		//The following properties are being extracted from <ITIM_HOME>/data/enRole.properties
+		String contextFactory = getProperty("enrole.platform.contextFactory");
+		String appServerUrl = getProperty("enrole.appServer.url");
+		String ejbUser = getProperty("enrole.appServer.ejbuser.principal");
+		
+		//For this example to work, we must have the following password value in clear-text. 
+		String ejbPwd = getProperty("enrole.appServer.ejbuser.credentials");
+		
+		String ejbRealm = getProperty("enrole.appServer.realm");
+		
+		// Setup environment table to create an InitialPlatformContext
+		Hashtable env = new Hashtable();
+		env.put(InitialPlatformContext.CONTEXT_FACTORY, contextFactory);
+		env.put(PlatformContext.PLATFORM_URL, appServerUrl);
+		env.put(PlatformContext.PLATFORM_PRINCIPAL, ejbUser);
+		env.put(PlatformContext.PLATFORM_CREDENTIALS, ejbPwd);
+		env.put(PlatformContext.PLATFORM_REALM, ejbPwd);
+		
+		return new InitialPlatformContext(env);		
+	}
+	private Properties props=null;//Cache of the properties file
+	private String getProperty(String propName) throws Exception
+	{
+		if (props == null) //check cache for existance
+		{
+			props = new Properties();
+			File propsFile=findPropsFile();
+			props.load(new FileInputStream(propsFile));//Load properties file and cache it
+		}
+		String propVal=props.getProperty(propName);
+		return (propVal==null)?"":propVal;//Defaulting to empty String for unspecified properties
+	}
+	//ITIM's data folder is in the classpath, so we walk the classpath until we spot the enRole.properties file.
+	private File findPropsFile() throws Exception 
+	{
+		String classPath = System.getProperty("java.class.path");
+		StringTokenizer st = new StringTokenizer(classPath, File.pathSeparator);
+		while (st.hasMoreTokens()) 
+		{
+			String dirName = st.nextToken();
+			File file = new File(dirName, "enRole.properties");
+			if (file.isFile())
+				return file;
+		}
+		return null;
+	}
+%>

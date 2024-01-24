@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>README for Self-Care</title>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<META name="GENERATOR"
+	content="IBM WebSphere Studio Homepage Builder V6.0.2 for Windows">
+<META http-equiv="Content-Style-Type" content="text/css">
+<link href="../examples.css" type="text/css" rel="stylesheet">
+</head>
+<BODY text="#ff0000">
+<table cellPadding="0" cellSpacing="0" border="0" width="100%">
+	<tr>
+		<td align="left"><img border="0" src="../ibm_banner.gif"></td>
+		<td align="right"><img src="../tivolilogo.gif"></td>
+	</tr>
+</table>
+<h1>README for Self-Care</h1>
+<a href="#Overview">Overview</a>
+<br>
+<a href="#Build">Building the Self-Care Application</a>
+<br>
+<a href="#ConfigureWAS">Configuring Websphere before installing Self-Care Application</a>
+<br>
+<a href="#WASInstall">Installing the Self-Care Application on WebSphere</a>
+<br>
+<a href="#WASSecurityEnabled">Changes if WebSphere Security is
+Enabled</a>
+<br>
+<a href="#ConfigApp">Configuring the Self-Care Application</a>
+<br>
+<a href="#ConfigITIM">Configuring IBM Security Identity Manager</a>
+<br>
+<a href="#StartApp">Starting the Self-Care Application</a>
+<br>
+<a href="#TestApp">Testing the Self-Care Application</a>
+<br>
+<br>
+
+
+<h2><a name="Overview"></a>Overview</h2>
+<br>
+You can use the self-care application to enable users to manage their user IDs and
+passwords. Enabling users  to perform these types of self-management tasks reduces the
+number of help desk calls.
+	<p>
+		<b>NOTE:</b> This self-care application is different than the Self
+		Service application that comes with IBM Security Identity Manager. This
+		example demonstrates how to write your own
+		self-care web application by using IBM Security Identity Manager public APIs. This example is for the demonstration purpose only. The self-care  example application supports the following operations:
+	</p>
+	<ul>
+	<li>Changing your  password</li>
+	<li>Changing your  personal information</li>
+	<li>Changing your challenge response answers</li>
+	<li>Registering yourself as a new user</li>
+	<li>Resetting your password by answering the challenge response questions</li>
+	</ul><p>
+	</p>
+	
+	<h2><a name="Build"></a>Building the Self-Care Application</h2>
+<br>
+Use the build scripts in the examples directory to
+create <b>itim_expi.war</b> file.
+See <a href="../Building.html">Building the Examples</a> for more details about building examples.  
+<ul>
+    <li> Make sure that the IBM Websphere Application Server is installed on the client where you want to build the self care application. </li>
+    <li> Set the <b>WAS_HOME</b> environment variable to point to the WebSphere Application Server installation directory. </li>
+    <li>
+	To build only the self-care application, specify <code>self_care</code> as the target when you build the examples.
+	For example, issuing the &quot;<i>build self_care</i>&quot; command on Windows operating systems, or the &quot;<i>./build.sh self_care</i>&quot; command on UNIX operating systems,
+ 	creates the <b>itim_expi.war</b> file. The administrator installs this war file onto WebSphere Application Server by following
+	these <a href="#WASInstall">instructions</a>. If the administrator makes any changes to the source of the self-care application, the administrator
+	must recreate <DFN>itim_expi.war file</DFN>.
+    </li>
+</ul>
+<br>
+<br>
+<h2><a name="ConfigureWAS"></a>Configuring Websphere Application Server before installing the Self-Care Application</h2>
+<br>
+	<ul>
+  		<li> Make sure that administrative security is enabled for the profile on which the Self Care Application is to be installed. </li>
+  		<li> Create a folder named <b>classes</b> (if it does not exist) in $WAS_HOME/profiles/profile_name. </li>
+  		<li> Copy the <b>itim_common.jar, com.ibm.cv.kmip.ext.jar, itim_util.jar, and jlog.jar</b> files from extensions/lib to the $WAS_HOME/profiles/profile_name/classes folder. </li>
+  		<li> Copy the <b>isimva_user_registry.jar</b> file from <b>extensions/{RELEASE_VERSION}/user registry</b> to $WAS_HOME/profiles/profile_name/classes folder. </li>
+  		<li> Edit the <b>isimva_registry.properties</b> file in <b>extensions/{RELEASE_VERSION}/user registry</b> for the Self Care Application.
+                     <ul>
+			<li> From the IBM Security Identity Manager virtual appliance console, click <b>Configure > Update Property</b>. </li> 
+      			<li> Select the <b>enRole.properties</b> file from the <b>All properties > Identity server properties</b> file tab. </li>
+      			<li> Search for the value of following properties and update the corresponding property in the <b>isimva_registry.properties file</b>.
+                             <ul> 
+				<li> enrole.ldapserver.root </li>
+				<li> enrole.defaulttenant.id </li>
+				<li> enrole.appServer.realm </li>
+				<li> enrole.encryption.passwordDigest </li>
+                             </ul>
+      			</li>
+                        <li> Select the <b>enRoleAuthentication.properties</b> file from the <b>All properties</b> tab. </li>
+			<li> Search for the value of following properties and update the corresponding property in the <b>isimva_registry.properties</b> file.
+			     <ul>
+				<li> enrole.authentication.requiredCredentials </li>
+				<li> enrole.authentication.provider.simple </li>
+			     </ul>
+			</li>
+			<li> For the last set of properties, contact your directory server administrator.
+			     <ul>
+				<li> java.naming.provider.url = LDAP URL in the format ldap://IP address of LDAP server:port </li>
+				<li> java.naming.security.principal = LDAP principal Distinguished Name </li>
+				<li> java.naming.security.credentials = LDAP principal Distinguished Name password </li>
+				<li> java.naming.security.protocol = Security protocol to be used with LDAP. For example, SSL. Remove this property if no security protocol is defined for the directory server. </li>
+			    </ul>
+			</li>
+                      </ul>
+   		</li>
+		<li>Copy the <b>isimva_registry.properties</b> in the WAS_HOME/profiles/profile_name /properties folder on the WebSphere Application Server. </li>
+		<li> Restart the WebSphere Application Server. </li>
+		<li> Log on to the WebSphere Administrative console and click <b>Security > Security Domains > Copy Global Security</b>. </li>
+		<li> Enter the name of domain <b>ISIMSecurityDomain</b>, click <b>OK</b> and save the changes to the master configuration. </li>
+		<li> Configure the security domain.
+		    <ul>
+			<li> Go to <b>Security > Security Domain > ISIMSecurityDomain</b>. Specify <i>server1</i> as the scope of the domain. Click <b>OK</b> and save the changes to the master configuration. </li>
+			<li> Go to <b>Security > Security Domain > ISIMSecurityDomain > User Realm</b>. Select <b>Standalone custom registry</b>. </li>
+			<li> Click <b>Configure</b> and enter the realm name as <b>itimCustomRealm</b> and custom registry class name as <b>com.ibm.isimva.registry.IsimVaUserRegistry</b>. Select <b>Ignore case for authorization</b>. </li> 
+			<li> Click <b>OK</b> and save the changes to master configuration. </li>
+		    </ul>
+		</li>
+		<li> Configure SSL appropriately between the IBM Security Identity Manager virtual appliance and the WebSphere Application Server. For example:
+		     <ul>
+			<li> Log on to the administrative console of the WebSphere Application Server. </li>
+			<li> Expand <b>Security</b> and click <b>SSL certificate and key management</b>. </li>
+			<li> Under </b>Related Items</b>, click <b>Key stores and certificates</b> and click the <b>NodeDefaultTrustStore</b> key store. </li> 
+			<li> Under <b>Additional Properties</b>, click <b>Signer certificates</b> and click <b>Retrieve From Port</b>. </li>
+			<li> In the <b>Host</b> field, enter the IP address of Application Interface in the IBM Security Identity Manager virtual appliance. </li> 
+			<li> In the <b>Port</b> field, enter 9072. Set Alias as the IP address of Application Interface suffixed by <b>_cert</b>. </li>
+			<li> Click <b>Retrieve Signer Information</b>. </li>
+			<li> Verify that the certificate information is for a certificate that you can trust. </li>
+			<li> Click <b>Apply</b> and <b>Save</b>.</li>
+		    </ul>
+		</li>
+		<li> Ensure that you export and import the LTPA keys for the encryption and decryption of the identity tokens.
+		     <ul>
+			<li> To export the LTPA key from the IBM Security Identity Manager virtual appliance, do these steps.
+			    <ul>
+				<li> On IBM Security Identity Manager virtual appliance console, click <b>Configure > Single Sign-On Configuration</b>. </li>
+				<li> Select <b>LTPA Keys</b> tab. </li>
+				<li> Specify a password in the <b>Password</b> and <b>Confirm password</b> fields. </li>
+				<li> Click <b>Export LTPA keys</b>. </li>
+			    </ul>
+			</li>
+			<li> Import the LTPA key on the WebSphere Application Server.
+			     <ul>
+				<li> Go to <b>Security > Global Security > LTPA</b>. </li>
+				<li> Specify the password that was used in exporting the ltpa key in the <b>Password</b> and <b>Confirm Password</b> fields. </li>
+				<li> Specify the path of the LTPA key file downloaded from the virtual appliance in the <b>Fully qualified key file name</b> field. </li>
+				<li> Click <b>Import keys</b>. </li>
+				<li> Save the changes to the master configuration. </li>
+			     </ul>
+			</li>
+		    </ul>
+		</li>
+		<li> Restart the WebSphere Application Server server. </li>
+	</ul>
+<br>
+<br>
+<h2><a name="WASInstall"></a>Installing the Self-Care Application on WebSphere</h2>
+<br>
+Before you install the self-care application, be familiar with
+the requirements for installing it and the methods of
+installation.
+<br>
+<br>
+You must install the self-care application on a system that has
+WebSphere Application Server  already installed. You must
+also have installed the WebSphere Application Server patches that are specified
+in the IBM Security Identity Manager Release Notes. Use the installation
+instructions in the Release Notes to install the patches.
+
+<br>
+<P>Follow these steps  to install the self-care application on a WebSphere Application Server:</P>
+<ul>
+	<li><a href="#Build">Build</a> the self-care
+	application to create the <b>itim_expi.war</b> file.</li>
+	<li>Log on to the WebSphere administrative console.</li>
+	<li>Under <b>Applications</b><i> -&gt; </i><b>New Application</b><i></i><b>
+	</b>click<b> New Enterprise Application.</b></li>
+	<li>For <i>Path to the new application</i>, select <b>Local file</b><i>
+	</i>system
+	and set <b>Full path</b> to the location of the <b>itim_expi.war</b> file.</li>
+	<li>For installation method, select 
+                  <b>Detailed - Show all installation options and
+	parameters</b>.</li>
+	<li>For <b>Map context roots for Web modules</b>, specify <code>/itim_expi</code>.</li>
+	<li>For <b>Map security roles to users or groups</b>
+            step, map <b>SELFCARE_CLIENT </b>role to<b> </b>the special subject<b></b>, <b>
+	All Authenticated in Trusted Realms</b>.</li><li>Repeatedly click <b>Next</b> until you arrive at the Summary window.</li>
+	<li>At the Summary window, click <b>Finish</b>.</li>
+	<li>Click <b>Save</b> to save your changes directly to the master
+	configuration.</li>
+	<li>Under <b>Applications -&gt; Appliation Types -&gt; WebSphere
+	enterprise applications</b>, select <b>itim_expi_war.</b></li>
+	<li>Under <b>Detailed Properties </b>-&gt; <b>Class
+	loading and update detection</b>, select  <b>Classes loaded
+	with local class loader first (parent last) </b>for Class loader order and select <b>Single
+	class loader for application</b> for WAR class loader policy.</li>
+	<li>Click <b>OK</b>   to apply the changes.</li>
+	<li>Click <b>Save</b> to save the changes to the master
+	configuration.</li>
+	<li><b></b>Do not start the self-care application until after you have
+	followed the remaining steps, including <a href="#WASSecurityEnabled">Changes
+	if WebSphere Java 2 Security is Enabled</a>, <a href="#ConfigApp">Configuring
+	the Self-Care Application</a>, and <a href="#ConfigITIM">Configuring
+	IBM Security Identity Manager</a>.</li>
+	<li>Copy the itim_expi.properties file from the
+	extensions/{<i>RELEASE_VERSION</i>}/examples/self_care
+	directory to the <i>$WAS_HOME</i>/properties
+	directory.</li>
+</ul>
+<p>
+<h2><a name="WASSecurityEnabled"></a>Changes if WebSphere Java 2
+Security is Enabled</h2>
+<b> <br>
+</b>If Java 2 security has been enabled for the WebSphere Application Server
+where the self-care application has been installed, follow this
+procedure:<b></b></p></p>
+<UL>
+	<LI>Edit the <b>was.policy</b> file in the
+	<i>$WAS_HOME</i>/profiles/<i>$PROFILE_NAME</i>/config/cells/<i>$CELL_NAME</i>/applications/itim_expi_war.ear/deployments/itim_expi_war/META-INF directory
+	(The <VAR>$WAS_HOME</VAR> is the directory where WebSphere
+	Application Server is installed. The <VAR>$PROFILE_NAME</VAR> is the name of
+	the WebSphere Application Server profile in which the self-care
+	application has been installed. The <var>$CELL_NAME</var> is the name of
+	the WebSphere Application Server cell in which the self-care application
+	has been installed).</LI>
+	<LI>Modify the application permissions in the <b>was.policy</b>
+	file as follows:<BR>
+	<SAMP>grant codeBase &quot;file:${application}&quot; {<BR>
+	permission java.security.AllPermission;<BR>
+	};</SAMP></LI>
+	<LI>Restart the WebSphere Application Server on the system where
+	the self-care application has been installed.</LI>
+</UL>
+<p>
+<p>
+<p>
+<h2><a name="ConfigApp"></a>Configuring the Self-Care Application</h2>
+</p>
+ Edit the <b>itim_expi.properties</b> file in the <i>$WAS_HOME</i>/properties directory (where <var>$WAS_HOME</var> is
+the directory where WebSphere Application Server is installed on the
+system where the self-care application is installed), and set the following
+key properties:
+<br>
+<br>
+Tenant and Tenant DN setup:
+<br>
+<samp>tenantid=&lt;your tenant ID&gt;<br>
+tenantdn=&lt;your tenant DN&gt;</samp>
+<br>
+<br>
+Default organization (root in  Identity Manager):
+<br>
+<samp>default.org=root organization in IBM Security Identity Manager<br>
+platform.url=corbaloc:iiop://host name of IBM Security Identity Manager server:port<br>
+</samp>
+(URL where  Identity Manager is installed)
+<br>
+<br>
+<samp>platform.principal=IBM Security Identity Manager administrator<br>
+platform.credentials=IBM Security Identity Manager password</samp>
+<br>
+<br>
+You can determine the values for these properties by looking at the
+corresponding values in the <b>enRole.properties</b> file.  The file can be read from IBM Security Identity Manager virtual appliance console. 
+Click <b>Configure > Update Property</b>. Select <b>enRole.properties</b> file from the <b>All properties > Identity server properties file</b> tab. 
+The properties and corresponding values are described in the following table. 
+<br>
+<br>
+</p>
+</p>
+<p>
+<p>
+<p>
+<table border="1">
+	<tbody>
+		<tr>
+			<td bgcolor="#cccccc" height="41" width="261">Property in
+			itim_expi.properties file</td>
+			<td bgcolor="#cccccc" width="463" height="41">Corresponding
+			value in the enRole.properties file</td>
+		</tr>
+		<tr>
+			<td width="261" height="31">tenantid</td>
+			<td width="463" height="31">Use the value for
+			enrole.defaulttenant.id.</td>
+		</tr>
+		<tr>
+			<td width="261" height="33">tenantdn</td>
+			<td width="463" height="33">Use the value
+			&quot;ou=tenantid&quot; combined with the value of
+			enrole.ldapserver.root. For example, if the value of tenantid were
+			"myco", and the value of enrole.ldapserver.root were "dc=com", the
+			property could be set using &quot;tenantdn=ou=myco,dc=com&quot;.</td>
+		</tr>
+		<tr>
+			<td height="35" width="261">default.org</td>
+			<td width="463" height="35">Use &quot;ou=tenantid&quot;. For
+			example, if the value of tenantid were "myco", the property could be
+			set using &quot;default.org=ou=myco&quot;.</td>
+		</tr>
+		<tr>
+			<td width="261">platform.url</td>
+			<td width="463">Use the value for enrole.appServer.url. Note: If
+			the value of enrole.appServer.url contains &quot;localhost&quot;,
+			substitute the host name or IP address of the system where 
+			IBM Security Identity Manager is installed.</td>
+		</tr>
+		<tr>
+			<td width="261">platform.principal</td>
+			<td width="463">Use the name of IBM Security Identity Manager administrator.</td>
+		</tr>
+		<tr>
+			<td width="261">platform.credentials</td>
+			<td width="463">Use the password of IBM Security Identity Manager administrator.</td>
+		</tr>
+	</tbody>
+</table>
+<b> <br>
+</b></p>
+<b> <br>
+</b></p>
+<b> Following are example values for these key properties in the <dfn>itim_expi.properties</dfn></b></p>
+file:
+<BR>
+<SAMP>#------------------------------------------------------ <BR>
+# Organizational information <BR>
+#------------------------------------------------------ <BR>
+tenantid=myco <BR>
+tenantdn=ou=myco,dc=com <BR>
+default.org=ou=myco <BR>
+<BR>
+# Application Server <BR>
+platform.url=corbaloc:iiop://itimserver.myco.com:9067 <BR>
+platform.principal=itim manager <BR>
+platform.credentials=admin</SAMP>
+<BR>
+<p>
+Download <b>tmsMessages_en.properties</b>. The file can be downloaded from IBM Security Identity Manager virtual appliance console. Click <b>Configure > Custom File Management</b>. Select <b>nls</b> folder from <b>All files > directories</b>. Search for <b>tmsMessages_en.properties</b>. Click on <b>Dowload</b> button. Copy this file to <i>$WAS_HOME/properties</i> directory
+<p>
+<p>
+<h2><a name="ConfigITIM"></a>Configuring  IBM Security Identity Manager</h2>
+<b> <br>
+</b></p>
+<b> </b>Log on to the  Identity Manager administrative console and
+follow these steps  to configure Identity Manager: 
+<ul>
+	<li>Create a Location in the  IBM Security Identity Manager organization
+	structure for the self-registered users. By default,
+	the self-care application uses the Location <b>selfregisterhere</b>.
+	You can specify any name but you must update the self-care application  to recognize the name. <br>
+	<br>
+	If you create a non-default Location name, edit the <b>itim_expi.properties</b> 
+	file to update the self-care application. This  file is located in  
+	<i>$WAS_HOME</i>/properties directory (where <b><var>$WAS_HOME</var></b>
+	is the directory where WebSphere Application Server is installed on the
+	system where the self-care application is installed), and set the
+	following property to the name of the Location: <br>
+	<pre>orgContainer.selfregister.location.org=selfregisterhere</pre>
+	</li>
+	<br>
+	<li>Enable forgotten password authentication using
+	administrator-defined questions. For more information see IBM Security Identity Manager Information Center.</li>
+</ul>
+</p>
+<p>
+<p>
+<h2><a name="StartApp"></a>Starting the Self-Care Application</h2>
+<b> <br>
+</b></p>
+<b> </b>Start the self-care application running on the WebSphere
+Application Server: 
+<ul>
+	<li>Log on to the WebSphere administrative console running on the
+	system where the self-care application is installed (for example,
+	http://localhost:9060/ibm/console).</li>
+	<li>Navigate to <i><b>Applications &gt; Enterprise Applications</b></i>.</li>
+	<li>If <b>itim_expi_war</b> is already stopped then go to the next
+	step. Otherwise check the <b>itim_expi_war </b>checkbox and click <b>Stop</b>.</li>
+	<li>Check the <b>itim_expi_war</b> checkbox and click <b>Start</b>.</li>
+</ul>
+</p>
+<p>
+<h2><a name="TestApp"></a>Testing the Self-Care Application</h2>
+<b> <br>
+</b></p>
+<p>In a Web browser window enter the URL <code>http://<i>hostname</i>:9080/itim_expi</code>
+or if SSL has been enabled, <code>https://<i>hostname</i>:9443/itim_expi</code> (Where <i>hostname</i> is the name of the host where the self-care application is installed). The self-care application Sign On page is displayed. Try 
+various tasks. If you encounter problems, verify that IBM Security Identity Manager is configured to enable the user to perform the task (that is, make
+sure the same operation can be performed by the same user using the
+standard Security Identity Manager user interface).</p>
+</BODY>
+</html>

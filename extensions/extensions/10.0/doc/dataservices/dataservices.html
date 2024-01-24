@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Data Services API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR><A HREF="#overview">Overview</A><BR><A HREF="#apiDescription">API
+Description</A><BR><A HREF="#apiExample">API Example</A></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is designed with
+extensibility as a primary goal. Many of the architectural components
+have been built using frameworks that can make use of custom
+extensions. Often, those extensions need to make use of the data
+model managed by Identity Manager (i.e., identities and accounts).
+This document describes the Application Programming Interface (API)
+that is available for querying elements of this data model.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The Data Services API has been developed to provide the developers
+of custom extensions to Identity Manager a portable and
+backwards-compatible interface to the Identity Manager data model. 
+</P>
+<P>The API consists of a set of java classes that abstract the more
+commonly used data model entities in the provisioning process, such
+as identities, accounts, and services. The classes that make up this
+API are the same classes the platform uses for its out-of-the-box
+feature set. A note about security: these classes communicate
+directly with the data store (directory server) using the platform’s
+credentials. Clients of this API will be assumed to have an
+appropriate level of trust. In fact, the platform credentials needed
+for this trust are obtained within the API code, which requires the
+client code to be executed within the platform’s environment. The
+easiest way to deploy client code within the platform’s environment
+is to have the platform call the code from its published extensions,
+such as authentication, workflow, and its JavaScript interpreter.</P>
+<P>Although the ability to change the data model is provided within
+this API, it is very important to understand that this ability is not
+the focus of the API, and in fact, it is highly recommended that a
+client does not make changes to the data model through this API. The
+reason for this is that the Data Services API is a low level API that
+abstracts the physical layout of the data store (directory server),
+but does not provide a lot of the business logic that the
+provisioning applications within the platform do. For example, when
+adding a new person (identity) with the Data Services API, an entry
+is added to the data store only, but when adding a new person through
+the Identity Management application, the entry is added to the data
+store and the process of automatically provisioning the person is
+performed using the platform’s workflow engine. With that said, in
+limited situations this ability can safely be used as long as the
+client understands their effects. For example, the creation of
+containers in the org chart does not require any special provisioning
+business logic and can be safely done through this API.</P>
+<H2><A NAME="apiDescription"></A>API Description</H2>
+<P>The Data Services API consists of a set of classes that represent
+the commonly used entities within the Identity Manager data model and
+a set of classes. All of these classes can be found in the
+com.ibm.itim.dataservices.model package and its sub-packages.</P>
+<P>An entity represents one entry of the data model, such as an
+identity, account, or service. Once a client obtains an instance of
+one of these entities, they can retrieve both Identity Manager
+specific attributes and custom attributes that describe it. An
+Identity Manager specific attribute is one that is used by Identity
+Manager for its internal business logic, such as an account’s
+status, or for navigating relationships, such as determining a
+business partner’s sponsor. A custom attribute is one that is not
+used within Identity Manager business logic, but is made available
+when the customer for business reasons extends the Identity Manager
+schema. Since these attributes may be relevant to business logic
+extensions making use of this API, an interface is provided to
+retrieve them. The UML class diagram in figure 1 below illustrates
+the primary entities available in the API and their relationships.
+There are several more entities available in the API that are not
+shown here. Please see the accompanying <A HREF="../../api/index.html">API
+Reference Document</A> for more details on the individual classes. 
+</P>
+<P ALIGN=CENTER><IMG SRC="images/image003.gif" NAME="graphics2" ALIGN=BOTTOM WIDTH=574 HEIGHT=456 BORDER=0><BR><B>Figure
+1: Primary Entity Class Diagram</B></P>
+<P>There is a consistent framework implemented in this API for
+querying and operating on entities along with their relationships
+(the framework is graphically depicted in figure 2 below). This
+framework is centered on the entity class itself. An entity class is
+a composite class that holds a reference to a value class that holds
+the defining attribute information for the entity, and provides
+access to other related entities with relationship-based interfaces.
+The relationships and attribute information are cached for the life
+of the entity, however, every time a relationship is evaluated, the
+entity, or entities, that participate in that relationship will be
+loaded from the data store. For example, the reference to the
+supervisor of a person is cached within the person entity class, but
+when the client requests the supervisor, the supervisor’s attribute
+information will be loaded from the data store at the time the
+supervisor entity is constructed.</P>
+<P>To query for entities, the framework provides a search class for
+each type of entity. The search class will possibly provide canned
+queries as well as a filtered query where the client can create their
+own custom query criteria using a string representation of an LDAP
+filter (see RFC 2254).</P>
+<P>To create a new entity in the data store, the framework provides a
+factory class for each type of entity. The factory class abstracts
+the physical placement and naming requirements of the data store
+implementation.</P>
+<P>The deletion and modification of entities is made directly on the
+entity itself. The modification is made by passing an updated value
+object to the entity. It is important to note that the value object
+itself tracks the changes that have been made to it by the client.
+This is done for efficiency and to avoid confusion as to whether a
+missing attribute in a value object is due to it never being queried
+to start with (see the SearchParameters class and its use with search
+classes), or due to the client requesting it to be removed from the
+data store. Keep this in mind when passing value objects around in
+client code.</P>
+<P>The evaluation of relationships in the data model is commonly
+achieved by using specific relationship-based methods on entity
+classes, such as getSupervisor() on a person entity. There is,
+however, support for additional relationships to be added to the data
+model to extend its capabilities for customization purposes. This can
+be achieved by creating a class to represent a relationship and
+registering it in the meta-data of the data model. Please see the
+<A HREF="../../api/com/ibm/itim/dataservices/model/ModelMetaData.html">ModelMetaData</A>
+and <A HREF="../../api/com/ibm/itim/dataservices/model/Relationship.html">Relationship</A>
+class documentation in the <A HREF="../../api/index.html">API
+Reference Document</A> for more details. Once registered, the
+relationship object can be obtained from an associated entity
+instance (see <A HREF="../../api/com/ibm/itim/dataservices/model/DirectoryObjectEntity.html">DirectoryObjectEntity</A>)
+and evaluated.</P>
+<P ALIGN=CENTER><IMG SRC="images/image005.gif" NAME="graphics3" ALIGN=BOTTOM WIDTH=448 HEIGHT=219 BORDER=0><BR><B>Figure
+2: API Framework</B></P>
+<H2><A NAME="apiExample"></A>API Example</H2>
+<P>The following method uses the Data Services API to print the
+accounts owned by a specified user.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> printAccounts(String rawIdentityDN) {</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">   </FONT><B>try</B></FONT><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// create compatible object from raw dn</FONT>
+<FONT COLOR="#000000">      DistinguishedName identityDN = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> DistinguishedName(rawIdentityDN);</FONT>
+
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">      </FONT>// obtain an Identity object needed to look up accounts</FONT>
+<FONT COLOR="#000000">      PersonEntity identityEntity = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> PersonSearch().lookup(identityDN);</FONT>
+
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">      </FONT><B>if</B></FONT><FONT COLOR="#000000"> (identityEntity != </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">) {</FONT>
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">         </FONT>// lookup accounts</FONT>
+<FONT COLOR="#000000">         Collection accounts = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> AccountSearch()</FONT>.searchByOwner(identityDN);
+
+         Iterator iter = accounts.iterator();
+<FONT COLOR="#3f7f5f"><FONT COLOR="#000000">         </FONT>// loop through accounts and print user id and service name</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">         </FONT><B>while</B></FONT><FONT COLOR="#000000"> (iter.hasNext()) {</FONT>
+            AccountEntity accountEntity = (AccountEntity) iter.next();
+            Account account = (Account) accountEntity
+               .getDirectoryObject();
+            ServiceEntity serviceEntity = accountEntity.getService();
+            Service service = (Service) serviceEntity
+               .getDirectoryObject();
+
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;*****Account*****&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;User Id: &quot;</FONT><FONT COLOR="#000000"> + account.getUserId());</FONT>
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Service: &quot;</FONT><FONT COLOR="#000000"> + service.getName());</FONT>
+<FONT COLOR="#000000">            System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println();</FONT>
+         }
+      }
+   }<FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (ModelCommunicationException ex) {</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">err</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Communication Exception: &quot;</FONT><FONT COLOR="#000000"> + ex.toString());</FONT>
+<FONT COLOR="#000000">   } </FONT><B><FONT COLOR="#7f0055">catch</FONT></B><FONT COLOR="#000000"> (ObjectNotFoundException ex) {</FONT>
+<FONT COLOR="#000000">      System.</FONT><I><FONT COLOR="#0000c0">err</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;Object Not Found Exception: &quot;</FONT><FONT COLOR="#000000"> + ex.toString());</FONT>
+   }
+<FONT COLOR="#000000">}</FONT></PRE>
+</BODY>
+</HTML>

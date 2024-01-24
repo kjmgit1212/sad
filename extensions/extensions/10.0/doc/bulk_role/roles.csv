@@ -1,0 +1,6 @@
+# Example file for the bulk role loader example application
+# Order of columns is
+# role name, description, business unit, owner, parent roles
+Lotus Notes, An application role, Los Angeles, Harry Jones
+Windows AD, An application role, San Francisco, Lisa Sullivan
+SAP, An application role, New York, Fred Mackey

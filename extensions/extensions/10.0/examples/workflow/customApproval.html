@@ -1,0 +1,345 @@
+<html>
+
+<head>
+<title>TIM Extension: Creating an Approval on a Role Request</title>
+<link rel=Stylesheet type="text/css" media=all href="../examples.css">
+
+<![if mso 9]>
+<style>
+p.MsoNormal
+	{margin-left:52.5pt;}
+</style>
+<![endif]>
+<meta content="Alexander Amies" name=author>
+<meta http-equiv=Content-Style-Type content="text/css">
+</head>
+
+<body bgcolor=white lang=EN-US link="#0000CC" vlink="#660099" style='margin-left:
+52.5pt;margin-top:24.0pt;margin-right:12.0pt;margin-bottom:24.0pt'>
+
+<div class=Section1>
+
+<table  border=0 cellspacing=0 cellpadding=0 width="100%"
+ style='width:100.0%'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'><img width=283
+  height=58 src="../ibm_banner.gif"></span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  align=right style='margin:0in;margin-bottom:.0001pt;
+  text-align:right'><span style='font-family:"Arial","sans-serif";color:black'><img
+  width=347 height=46 src="../tivolilogo.gif"></span></p>
+  </td>
+ </tr>
+</table>
+
+<h1>Creating a Custom Approval for a Group Request</h1>
+
+<h2>Overview</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>This example describes
+creating a custom approval process that is determined by looking up an approver
+in a database.&nbsp; The approver chosen will depend on the value of the group
+in the account requested.&nbsp; The example illustrates two JavaScript
+extensions: one for JavaScript logging and the other for looking up the
+approver.</span></p>
+
+<h2>Building the Example</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>To build the
+examples follow the instructions given in <a href="../Building.html">Compiling
+the Examples</a>.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Add the
+examples.jar file created by the build process to the application server's
+classpath by following the instructions given in <a href="../Classpath.html">Adding
+examples.jar to Classpath</a>.</span></p>
+
+<h2>Registering the JavaScript Extensions</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>Edit the <dfn><span
+style='font-family:"Arial","sans-serif"'>scriptframework.properties</span></dfn>
+file by adding these two lines (see <a href="../Updating_property_files.html">Updating
+the property files</a>):<br>
+<br>
+</span><code><span style='font-size:10.0pt;color:black'>ITIM.extension.Workflow.log=examples.workflow.customApproval.itim50.LoggingExtension</span></code><span
+style='font-size:10.0pt;font-family:"Courier New";color:black'><br>
+<code>ITIM.extension.Workflow.findApprover=examples.workflow.customApproval.itim50.CustomApprovalExtension</code></span><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+<br>
+Restart the application server.</span></p>
+
+<h2>Creating the Database Tables</h2>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>A database table
+is needed to store the mapping from group name to approver name.&nbsp; This is
+created in the same database as ISIM uses for its operational database.&nbsp;To
+use another database, a change of the example code is required. This table
+should be owned by the same user as the other ISIM database tables.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The fields in the
+database table are described in Table 1.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Table
+1 Fields in APPROVERS Table</span></b><span style='font-family:"Arial","sans-serif";
+color:black'> </span></p>
+
+<div align=center>
+
+<table  border=1 cellpadding=0 width=739 style='width:554.25pt'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Field</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Description</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>GROUP_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The name of the group
+  being provisioned (primary key).</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>APPROVER_NAME</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>The common name of the
+  approver.&nbsp; This should uniquely identity the approver.&nbsp; If it does
+  not the approval will be routed to the system administrator.</span></p>
+  </td>
+ </tr>
+</table>
+
+</div>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>SQL scripts are
+included that will create the table and add sample data.&nbsp;Run the script in
+file <dfn><span style='font-family:"Arial","sans-serif"'>custom_approver_db2.ddl
+</span></dfn>(DB2), <dfn><span style='font-family:"Arial","sans-serif"'>custom_approver_oracle.ddl</span></dfn>
+(Oracle) or <dfn><span style='font-family:"Arial","sans-serif"'>custom_approver_sqlserver.ddl</span></dfn>
+(Microsoft SQL Server) using the native database command tools.&nbsp; All of
+the scripts can be found in
+workflow/src/examples/workflow/customApproval/itim50/.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The sample data
+in Table 2 is added to the database.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Table
+2 Sample Data</span></b></p>
+
+<table  border=1 cellpadding=0 width="80%"
+ style='width:80.0%'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Group Name</span></b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  align=center style='margin:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Arial","sans-serif";
+  color:black'>Approver Name</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>developer</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Bill Sanderman</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>tester</span></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p  style='margin:0in;margin-bottom:.0001pt'><span
+  style='font-family:"Arial","sans-serif";color:black'>Jill Vox</span></p>
+  </td>
+ </tr>
+</table>
+
+<h2>Creating the Entitlement Workflow</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>Open up the workflow
+designer (via Design Workflows &gt; Manage Account Request Workflows) and
+create an advanced approval workflow for a general service (Service type =
+All), as shown in Figure 1.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=414 height=112 src="images/custom_workflow.gif"
+alt="Screenshot of Workflow Designer"></span><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+<b>Figure 1 Entitlement Workflow</b></span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+Double click on the approval node to bring up the properties dialog and set the
+participant type to Custom, as shown in Figure 2.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=527 height=439 src="images/approval_dialog.gif"
+alt="Screenshot of Approval Dialog"></span><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+<b>Figure 2 Approval Dialog</b></span></p>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'><br>
+Add this script to find the participant:<br>
+<br>
+</span><code><span style='font-size:10.0pt;color:black'>log(&quot;Custom
+Approval&quot;);</span></code><span style='font-size:10.0pt;font-family:"Courier New";
+color:black'><br>
+<code>var account = entity.get(); </code><br>
+<code>var group = account.getProperty(&quot;erposixprimarygroup&quot;)[0];</code><br>
+<code>var approverDN = findApprover(group);</code><br>
+<code>log(&quot;approverDN: &quot; + approverDN);</code><br>
+<code>return new Participant(ParticipantType.USER, approverDN);</code></span><span
+style='font-family:"Courier New";color:black'><br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><br>
+Set the Escalation Participant to System Administrator. Save the workflow
+before exiting.&nbsp; For the sake of illustration this example will set the
+entitlement workflow into the provisioning policy for a Linux service.&nbsp;
+This is shown in Figure 3.</span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=806 height=413 src="images/entitlement_workflow.gif"
+alt="Screenshot of entitlement"></span><span style='font-family:"Arial","sans-serif";
+color:black'><br>
+<br>
+<b>Figure 3&nbsp; Screenshot for Provisioning Policy Entitlement</b></span></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>The membership for the
+policy is all people.</span></p>
+
+<h2>Testing the Custom Approval Process</h2>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'>Testing
+includes provisioning of a Linux account with a primary group corresponding to
+one of the participants in the table and checking that the person approving the
+request matches the file entry.&nbsp;&nbsp; Add people matching the sample data
+in Table 2 (two people with common names Bill Sanderman and Jill Vox). Create
+an ISIM account for Bill Sanderman. Add groups developer and tester on the
+managed resource.&nbsp;Run a reconciliation on the service. Provision a Linux
+account with the developer group.&nbsp;This is shown in Figure 4.<br>
+<br>
+</span><span style='font-family:"Arial","sans-serif";color:black'><img
+border=0 width=800 height=511 src="images/linux_account.gif"
+alt="Screenshot of Linux form"></span></p>
+
+<p  align=center style='margin:0in;margin-bottom:.0001pt;
+text-align:center'><b><span style='font-family:"Arial","sans-serif";color:black'>Figure
+4 Screenshot of Linux Form for Provisioning with Developer Group</span></b></p>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'><br>
+Log in as Bill Sanderman with the ISIM account already created for him.&nbsp;
+You should be redirected to the To Do List and have a request for approval in
+the list.&nbsp; After approving the request it will be provisioned.</span></p>
+
+<h2>Source Code for the Example</h2>
+
+<p  style='margin:0in;margin-bottom:.0001pt'><span
+style='font-family:"Arial","sans-serif";color:black'>The source code for the
+examples is in the files <a
+href="src/examples/workflow/customApproval/itim50/LoggingExtension.java">LoggingExtension.java</a>,
+<a href="src/examples/workflow/customApproval/itim50/CustomApprovalBean.java">CustomApprovalBean.java</a>,
+and <a
+href="src/examples/workflow/customApproval/itim50/CustomApprovalExtension.java">CustomApprovalExtension.java</a>.&nbsp;
+The log extension simply logs messages to the ISIM log file in debug mode to
+help in debugging JavaScript.&nbsp; The custom approval bean provides the logic
+to look up the approver for a group and returns the distinguished name of the
+person who approves accounts for that group. The custom approval extension ties
+into the scripting framework provided by ISIM, but uses CustomApprovalBean to
+provide all of the logic for the lookup.</span></p>
+
+<h2>Additional Considerations</h2>
+
+<h3>Maintaining the List of Approvers</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The approvers are
+stored in the database with the group requested as the key and the common name
+identifying the approver.&nbsp; This has the limitation that there may be
+multiple people with the same name.&nbsp; Ideally, the distinguished name of
+the approver would be used to be uniquely identified.</span></p>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>Also, the data
+must be entered into the database and kept up to date. This may require a
+specially built utility needs. The utility may take the form of an import tool
+to import data available in another format from documentation on an equivalent
+manual process. </span></p>
+
+<h3>Avoiding Duplicate Approvals</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>In this example,
+we routed the approval to a given person based on the value of the primary
+group.&nbsp; However, on a modify account request the group may not
+change.&nbsp; This should be detected and handled differently.&nbsp; This can
+be done by writing additional script or Java code to examine the account
+changes rather than just the group value. </span></p>
+
+<h3>Extending to Other Account Types</h3>
+
+<p><span style='font-family:"Arial","sans-serif";color:black'>The example can
+be generalized to include multiple account types or it can be copied and
+modified to work for other account types.&nbsp; Considering the development,
+testing, and maintenance work involved it would be best to generalize to work
+for all account types.&nbsp; To do this the database schema and code would need
+to be changed.&nbsp; The custom approver script could pass the account object
+to the JavaScript extension.&nbsp; The JavaScript extension would then
+determine the approver based on the account type and group value. </span></p>
+
+<h3>Multiple Groups in a Single Request</h3>
+
+<p  style='margin-top:0in;margin-right:0in;margin-bottom:12.0pt;
+margin-left:0in'><span style='font-family:"Arial","sans-serif";color:black'>Many
+account types can have multiple values for group and they can be requested in a
+single transaction.&nbsp; In addition, there may be different types of groups,
+such as primary and secondary UNIX groups.&nbsp; In this case routing to
+multiple approvers seems like a reasonable requirement.&nbsp; This can be
+achieved by using the loop construct in the workflow designer.&nbsp; Each
+iteration of the loop would have approval by the approver for one of the groups
+in the request.<br>
+<br>
+It is possible that in a request for multiple groups that some of the groups
+will have the same approver.&nbsp; Additional development work is needed to
+make sure that these approvers are not routed multiple requests for approval
+because the user interface for each approval request is the same.</span></p>
+
+</div>
+
+</body>
+
+</html>

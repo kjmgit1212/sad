@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<MetamergeConfig IDIversion="Created by TDI7.0 - 2009-02-27" created="Fri Mar 13 14:49:15 IST 2009" createdBy="Administrator" modified="Mon Mar 16 12:15:35 IST 2009" modifiedBy="Administrator" version="7.0">
+    <Folder name="AssemblyLines">
+        <AssemblyLine name="HRFeed">
+            <LogEnabled>true</LogEnabled>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="ScriptEngine">JavaScript</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="debug">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="nullBehavior">Default Behavior</parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks>
+                <Hook name="onsuccess">
+                    <Name>onsuccess</Name>
+                    <Enabled>false</Enabled>
+                    <DebugBreak>false</DebugBreak>
+                </Hook>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="JNDIFeed" state="Simulated"/>
+                    <Component name="CVS File Connector" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <Connector name="CVS File Connector">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <UserComment/>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <parameter name="debug">false</parameter>
+                        <parameter name="fileAppend">false</parameter>
+                        <parameter name="filePath">D:\itim\extensions\examples\idi_integration\HRFeedCSV\TDI7.0\People4.csv</parameter>
+                        <parameter name="userComment"/>
+                    </Configuration>
+                    <ComputeChanges>true</ComputeChanges>
+                    <DeltaBehavior>0</DeltaBehavior>
+                    <DeltaStrict>true</DeltaStrict>
+                    <Parser>
+                        <UserComment/>
+                        <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+                        <parameter name="characterSet"/>
+                        <parameter name="csvEnableQuoting">true</parameter>
+                        <parameter name="csvLogLongLines">0</parameter>
+                        <parameter name="csvWriteHeader">true</parameter>
+                        <parameter name="debug">false</parameter>
+                        <parameter name="userComment"/>
+                        <Schema name="Input">
+                            <InheritFrom>[parent]</InheritFrom>
+                        </Schema>
+                        <Schema name="Output">
+                            <InheritFrom>[parent]</InheritFrom>
+                        </Schema>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>$dn</Name>
+                            <Type>advanced</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Script>ret.value="uid=" + conn.getString("Last") + "," + JNDIFeed.getConnectorParam("jndiSearchBase");</Script>
+                            <Simple>$dn</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>Title</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>Title</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>cn</Name>
+                            <Type>advanced</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Script>ret.value=conn.getString("First") + " " + conn.getString("Last");</Script>
+                            <Simple>cn</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>departmentNumber</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>Department</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>givenname</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>First</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>objectclass</Name>
+                            <Type>advanced</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Script>ret.value="inetorgperson";</Script>
+                            <Simple>objectclass</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>sn</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>Last</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>uid</Name>
+                            <Type>advanced</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Script>ret.value=conn.getString("Last");</Script>
+                            <Simple>uid</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <InheritFrom>[no inheritance]</InheritFrom>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <Driver>CloudScape</Driver>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <SchemaItem>
+                            <Name>Department</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>First</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>Last</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>Title</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <SchemaItem>
+                            <Name>Department</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>First</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>Last</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>Title</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <MatchAny>false</MatchAny>
+                        <AdvancedLinkMode>false</AdvancedLinkMode>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <parameter name="initreconnect">false</parameter>
+                        <parameter name="numberOfRetries">1</parameter>
+                        <parameter name="retryDelay">10</parameter>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                    <InitializeOption>0</InitializeOption>
+                </Connector>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <Connector name="JNDIFeed">
+                    <InheritFrom>system:/Connectors/ibmdi.JNDI</InheritFrom>
+                    <ConnectorMode>Update</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <UserComment/>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <parameter name="debug">true</parameter>
+                        <parameter name="java.naming.factory.initial">com.ibm.dsml2.jndi.DSML2InitialContextFactory</parameter>
+                        <parameter name="java.naming.provider.url">http://hostname/enrole/dsml2_event_handler</parameter>
+                        <parameter name="java.naming.referral">follow</parameter>
+                        <parameter name="java.naming.security.authentication">Simple</parameter>
+                        <parameter name="java.naming.security.credentials">agent</parameter>
+                        <parameter name="java.naming.security.principal">agent</parameter>
+                        <parameter name="jndiSearchBase">dc=HRLoad</parameter>
+                        <parameter name="jndiSearchFilter">(objectclass=*)</parameter>
+                        <parameter name="jndiSearchScope">subtree</parameter>
+                        <parameter name="userComment"/>
+                    </Configuration>
+                    <ComputeChanges>true</ComputeChanges>
+                    <DeltaBehavior>0</DeltaBehavior>
+                    <DeltaStrict>true</DeltaStrict>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <Schema name="Input">
+                            <InheritFrom>[parent]</InheritFrom>
+                        </Schema>
+                        <Schema name="Output">
+                            <InheritFrom>[parent]</InheritFrom>
+                        </Schema>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>$dn</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>false</Modify>
+                            <Simple>$dn</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>Title</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>Title</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>cn</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>cn</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>departmentNumber</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>departmentNumber</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>givenname</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>givenname</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>objectclass</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>false</Modify>
+                            <Simple>objectclass</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>sn</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>sn</Simple>
+                        </AttributeMapItem>
+                        <AttributeMapItem>
+                            <Name>uid</Name>
+                            <Type>simple</Type>
+                            <Enabled>true</Enabled>
+                            <Add>true</Add>
+                            <Modify>true</Modify>
+                            <Simple>uid</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <Driver>BTree</Driver>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <SchemaItem>
+                            <Name>$dn</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>audio</Name>
+                            <Syntax>[byte array]</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>businesscategory</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>carlicense</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>cn</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>departmentnumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>description</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>destinationindicator</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>displayname</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>employeenumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>employeetype</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>facsimiletelephonenumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>givenname</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>homephone</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>homepostaladdress</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>initials</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>internationalisdnnumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>jpegphoto</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>l</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>labeleduri</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>mail</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>manager</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>mobile</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>o</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>objectclass</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>ou</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>pager</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>photo</Name>
+                            <Syntax>[byte array]</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>physicaldeliveryofficename</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>postaladdress</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>postalcode</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>postofficebox</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>preferreddeliverymethod</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>preferredlanguage</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>registeredaddress</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>roomnumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>secretary</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>seealso</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>sn</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>st</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>street</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>telephonenumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>teletexterminalidentifier</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>telexnumber</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>title</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>uid</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>usercertificate</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>userpassword</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>userpkcs12</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>usersmimecertificate</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>x121address</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>x500uniqueidentifier</Name>
+                            <Syntax>java.lang.String</Syntax>
+                            <Presence>null</Presence>
+                        </SchemaItem>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <MatchAny>false</MatchAny>
+                        <AdvancedLinkMode>true</AdvancedLinkMode>
+                        <Script>ret.filter="(uid=" + work.getString("uid") + ")";</Script>
+                        <LinkCriteriaItem>
+                            <Key>f3bb0f97b5</Key>
+                            <Attribute>$dn</Attribute>
+                            <Operator>equals</Operator>
+                            <Value>$$dn</Value>
+                        </LinkCriteriaItem>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <Hook name="before_add">
+                            <Name>before_add</Name>
+                            <Script>system.dumpEntry(work);</Script>
+                            <Enabled>true</Enabled>
+                            <DebugBreak>false</DebugBreak>
+                        </Hook>
+                        <Hook name="before_modify">
+                            <Name>before_modify</Name>
+                            <Script><![CDATA[system.dumpEntry(current);
+system.dumpEntry(work);]]></Script>
+                            <Enabled>true</Enabled>
+                            <DebugBreak>false</DebugBreak>
+                        </Hook>
+                        <Hook name="default_fail">
+                            <Name>default_fail</Name>
+                            <Script>system.dumpEntry(error);</Script>
+                            <Enabled>true</Enabled>
+                            <DebugBreak>false</DebugBreak>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <parameter name="initreconnect">false</parameter>
+                        <parameter name="numberOfRetries">1</parameter>
+                        <parameter name="retryDelay">10</parameter>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                    <InitializeOption>0</InitializeOption>
+                </Connector>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations>
+                <Operation name="Default">
+                    <Schema name="Input"/>
+                    <Schema name="Output"/>
+                    <AttributeMap name="Input"/>
+                    <AttributeMap name="Output"/>
+                    <Public>true</Public>
+                </Operation>
+            </Operations>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    </Folder>
+    <Folder name="Connectors"/>
+    <Folder name="Parsers"/>
+    <Folder name="Scripts"/>
+    <JavaLibraries/>
+    <JavaProperties/>
+    <Folder name="Includes"/>
+    <Folder name="Config">
+        <LogConfig name="Logging"/>
+        <InstanceProperties name="AutoStart">
+            <AutoStart/>
+        </InstanceProperties>
+        <TombstonesConfig name="Tombstones"/>
+        <SolutionInterface name="SolutionInterface">
+            <InstanceID>Placement_Rule</InstanceID>
+            <enabled>true</enabled>
+        </SolutionInterface>
+    </Folder>
+    <Folder name="Functions"/>
+    <Folder name="AttributeMaps"/>
+    <Properties name="Properties">
+        <Stores>
+            <PropertyStore name="Solution-Properties">
+                <Parser>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                </Parser>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">Solution-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="Global-Properties">
+                <Parser>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                </Parser>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">Global-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="System-Properties">
+                <Parser>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                </Parser>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">System-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="Placement_Rule">
+                <Parser>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                </Parser>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collection">@SUBSTITUTE{config.$directory}/Placement_Rule.properties</parameter>
+                    <parameter name="collectionType">Placement_Rule</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="Java-Properties">
+                <Parser>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                </Parser>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collection">@SUBSTITUTE{config.$directory}/Placement_Rule.properties</parameter>
+                    <parameter name="collectionType">Java-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+        </Stores>
+    </Properties>
+</MetamergeConfig>

@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2000, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<!-- Copyright (C) 1998 Dascom, Inc. -->
+<!-- All Rights Reserved. -->
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="JavaScript">
+	<!--
+	function selfreg()
+	{
+       document.location= "/cct/itim_expi/selfregister.jsp";
+	}
+	function change()
+	{           
+		document.location= "/cct/itim_expi/selfchangepwd.jsp";
+	}
+	function forgot()
+	{
+       if ( document.form.username.value.length > 0 ) {
+           document.form.action = "/cct/itim_expi/ForgotPasswordServlet";
+           document.form.submit();
+       } else {
+           alert( "Please enter your User ID and press the \"Forgot Password?\" link" );
+       }
+	}
+	//-->
+</script>
+<TITLE>Access Manager Login for Tivoli Identity Products Integration Sample</TITLE>
+</HEAD>
+
+<link href="/css/imperative.css" rel="stylesheet" type="text/css">
+<body bgcolor="#EFEFEF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="document.form.username.focus();">
+<table width="100%" height="60" border="0" cellpadding="0" cellspacing="0">
+  <tr bgcolor="#000000"> 
+    <td width="57"><img src="/images/img_clear.gif" width="20" height="20"></td>
+    <td width="57"><img src="/images/logo_tivoli.gif" width="47" height="25" alt="Tivoli"></td>
+    <td width="100%" valign="middle" nowrap class="text-productname">&nbsp;&nbsp;Tivoli Identity Products Integration Sample </td>
+    <td width="103"><img src="/images/mosaic_banner.jpg" width="186" height="56"></td>
+    <td width="103"><img src="/images/logo_ibm.gif" width="96" height="56"></td>
+  </tr>                   
+</table>
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="taskbar">
+  <tr nowrap> 
+    <td height="26" width="95%" nowrap></td>
+  </tr>
+</table>
+
+<BR>
+%ERROR%
+<BR>
+
+<!--- DO NOT TRANSLATE OR MODIFY any part of the hidden parameter(s) --->
+
+<!---
+  The following block of code provides users with a warning message
+  if they do not have cookies configured on their browsers.  
+  If this environment does not use cookies to maintain login sessions, 
+  simply remove or comment out the block below.
+--->
+
+
+<!--- BEGIN Cookie check block --->
+<!---
+DO NOT TRANSLATE anything inside the SCRIPT tag except the quoted 
+string warningString.  i.e. var warningString = "Translate this string";
+--->
+<SCRIPT LANGUAGE=JavaScript>
+var warningString = "<B>WARNING:</B> To maintain your login session, make sure that your browser is configured to accept Cookies.";
+document.cookie = 'acceptsCookies=yes';
+if(document.cookie == ''){
+document.write(warningString);
+}
+else{
+document.cookie = 'acceptsCookies=yes; expires=Fri, 13-Apr-1970 00:00:00 GMT';
+}
+</SCRIPT>
+<NOSCRIPT>
+<B>WARNING:</B> To maintain your login session, make sure that<BR>
+your browser is configured to accept Cookies.
+</NOSCRIPT>
+<!--- END Cookie check block --->
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="3">
+  <tr>
+	<td width="80"><img src="/images/img_clear.gif" width="80" height="10"></td>
+	<td width="100%">
+	  <table width="90%" border="0" cellspacing="0" cellpadding="0">
+	    <tr>
+		  <td class="heading-text">Sign On</td>
+		</tr>
+		<tr>
+		  <td class="heading-line"><img src="/images/img_clear.gif" width="1" height="2"></td>
+		</tr>
+
+		<!-- Info message -->
+		<tr>
+		  <td class="text-description">
+            To sign on, please enter your user ID and password.
+          </td>
+		</tr>
+
+		<!-- Display any error messages -->
+		<tr>
+<!--				<td><%@ include file="error_msg_box.jsp" %></td> -->
+		</tr>
+	  </table>
+      
+      <br>
+      
+      <FORM name="form" METHOD=POST ACTION="/pkmslogin.form">
+        <table width="102%" border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td width="90%" nowrap class="text-normal">
+              User ID:
+              <br>
+	          <input NAME="username" type="text" size="15" class="entry-field">
+            </td>
+          </tr>
+          <tr>
+            <td nowrap class="text-normal">
+              Password:
+              <br>
+	          <input name="PASSWORD" type="password" size="15" class="entry-field">
+	        </td>
+          </tr>
+          <tr>
+            <td nowrap class="text-normal">
+              <INPUT TYPE="HIDDEN" NAME="login-form-type" VALUE="pwd">
+              <br>
+              <INPUT TYPE="SUBMIT" VALUE="Login">
+	        </td>
+          </tr>
+	      <tr>
+	        <td class="text-normal">
+              <br>
+  	          <b>
+                <a href="javascript:change();">
+                  <span class=pci-link>Change Your Password?</span>
+                </a>
+              </b>
+            </td>
+	      </tr>
+	      <tr>
+	        <td class="text-normal">
+              <br>
+  	          <b>
+                <a href="javascript:forgot();">
+                  <span class=pci-link>Forgot Password?</span>
+                </a>
+              </b>
+            </td>
+	      </tr>
+	      <tr>
+	        <td class="text-normal">
+              <br>
+		      <b>
+                <a href="javascript:selfreg();">
+                  <span class=pci-link>Register a new user?</span>
+                </a>
+              </b>
+            </td>
+	      </tr>
+        </table>
+      </FORM>
+    </td>
+  </tr>
+</table>    
+
+</BODY>
+</HTML>

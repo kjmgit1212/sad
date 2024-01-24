@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>Integrating Identity Manager with a Single Sign-On (SSO)
+Provider</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P><A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><BR>
+<a href="#customizeUI">Customizing the Logon User Interface</a><BR>
+<a href="#envSetUp">Environment Set-up</a></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>This document describes the configuration of single sign-on for Identity Manager.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>Some Identity Manager installations may be required to be
+integrated with third party single sign-on providers. Typically, such
+single sign-on providers protect a set of web-based resources using
+an authentication data store that is managed separately from Identity
+Manager. The first time a client attempts to access any protected
+resource, the single sign-on provider will authenticate and, if
+successful, will pass a token indicating the identity of the
+authenticated user to all subsequently accessed resources.
+</P>
+<P>When using a single sign-on provider with Identity Manager it will
+be necessary to add a customized logon user interface specific to the
+single sign-on provider. Typically, single sign-on providers
+intercept http requests to a protected resource, authenticate the
+user, and place authentication data into the http header before
+allowing access to the resource. In this case the protected resource
+is the Identity Manager user interface.</P>
+<P>The standard logon user interface provided with Identity Manager
+will not be appropriate, since it will prompt the user for a user id
+and password. An Identity Manager logon interface customized for a
+single sign-on logon provider will typically collect user credentials
+from the sign-on provider, verify that the user has a Identity
+Manager account, establish an Identity Manager session, and forward
+the user into the Identity Manager system.</P>
+<P>Logout and session timeout are related problems that can also be
+addressed to fit in with custom approaches.</P>
+<P>Figure 1 describes the actors involved in managing and using a
+system configured for user with a single sign-on provider.</P>
+<div align="center">
+<img width=576 height=596 src="images/image004.gif"><br>
+<b>Figure 1: External Actors involved in managing and using a single
+sign-on provider with Identity Manager</b>
+</div>
+<P>A description of the actors is presented in Table 1.</P>
+<div align="center">
+<table border="1">
+	<tbody>
+		<tr>
+			<td align="center"><b>Actor</b></td>
+			<td align="center"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td>User</td>
+			<td>The user tries to access Identity Manager’s web user interface</td>
+		</tr>
+		<tr>
+			<td>Single sign-on provider</td>
+			<td>Protects access to Identity Manager’s web user interface</td>
+		</tr>
+		<tr>
+			<td>SSO Provider User Data store</td>
+			<td>Stores user identities and logon credentials used by the single sign-on provider</td>
+		</tr>
+		<tr>
+			<td>Directory Server</td>
+			<td>Data store used by Identity Manager</td>
+		</tr>
+	</tbody>
+</table>
+<b>Table 1: Description of Actors involved in using a single sign-on
+provider with Identity Manager</b>
+</div>
+<H2><a name="customizeUI"></a>Customizing the Logon User Interface</H2>
+<br>
+<P>The steps when a user logs in via a single sign-on provider:</P>
+<OL>
+    <LI>The user attempts to access the Identity Manager
+    web user interface for the first time in the current session.
+	<LI>The single sign-on provider prompts the user for their user
+	id and password.
+	<LI>The user provides their user id and password.
+	<LI>The single sign-on provider verifies the user id and
+	password.
+	<LI>The single sign-on provider places a token indicating that
+	the user has been authenticated and a second token with the user id
+	in the HTTP request header/session or as a request parameter. Schemes for doing this will be specific
+	to individual providers.
+	<LI>The single sign-on provider forwards the request to the
+	custom logon module. This is the class written as part of the
+	integration exercise.
+	<LI>The SSO Adapter calls the Identity Manager authentication framework to authenticate the user.
+	<LI>There is no need for the custom authentication authority to
+	authenticate since the single sign-on provider already performed
+	that. However, it still needs to look up the Identity Manager system
+	user by their user id and, if they exist, return the SystemUser
+	user id as a String to the caller. If the user does not exist then a
+	<FONT SIZE=2><FONT FACE="Courier New">ITIMUISSOUserIdNotFoundException</FONT></FONT>
+	should be thrown. Since Identity Manager uses a different data store
+	than the single sign-on provider, the user id’s must be identical
+	on each.Otherwise, If the user id used to the authenticate to the SSO provider does not match the
+	ISDI user id, the adapter is responsible for mapping/returning the ISDI user id in getUserId() method in SSO Adapter.
+	<LI>At this point control is returned to the Identity Manager Login module , which can now
+	establish the Identity Manager user session.
+	<LI>The Identity Manager Login module now forwards the user to the Identity
+	Manager system including the main menu from which the user may
+	choose any action that they are authorized to perform. </OL>
+<P>A custom logon user interface appropriate to custom authentication
+methods may be added to Identity Manager. There are two steps
+required:</P>
+<OL>
+	<LI>Write Java code to define the login user interface, that collects logon credentials, and
+	establishes the user’s Identity Manager session through Single Sign On.
+	<LI>Register the Servlet with the application server (not required if a Java
+	Server Page is used).
+</OL>
+<P>The Identity Manager framework requires an Identity Manager user
+id at logon time in order to establish an Identity Manager session. An SSO Adapter
+that examines the incoming HTTP request for logon information
+placed in the header by an external authentication authority may
+implement this.</P>
+<P>An example for the same is , SampleSSOAdapter.java (which implements the SSOAdapter interface) provided in the examples directory.</P>
+<P>To establish an Identity Manager session and forward the user to
+the Identity Manager application, use the <FONT SIZE=2><FONT FACE="Courier New">SampleSSOAdapter.java </FONT></FONT>
+class. The customer needs to provide the implementation for the following methods in the implementation class of SSOAdapter interface:</P>
+<P><FONT SIZE=2><FONT FACE="Courier New">isAuthenticated(HttpServletRequest request)</FONT></FONT></P>
+<P>This method returns true if the request object passed to this method is authenticated via an SSO provider. Otherwise,it will throw  ITIMUIException or ITIMUISSOUserIdNotFoundException.</P>
+<P><FONT SIZE=2><FONT FACE="Courier New">getUserId(HttpServletRequest request)</FONT></FONT></P>
+<P>This method returns the ISDI User ID that identifies the authenticated user. The SSO adapter should use information stored in the HTTP request to identify the ISDI user.
+If the user id used to the authenticate to the SSO provider does not match the ISDI user id, the adapter is responsible for mapping/returning the ISDI user id.</P>
+<p>Note : The SampleSSOAdapter.java provided in the $ISDI_HOME\extensions\examples\singlesignon\src\examples\singlesignon example  is only a sample implementation provided for user's reference. It does not cater to the specific security requirements of the user.
+In this example, only null check of the user id is present as an authentication mechanism. Hence while using the same for a  production  environment , kindly perform the required modifications in this class. </p>
+<P>
+Details of the <FONT SIZE=2><FONT FACE="Courier New">SSOAdapter</FONT></FONT>
+interface, <FONT SIZE=2><FONT FACE="Courier New">ITIMUIException</FONT></FONT>,
+<FONT SIZE=2><FONT FACE="Courier New">ITIMUISSOUserIdNotFoundException</FONT></FONT> classes
+are provided in the API documents.</P>
+<P>When the user logs out, their session will be terminated and by
+default they will be directed back to the Identity Manager logon
+page. If this is not appropriate a new logout URL should be
+registered. The property enrole.ui.logoffURL in file ui.properties
+should be set to the URL where the user should be directed to when
+logging out of the Identity Manager application. This may be set to
+the URL of a HTML page, a JSP page, a Servlet, or some other web
+resource.</P>
+<P>It is desirable that, on logging out, the user’s HTTP session be
+terminated. This can be done by a call to <FONT SIZE=2><FONT FACE="Courier New">session.invalidate().</FONT></FONT>
+</P>
+<P>If the user’s session times out then, by default, the user will
+again be forwarded to the logon page. This may also be inappropriate
+for a single sign-on protected installation. A separate session
+timeout URL is defined for this by the parameter <FONT SIZE=2><FONT FACE="Courier New">enrole.ui.timeoutURL</FONT></FONT>
+in the ui.properties configuration file.</P>
+<H2><a name="envSetUp"></a>Environment Set-up</H2>
+<P>All custom code written must be compiled and added to the
+application server classpath. An appropriate place to locate the
+classes is in the lib directory under $ISDI_HOME. The classes should be put into a jar file. If the classes
+are placed in $ISDI_HOME/lib, then you should modify the WebSphere shared library ITIM Lib to include your jar file. Using the WAS admin console, navigate to Environment &gt; Shared Libraries and select ITIM Lib. Then add a new line to the Classpath text box that looks something like:</P>
+<pre>${ITIM_HOME}/lib/your_custom_jar.jar</pre>
+<p>Save the changes and restart WAS to have your custom code included in the Classpath.</p>
+</BODY>
+</HTML>

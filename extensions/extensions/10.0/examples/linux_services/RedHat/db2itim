@@ -1,0 +1,132 @@
+#!/bin/sh
+#/******************************************************************************
+# *
+# * Licensed Materials - Property of IBM
+# *
+# * Source File Name = db2itim
+# *
+# * (C) COPYRIGHT IBM Corp. 2006, 2008 All Rights Reserved
+# *
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# *
+# *****************************************************************************/
+
+#********************************************************************************************
+#
+#  This file contains sample code. IBM provides this code on an 'AS IS' basis without
+#  warranty of any kind, either expressed or implied, including but not limited to,
+#  the implied warranties of merchantability or
+#  fitness for a particular purpose.
+#
+#********************************************************************************************
+# This information is required by Redhat Linux
+#********************************************************************************************
+# chkconfig: 345 96 29
+# description: Starts and stops db2 instance for the ITIM database
+#
+# processname: db2itim
+#
+#********************************************************************************************
+#
+# To configure the ITIM DB2 Instance as a Linux Service so it automatically starts
+#
+#   1. Put this script in the directory /etc/init.d
+#   2. Run this command from the directory /etc/init.d to format the script text to unix
+#      dos2unix db2itim
+#   3. Run this command to change the script permissions so it is executable
+#      chmod  ugo+rx db2itim  
+#   4. Run this command to define db2itim as a Linux service 
+#      chkconfig --add db2itim
+#
+#********************************************************************************************
+
+# You may need to change the DB2 Instance name below
+DB2_INSTANCE="db2admin"
+
+RETVAL=0
+
+function start()
+{
+    echo "Starting DB2 instance $DB2_INSTANCE:"
+
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    su - $DB2_INSTANCE -c "db2gcf -u -p 0 -i $DB2_INSTANCE"
+    RETVAL=$?
+    status
+    return $RETVAL
+}	
+
+function stop()
+{
+    echo "Stopping DB2 instance $DB2_INSTANCE:"
+
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    su - $DB2_INSTANCE -c "db2gcf -d -p 0 -i $DB2_INSTANCE"
+    RETVAL=$?
+    return $RETVAL
+}	
+
+function restart()
+{
+    stop
+    start
+}	
+
+function status()
+{
+    check_instance
+    if [ $RETVAL -ne 0 ]; then
+        return $RETVAL
+    fi
+
+    su - $DB2_INSTANCE -c "db2gcf -s -p 0 -i $DB2_INSTANCE"
+    RETVAL=$?
+    return $RETVAL
+}
+
+function check_instance()
+{
+    output=`id -u $DB2_INSTANCE 2>&1 | grep -i 'No such user'`
+
+    if [ $? -eq 0 ]; then
+        echo "User $DB2_INSTANCE does not exist!" 
+        RETVAL=1
+    else
+        RETVAL=0
+    fi
+
+    return $RETVAL
+}
+
+###################################################################################
+# Mainline Shell script 
+###################################################################################
+
+case "$1" in
+    start)
+        start
+	;;
+    stop)
+        stop
+	;;
+    restart)
+        restart
+	;;
+    status)
+        status
+	;;
+    *)
+        echo "Usage: `basename $0` {start|stop|restart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL

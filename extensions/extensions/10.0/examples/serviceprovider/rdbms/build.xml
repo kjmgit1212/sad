@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ant build file for ITIM 4.x examples -->
+
+<!-- Licensed Materials - Property of IBM                              -->
+<!--                                                                   -->
+<!-- Source File Name = build.xml                                      -->
+<!--                                                                   -->
+<!-- (C) COPYRIGHT IBM Corp. 1999, 2009 All Rights Reserved            -->
+<!--                                                                   -->
+<!-- US Government Users Restricted Rights - Use, duplication or       -->
+<!-- disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+
+<project name="enRole examples" default="rdbms_connector" basedir="../../..">
+
+  <property name="all" value="examples"/>
+  <property name="dest" value="${itim.home}/extensions/lib"/>
+  <property name="srdest" value="${itim.home}/extensions/{RELEASE_VERSION}/examples/selfregistration"/>
+  <property name="expisrc" value="${itim.home}/extensions/{RELEASE_VERSION}/examples/self_care/src"/>
+
+  <!-- Create the time stamp and create destination directory-->
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${dest}"/>
+  </target>
+
+  <!-- set-up the classpath for compiling -->
+  <path id="classpath">
+    <fileset dir="${itim.home}/extensions/{RELEASE_VERSION}/lib">
+        <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${itim.home}/lib">
+        <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- Generates the SQL substitution language parser for the relational database connector using Antlr-->
+  <path id="antlr.class.path">
+    <pathelement path="${itim.home}/lib/antlr-2.7.2.jar"/>
+  </path>
+  <target name="gen_rdbms_parser"
+          description="Generates the SQL substitution language parser">
+    <java classname="antlr.Tool" fork="true">
+      <arg value="-o"/>
+      <arg value="examples/serviceprovider/rdbms/parser"/>
+      <arg value="examples/serviceprovider/rdbms/parser/sql_substitution.g"/>
+      <classpath refid="antlr.class.path"/>
+    </java>
+  </target>
+
+  <!-- Builds the relational database connector -->
+  <path id="deploy_classpath">
+      <pathelement location="${itim.home}/data"/>
+      <path refid="classpath"/>
+  </path> 
+  <target name="rdbms_connector" description="Builds the relational database Connector">
+      <mkdir dir="examples/serviceprovider/rdbms/classes"/>
+      <mkdir dir="examples/serviceprovider/rdbms/lib"/>
+      <javac debug="on" srcdir="examples/serviceprovider/rdbms" destdir="examples/serviceprovider/rdbms/classes" encoding="ISO8859-1">
+          <classpath refid="classpath"/>
+      </javac>
+      <jar jarfile="examples/serviceprovider/rdbms/lib/rdbms_connector.jar" 
+           basedir="examples/serviceprovider/rdbms/classes"/>
+  </target>
+
+  <!-- Deploys the relational database example -->
+  <target name="rdbms_deploy" description="Deploys the relational database example">
+      <copy todir="${app.deploy}" file="examples/serviceprovider/rdbms/lib/rdbms_connector.jar"/>
+      <copy todir="${itim.home}/data/remote_resources/rdbmsservice">
+          <fileset dir="examples/serviceprovider/rdbms/rdbmsservice"/>
+      </copy>
+      <java fork="true" classname="com.ibm.itim.remoteservices.transformation.EnroleAgentSchemaUtils">
+          <classpath refid="deploy_classpath"/>
+          <arg value="rdbmsservice"/>
+      </java>
+  </target>
+
+  <!-- DB2: creates the tables for the relational database example -->
+  <target name="rdbms_ddl" 
+          description="DB2: creates the tables for the relational database example">
+      <sql driver="COM.ibm.db2.jdbc.app.DB2Driver"
+           url="jdbc:db2:ENROLE"
+           userid="enrole"
+           password="access360"
+           src="examples/serviceprovider/rdbms/accounts.ddl"
+      />  
+  </target>
+  
+  <!-- SQL Server: creates the tables for the relational database example -->
+  <target name="rdbms_ddl_sql" 
+          description="SQL Server: creates the tables for the relational database example">
+      <sql driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+           url="jdbc:sqlserver://127.0.0.1:1433;database=enrole"
+           userid="enrole"
+           password="secret"
+           src="examples/serviceprovider/rdbms/accounts_sqlserver.ddl"
+      />  
+  </target>
+  
+  <!-- Oracle: creates the tables for the relational database example -->
+  <target name="rdbms_ddl_oracle" 
+          description="Oracle: creates the tables for the relational database example">
+      <sql driver="oracle.jdbc.OracleDriver"
+           url="jdbc:oracle:thin:@9.38.215.100:1521:OR81"
+           userid="enrole"
+           password="enrole"
+           src="examples/serviceprovider/rdbms/accounts_oracle.ddl"
+      />  
+  </target>
+
+</project>

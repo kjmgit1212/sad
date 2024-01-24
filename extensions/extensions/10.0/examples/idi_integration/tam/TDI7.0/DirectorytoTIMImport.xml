@@ -1,0 +1,1129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/********************************************************************
+*  Licensed Materials - Property of IBM
+*  
+*  (c) Copyright IBM Corp.  2007, 2009 All Rights Reserved
+*  
+*  US Government Users Restricted Rights - Use, duplication or
+*  disclosure restricted by GSA ADP Schedule Contract with
+*  IBM Corp.
+********************************************************************/
+-->
+<MetamergeConfig created="Tue Apr 08 11:06:46 CDT 2003" createdBy="sam" modified="Tue May 20 17:16:19 CDT 2003" modifiedBy="sam" version="1.0">
+<Folder name="AssemblyLines">
+<AssemblyLine name="LDAPUserstoTIM">
+<Settings>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="includeGlobalPrologs">true</parameter>
+<parameter name="nullBehavior">Default Behavior</parameter>
+</Settings>
+<IOSettings>
+<InputParameters/>
+<OutputParameters/>
+</IOSettings>
+<Connectors>
+<Connector name="GetLDAPUsers">
+<InheritFrom>/Connectors/GetLDAPUsers</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{LDAP_PW}</parameter>
+<parameter name="ldapSearchBase">@PROPERTY{LDAP_SearchBase}</parameter>
+<parameter name="ldapUrl">@PROPERTY{LDAP_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{LDAP_Login}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+<Connector name="TIMImport">
+<InheritFrom>/Connectors/TIMImport</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="java.naming.provider.url">@PROPERTY{TIM_DSMLv2_URL}</parameter>
+<parameter name="java.naming.security.credentials">@PROPERTY{TIM_DSMLv2_PW}</parameter>
+<parameter name="java.naming.security.principal">@PROPERTY{TIM_DSMLv2_Login}</parameter>
+<parameter name="jndiSearchBase">@PROPERTY{TIM_DSMLv2_SearchBase}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+<Connector name="TestOut">
+<InheritFrom>/Connectors/TestOut</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="filePath">testout.dsml</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value = "uid=" + work.getString("uid"); </Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+</Connectors>
+</AssemblyLine>
+<AssemblyLine name="ADUserstoTIM">
+<Settings>
+<parameter name="automapattributes">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="includeGlobalPrologs">true</parameter>
+<parameter name="nullBehavior">Default Behavior</parameter>
+</Settings>
+<IOSettings>
+<InputParameters/>
+<OutputParameters/>
+</IOSettings>
+<Connectors>
+<Connector name="GetADTAMUsers">
+<InheritFrom>/Connectors/GetADTAMUsers</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="ldapPassword">@PROPERTY{AD_password}</parameter>
+<parameter name="ldapSearchBase">@PROPERTY{AD_Search_Base}</parameter>
+<parameter name="ldapUrl">@PROPERTY{AD_URL}</parameter>
+<parameter name="ldapUsername">@PROPERTY{AD_Username}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script><![CDATA[var na = conn.getString("name");
+if (na == null)
+  ret.value=conn.getString("cn");
+else 
+  ret.value=na;]]></Script>
+<Simple>uid</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accountExpires</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>badPasswordTime</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>badPwdCount</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>codePage</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>countryCode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>distinguishedName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>instanceType</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>lastLogoff</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>lastLogon</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>logonCount</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>name</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectCategory</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectClass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectGUID</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectSid</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>primaryGroupID</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pwdLastSet</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sAMAccountName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sAMAccountType</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uSNChanged</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uSNCreated</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userAccountControl</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPrincipalName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>whenChanged</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>whenCreated</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+<Connector name="TIMImport">
+<InheritFrom>/Connectors/TIMImport</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="java.naming.provider.url">@PROPERTY{TIM_DSMLv2_URL}</parameter>
+<parameter name="java.naming.security.credentials">@PROPERTY{TIM_DSMLv2_PW}</parameter>
+<parameter name="java.naming.security.principal">@PROPERTY{TIM_DSMLv2_Login}</parameter>
+<parameter name="jndiSearchBase">@PROPERTY{TIM_DSMLv2_SearchBase}</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+<Connector name="TestOut">
+<InheritFrom>/Connectors/TestOut</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Disabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="filePath">testout.dsml</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value = "uid=" + work.getString("uid"); </Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+</Connectors>
+</AssemblyLine>
+</Folder>
+<Folder name="Connectors">
+<Connector name="GetLDAPUsers">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">root</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">dc=com</parameter>
+<parameter name="ldapSearchFilter">objectClass=person</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">@PROPERTY{TAM_LDAP_URL}</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">cn=root</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>sn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script><![CDATA[var ldapuid=conn.getString("uid");
+if (ldapuid == null)
+  ret.value=conn.getString("cn");
+else
+  ret.value=ldapuid;]]></Script>
+<Simple>uid</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="TIMImport">
+<InheritFrom>system:/Connectors/ibmdi.JNDI</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="java.naming.factory.initial">com.ibm.dsml2.jndi.DSML2InitialContextFactory</parameter>
+<parameter name="java.naming.provider.url">http://hostname:9080/enrole/dsml2_event_handler/tivoli</parameter>
+<parameter name="java.naming.referral">follow</parameter>
+<parameter name="java.naming.security.authentication">Simple</parameter>
+<parameter name="java.naming.security.credentials">agent</parameter>
+<parameter name="java.naming.security.principal">agent</parameter>
+<parameter name="jndiSearchBase">dc=HRLoad</parameter>
+<parameter name="jndiSearchFilter">(objectclass=*)</parameter>
+<parameter name="jndiSearchScope">subtree</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value = "uid=" + work.getString("uid") + "," + TIMImport.getConnectorParam("jndiSearchBase");</Script>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>displayName</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>displayName</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>erAliases</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>erAliases</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>givenName</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>givenName</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>objectclass</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script>ret.value="inetOrgPerson";</Script>
+<Simple>objectclass</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>sn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>uid</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+<Connector name="TestOut">
+<InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+<ConnectorMode>AddOnly</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="debug">false</parameter>
+<parameter name="fileAppend">false</parameter>
+<parameter name="filePath">testout.dsml</parameter>
+</Configuration>
+<Parser>
+<InheritFrom>system:/Parsers/ibmdi.DSML</InheritFrom>
+<parameter name="dnattribute">$dn</parameter>
+<parameter name="isnamespaceaware">false</parameter>
+<parameter name="isvalidating">false</parameter>
+<parameter name="omitxmldeclaration">false</parameter>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>$dn</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>$dn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>sn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>uid</Simple>
+</AttributeMapItem>
+</AttributeMap>
+<DeltaSettings>
+<InheritFrom>[no inheritance]</InheritFrom>
+</DeltaSettings>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+</Hooks>
+</Connector>
+<Connector name="GetADTAMUsers">
+<InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+<ConnectorMode>Iterator</ConnectorMode>
+<ConnectorState>Enabled</ConnectorState>
+<Configuration>
+<InheritFrom>[parent]</InheritFrom>
+<parameter name="automapADPassword">false</parameter>
+<parameter name="debug">false</parameter>
+<parameter name="ldapAuthenticationMethod">Simple</parameter>
+<parameter name="ldapPageSize">0</parameter>
+<parameter name="ldapPassword">y6biyu</parameter>
+<parameter name="ldapReferrals">follow</parameter>
+<parameter name="ldapSearchBase">DC=samtest,DC=com</parameter>
+<parameter name="ldapSearchFilter">objectClass=person</parameter>
+<parameter name="ldapSearchScope">subtree</parameter>
+<parameter name="ldapSizeLimit">0</parameter>
+<parameter name="ldapTimeLimit">0</parameter>
+<parameter name="ldapUrl">ldap://yang.dev.tivoli.com:389</parameter>
+<parameter name="ldapUseSSL">false</parameter>
+<parameter name="ldapUsername">sam</parameter>
+<parameter name="ldapVLVPageSize">0</parameter>
+<parameter name="simulateRename">true</parameter>
+<parameter name="userComment"/>
+</Configuration>
+<Parser>
+<InheritFrom>[parent]</InheritFrom>
+</Parser>
+<AttributeMap name="Input">
+<InheritFrom>[parent]</InheritFrom>
+<AttributeMapItem>
+<Name>cn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>cn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>sn</Name>
+<Type>simple</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script/>
+<Simple>sn</Simple>
+</AttributeMapItem>
+<AttributeMapItem>
+<Name>uid</Name>
+<Type>advanced</Type>
+<Add>true</Add>
+<Modify>true</Modify>
+<Script><![CDATA[var na = conn.getString("name");
+if (na.equals(""))
+  ret.value=conn.getString("cn");
+else 
+  ret.value=na;]]></Script>
+<Simple>uid</Simple>
+<NullBehavior>Empty String</NullBehavior>
+</AttributeMapItem>
+</AttributeMap>
+<AttributeMap name="Output">
+<InheritFrom>[parent]</InheritFrom>
+</AttributeMap>
+<DeltaSettings/>
+<Schema>
+<InheritFrom>[parent]</InheritFrom>
+<SchemaItem>
+<Name>$dn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>accountExpires</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>badPasswordTime</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>badPwdCount</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>cn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>codePage</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>countryCode</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>distinguishedName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>givenName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>instanceType</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>lastLogoff</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>lastLogon</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>logonCount</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>name</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectCategory</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectClass</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectGUID</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>objectSid</Name>
+<Syntax>[byte array]</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>[byte array]</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>primaryGroupID</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>pwdLastSet</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sAMAccountName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sAMAccountType</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>sn</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uSNChanged</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>uSNCreated</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userAccountControl</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>userPrincipalName</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>whenChanged</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+<SchemaItem>
+<Name>whenCreated</Name>
+<Syntax>java.lang.String</Syntax>
+<DefaultValue>null</DefaultValue>
+<Syntax>java.lang.String</Syntax>
+<RequiredInput>false</RequiredInput>
+<RequiredOutput>false</RequiredOutput>
+<Excluded>false</Excluded>
+</SchemaItem>
+</Schema>
+<LinkCriteria>
+<InheritFrom>[parent]</InheritFrom>
+<AdvancedLinkMode>false</AdvancedLinkMode>
+</LinkCriteria>
+<Hooks>
+<InheritFrom>[parent]</InheritFrom>
+<Hook>
+<Name>default_fail</Name>
+<Script>system.skipEntry();</Script>
+<Enabled>true</Enabled>
+<DebugBreak>false</DebugBreak>
+</Hook>
+</Hooks>
+</Connector>
+</Folder>
+<Folder name="Parsers"/>
+<Folder name="EventHandlers"/>
+<Folder name="Scripts"/>
+<JavaLibraries/>
+<JavaProperties/>
+<Folder name="Includes"/>
+<ExternalProperties>
+<Path>C:\Program Files\ibm\IBMDirectoryIntegrator\TIMTAMIntegration\DirectorytoTIMImport.properties</Path>
+<Encrypted>false</Encrypted>
+</ExternalProperties>
+</MetamergeConfig>

@@ -1,0 +1,917 @@
+<html>
+
+<head>
+<link rel=Stylesheet type="text/css" media=all href=style.css>
+
+
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<div>
+
+<p ><img width=283 height=58 src="../ibm_banner.gif"></p>
+
+</div>
+
+<div>
+
+<p ><img width=347 height=46 src="../tivolilogo.gif"></p>
+
+</div>
+
+<div>
+
+<p ><span style='font-size:20.5pt;font-family:"Arial","sans-serif";
+color:#005A9C'>Using Subforms</span></p>
+
+</div>
+
+<div style='margin-top:15.0pt'>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>Contents</span></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#1">1 Introduction</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#2">2 Skills Requirement</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#3">3 Related Documents</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#4">4 Related Documents</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#4.1">4.1 Subform
+Process Flow</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#4.2">4.2 Page Design</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#4.3">4.3 Linking the
+Subform to a Parent Form</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#5">5 Parameters Passed
+to the Subform</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#6">6 Returning Modified
+Data to the Parent Form</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#7">7 Retrieving ISIM
+Data</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#7.1">7.1 Retrieving
+Modified Data</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#8">8 Retrieving User
+Access Rights</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#9">9 Installing a
+Subform</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#10">10 Uninstalling a
+Subform</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#11">11 Example</a></p>
+
+</div>
+
+<div>
+
+<p  style='text-indent:15.0pt'><a href="#11.1">11.1 Installing
+the Example</a></p>
+
+</div>
+
+<div style='margin-top:15.0pt' id=1>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>1 Introduction</span></p>
+
+</div>
+
+<p>This readme describes the overall design, creation, installation and removal
+of subforms in the ISIM environment. It also shows you how to install the
+supplied subform example. </p>
+
+<p>IBM Security Identity Manager (ISIM) provides a number of built-in GUI
+controls that can be used to edit attributes of persons, business partners,
+accounts and organizational tree containers. These controls can be used to edit
+attributes that contain simple text data, dates and links to other ISIM
+objects. But the built-in controls may not be sufficient when an attribute
+contains formatted data, such as an XML document. </p>
+
+<p>ISIM provides the ability to define your own HTML pages to use as custom
+editors for formatted data. These custom editor pages are called subforms. ISIM
+ships with subform definitions that are used when editing RACF connect groups,
+SAP roles, etc. This document describes how you can create your own subform
+definitions </p>
+
+<div style='margin-top:15.0pt' id=2>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>2 Skills Requirement</span></p>
+
+</div>
+
+<p>Creating a subform definition requires application server development and
+deployment skills. This document assumes that the reader is familiar with the
+following: </p>
+
+<ul type=disc>
+ <li >Using HTML to create browser pages.</li>
+ <li >Client-side JavaScript and the Document Object Model.</li>
+ <li >J2EE servlet and JSP programming.</li>
+ <li >The ISIM Java API. </li>
+</ul>
+
+<div style='margin-top:15.0pt' id=3>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>3 Related Documents</span></p>
+
+</div>
+
+<p class=italic>IBM Tivoli Identity Manager Information Center </p>
+
+<ul type=disc>
+ <li >Specifically, search for the word &quot;subform&quot;.</li>
+</ul>
+
+<div style='margin-top:15.0pt' id=4>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>4 Creating a Subform</span></p>
+
+</div>
+
+<div style='margin-top:15.0pt' id=4.1>
+
+<p ><b><span style='font-family:"Arial","sans-serif"'>4.1
+Subform Process Flow</span></b></p>
+
+</div>
+
+<p>Editing an attribute value with a subform involves activities in both the
+ISIM application server, and in the user's web browser. The steps involved are
+shown in the diagram below. </p>
+
+<p ><img border=0 width=553 height=502 src=image001.gif></p>
+
+<div style='margin-top:15.0pt' id=4.2>
+
+<p ><b><span style='font-family:"Arial","sans-serif"'>4.2 Page
+Design</span></b></p>
+
+</div>
+
+<p>Your subform must be defined as a complete standalone web page. ISIM will
+display your subform in a separate browser window - not as a part of an ISIM
+page. </p>
+
+<p>Your subform can be defined using a static HTML file, or the HTML can be
+generated by a servlet or JSP. There are no requirements regarding the page
+contents. </p>
+
+<p>Using a static HTML file doesn't eliminate the need to do servlet or JSP
+programming. The changes to the edited attribute must be saved in the HTTP
+session. This can only be done by a servlet or JSP, so your static HTML must
+still use one of these as the action of a submit. </p>
+
+<div style='margin-top:15.0pt' id=4.3>
+
+<p ><b><span style='font-family:"Arial","sans-serif"'>4.3
+Linking the Subform to a Parent Form</span></b></p>
+
+</div>
+
+<p>The ISIM UI customization applet offers a control type of
+&quot;SubForm&quot;. When a form contains a subform control, this attribute is
+rendered as a button with the text &quot;Details&quot;. Clicking on this button
+will open a new browser window and load your subform in it. </p>
+
+<p>To edit an attribute using your custom subform, open the form template for
+the entity type having the attribute. Find the attribute on the form template,
+and right click on the attribute. Select &quot;Change To&quot; and then
+&quot;SubForm&quot; from the context menu. This will open the subform editor
+window in the applet. </p>
+
+<p>The subform editor allows you to specify a list of name-value pairs. These
+will be passed to your servlet or JSP as request parameters. The only mandatory
+entry in this list is the <span class=code1>customServletURI</span> parameter.
+The value of this parameter will depend on whether your subform is implemented
+using a servlet, JSP or HTML file: </p>
+
+<table  border=1 cellspacing=0 cellpadding=0
+ style='margin-left:15.0pt'>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=bold1>Servlet</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>The value must be the
+  &quot;url-pattern&quot; defined in your servlet mapping.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=bold1>JSP or HTML
+  File</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>The value must be the name of
+  the file, including the suffix. Don't include the path to the file.</p>
+  </td>
+ </tr>
+</table>
+
+<p>You may also include name-value pairs for any other parameters you want
+passed in the HTTP request. Note that these parameters will be static. The same
+values will always be passed whenever the subform referenced by this control is
+used. These parameters can be used to cause different behavior in a single
+servlet or JSP depending on how the subform control was created in the parent
+form. </p>
+
+<p>Additional parameters are automatically included in the first request to
+your servlet or JSP. These may contain the name of the attribute being edited,
+the DN of the object owning the attribute, or other context data. You don't
+need to include these in the subform control's name-value list. The exact list
+of automatically include parameters will vary depending on the type of object
+being edited, and whether it is being created or modified. This is described in
+detail in the next section of this document. </p>
+
+<p>Click the OK button in the subform editor when you are done editing the
+name-value list. </p>
+
+<p>You can also control the size of the window used to display your subform.
+With the entity form template still open in the UI customization applet, select
+the attribute with the subform control type. You can now set the subform's
+window size using the &quot;Width&quot; and &quot;Height&quot; fields in the
+&quot;Format&quot; tab at the bottom right of the applet window. These fields
+set the window size in pixels. </p>
+
+<div style='margin-top:15.0pt' id=5>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>5 Parameters Passed to the Subform</span></p>
+
+</div>
+
+<p>The first <span class=code1>HttpServletRequest</span> object passed to your
+servlet or JSP will contain one parameter for each of the name-value pairs
+defined in the subform control that opened the subform window, plus an
+additional 4 automatically included parameters. The values of these automatic
+parameters will vary depending on the type of object being edited and the
+context in which the parent form was displayed. </p>
+
+<p>The parameters derived from the subform control's name-value list will have
+parameter names that are derived from the name of the attribute being edited,
+the name used in the name-value pair, and a fixed prefix that avoids conflicts
+with other parameters. The format of the name is: </p>
+
+<p><span class=code1>[prefix].[attribute name].[parameter name]</span> </p>
+
+<p>The prefix is always <span class=code1>property.data.</span>. So the
+mandatory <span class=code1>customServletURI</span> entry in the name-value
+list will result in a request parameter named <span class=code1>property.data.accessrights.customServletURI</span>
+if used to edit an attribute named <span class=code1>accessrights</span>. </p>
+
+<p>A request sent to your servlet or JSP will always contain the following
+parameters: </p>
+
+<ol start=1 type=1>
+ <li ><span class=code1>fieldname</span></li>
+ <li ><span class=code1>target_dn</span></li>
+ <li ><span class=code1>container_dn</span></li>
+ <li ><span class=code1>search_base</span></li>
+</ol>
+
+<p>The <span class=code1>fieldname</span> parameter will always contain the
+name of the attribute being edited with a prefix of &quot;data.&quot; The other
+parameters' values will depend on the entity type being edited, and the context
+in which the subform was opened. The following tables describe the parameter
+values for each context in which a subform can be used. </p>
+
+<table  border=1 cellspacing=0 cellpadding=0
+ style='margin-left:15.0pt'>
+ <tr>
+  <td colspan=2 style='border:none;padding:0in 0in 0in 0in'>
+  <p  align=center style='margin-top:15.0pt;margin-right:0in;
+  margin-bottom:7.5pt;margin-left:0in;text-align:center'><b>Table 1: Person
+  Create</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>target_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>Empty</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>container_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of organizational tree
+  container where person will be created.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>search_base</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>Empty</p>
+  </td>
+ </tr>
+</table>
+
+<p ><span style='display:none'>&nbsp;</span></p>
+
+<table  border=1 cellspacing=0 cellpadding=0
+ style='margin-left:15.0pt'>
+ <tr>
+  <td colspan=2 style='border:none;padding:0in 0in 0in 0in'>
+  <p  align=center style='margin-top:15.0pt;margin-right:0in;
+  margin-bottom:7.5pt;margin-left:0in;text-align:center'><b>Table 2: Person
+  Modify</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>target_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of person.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>container_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of organizational tree
+  container where person is located.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>search_base</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>Empty</p>
+  </td>
+ </tr>
+</table>
+
+<p ><span style='display:none'>&nbsp;</span></p>
+
+<table  border=1 cellspacing=0 cellpadding=0
+ style='margin-left:15.0pt'>
+ <tr>
+  <td colspan=2 style='border:none;padding:0in 0in 0in 0in'>
+  <p  align=center style='margin-top:15.0pt;margin-right:0in;
+  margin-bottom:7.5pt;margin-left:0in;text-align:center'><b>Table 3: Account
+  Create</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>target_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of account owner.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>container_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of account owner.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>search_base</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of Service.</p>
+  </td>
+ </tr>
+</table>
+
+<p ><span style='display:none'>&nbsp;</span></p>
+
+<table  border=1 cellspacing=0 cellpadding=0
+ style='margin-left:15.0pt'>
+ <tr>
+  <td colspan=2 style='border:none;padding:0in 0in 0in 0in'>
+  <p  align=center style='margin-top:15.0pt;margin-right:0in;
+  margin-bottom:7.5pt;margin-left:0in;text-align:center'><b>Table 4: Account
+  Modify</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>target_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of account.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>container_dn</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of account owner.</p>
+  </td>
+ </tr>
+ <tr>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'><span class=code1>search_base</span></p>
+  </td>
+  <td style='padding:0in 0in 0in 0in'>
+  <p  style='margin-top:15.0pt'>DN of service.</p>
+  </td>
+ </tr>
+</table>
+
+<div style='margin-top:15.0pt' id=6>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>6 Returning Modified Data to the Parent Form</span></p>
+
+</div>
+
+<p>Your subform should never directly modify the entity being edited. The
+changes made by the user in your subform must be stored in the HTTP session. The
+ISIM servlets that process submissions of entity create and modify forms know
+to look for attribute changes in the session as well as in the submitted form. </p>
+
+<p>The modified value from your subform must be stored as a <span class=code1>com.ibm.itim.common.AttributeValue</span>
+object. This object must be constructed with the name of the attribute being
+edited by the subform. The attribute name is the <span class=code1>fieldname</span>
+request parameter with the &quot;data.&quot; prefix stripped out. </p>
+
+<p>The name of the session attribute you must use is <span class=code1>subFormAttrValue</span>.
+</p>
+
+<p>For example: </p>
+
+<p ><span class=code1>AttributeValue av = new
+AttributeValue(attrName, newValue);
+session.setAttribute(&quot;subFormAttrValue&quot;, av); </span></p>
+
+<div style='margin-top:15.0pt' id=7>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>7 Retrieving ISIM Data</span></p>
+
+</div>
+
+<p>ISIM does not pass the current value of the attribute being edited to your
+subform. Your servlet or JSP must do this when it generates the HTTP response
+that will be used to send your subform to the user's browser. This is one of
+the reasons why static HTML files are not useful as subforms. There is no way
+for such as subform to be used to modify an existing value. </p>
+
+<p>Your servlet or JSP can lookup the existing value of the attribute to be
+edited by retrieving it from the session using the key <span class=code1>subFormAttrValue</span>.
+The Object stored in the session under this key is of type <span class=code1>AttributeValue</span>.
+</p>
+
+<p>If your subform requires other ISIM-related services, it can access those
+via the ISIM application API. Using the application API normally requires that
+you authenticate to ISIM in order to obtain the <span class=code1>Subject</span>
+object that you must pass to application API constructors. This is not necessary
+in your subform code. The user is already authenticated, and their subject
+object can be retrieved from the HTTP session. You can do this using the
+following code: </p>
+
+<p ><span class=code1>Subject subject = (Subject)
+session.getAttribute(&quot;subject&quot;); </span></p>
+
+<p>Remember that a servlet's <span class=code1>service</span> method is defined
+as throwing only <span class=code1>ServletException</span> and <span
+class=code1>IOException</span>. Any other exceptions that may be thrown by your
+code or the application API must be caught and wrapped as a <span class=code1>ServletException</span>.
+This is also true if you are using a JSP to generate your subform. All of the
+code generated by your JSP will be called from within a servlet <span
+class=code1>service</span> method. </p>
+
+<div style='margin-top:15.0pt' id=7.1>
+
+<p ><b><span style='font-family:"Arial","sans-serif"'>7.1
+Retrieving Modified Data</span></b></p>
+
+</div>
+
+<p>It is possible for a user to edit an attribute value with your subform, save
+their changes, and then open the subform again before they have submitted the
+parent form. When this happens your subform should display the user's saved
+changes which will be available in the session </p>
+
+<p>Your servlet or JSP can do this by retrieving the <span class=code1>AttributeValue</span>
+stored in the session under the key <span class=code1>subFormAttrValue</span>.
+ISIM deletes this session attribute when it displays an entity form, so you
+don't need to worry about stale session attributes left over from edits of a
+different entity. </p>
+
+<div style='margin-top:15.0pt' id=8>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>8 Retrieving User Access Rights</span></p>
+
+</div>
+
+<p>You will probably want your subform to act or look differently depending on
+whether the user has write access to the attribute being edited by the subform.
+You can get this data from the HTTP session. </p>
+
+<p>For backwards compatibility, the user's attribute permission will be stored
+in 3 session attributes: </p>
+
+<ol start=1 type=1>
+ <li ><span class=code1>rfiPermissions</span></li>
+ <li ><span class=code1>attributePermissions</span></li>
+ <li ><span class=code1>permissions</span></li>
+</ol>
+
+<p>All 3 of these attributes will exist in your session. The value of these
+attributes will be a <span class=method><span style='font-family:"Arial","sans-serif"'>java.util.Map</span></span>
+object. This map will contain your attribute name as the only key. If the value
+stored for the attribute you are editing is &quot;r&quot; this indicates that
+the user has read-only access to the attribute. Any other value (ie:
+&quot;w&quot;) indicates that the user has write permission for the attribute. </p>
+
+<p>You don't need to worry about checking for read access to the edited
+attribute. ISIM will not display the link to your subform on the entity form if
+the user doesn't have read access to the edited attribute. </p>
+
+<div style='margin-top:15.0pt' id=9>
+
+<p ><span style='font-size:18.0pt;font-family:"Arial","sans-serif";
+color:#005A9C'>9 Installing a Subform</span></p>
+
+</div>
+
+<p>The procedure for installing your subform installation varies depending on
+whether you have used a servlet, JSP or HTML file. </p>
+
+<p>If you have created a servlet or your Jsp uses a custom set of java
+libraries then you must: </p>
+
+<ul type=disc>
+ <li >For servlets, create a JAR file containing your servlet.</li>
+ <li >Add the JAR files to ISIM's class path. For a clustered
+     environment, perform this step for each cluster member that is running
+     ISIM.</li>
+ <li >For servlets, edit ISIM's web.xml file adding a <span
+     class=code1>&lt;servlet&gt;</span> and <span class=code1>&lt;servlet-mapping&gt;</span>
+     tag for your servlet. </li>
+ <ul type=circle>
+  <li >The subform infrastructure expects the contents of the
+      subform to be found at <span class=code1>/itim/self/subforms/</span> for
+      a self service console installation, <span class=code1>/itim/console/subforms/</span>
+      for an administrative console installation, and <span class=code1>/itim/ui/subforms/</span>
+      for Identity Service Center installation. Therefore make sure that the <span
+      class=code1>&lt;url-pattern&gt;</span> tag within the <span class=code1>&lt;servlet-mapping&gt;</span>
+      tag starts with <span class=code1>/subforms/</span>. </li>
+  <ul type=square>
+   <li >For example: </li>
+  </ul>
+ </ul>
+</ul>
+
+<pre style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:
+Wingdings'><span style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp; &lt;servlet&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;description&gt;My Custom Subform&lt;/description&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;servlet-name&gt;MyCustomSubform&lt;/servlet-name&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;servlet-class&gt;mydevshop.itimextensions.MyCustomSubformServlet&lt;/servlet-class&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp; &lt;/servlet&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp; &lt;servlet-mapping&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;servlet-name&gt;MyCustomSubform&lt;/servlet-name&gt;</pre><pre
+style='margin-left:1.5in;text-indent:-.25in'><span style='font-family:Wingdings'><span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;url-pattern&gt;/subforms/mycustomsubform&lt;/url-pattern&gt;</pre><pre
+style='margin-left:1.5in'>&nbsp;&nbsp;&nbsp;&nbsp; &lt;/servlet-mapping&gt;</pre>
+
+<ul type=disc>
+ <ul type=circle>
+  <li >In clustered environment:<br>
+      The web.xml for a self service console installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[deployment manager
+      profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/itim_self_service.war/WEB-INF/web.xml</span><br>
+      The web.xml for an administrative console installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[deployment manager
+      profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/itim_console.war/WEB-INF/web.xml</span><br>
+      The web.xml for Identity Service Center installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[deployment manager
+      profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/isim_isc_subform.war/WEB-INF/web.xml</span></li>
+  <li >In single server environment:<br>
+      The web.xml for a self service console installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/itim_self_service.war/WEB-INF/web.xml</span><br>
+      The web.xml for an administrative console installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/itim_console.war/WEB-INF/web.xml</span></br/>
+      The web.xml for Identity Sevice Center installation can be found here:<br>
+      <span class=code1>WAS_HOME/profiles/[profile]/config/cells/[cell]/applications/ITIM.ear/deployments/ITIM/isim_isc_subform.war/WEB-INF/web.xml</span></br/></li>
+ </ul>
+</ul>
+
+<p style='margin-left:1.0in'>Changes to ISIM's class path and ISIM's web.xml
+will require a restart of the ISIM application server. </p>
+
+<p style='margin-left:1.0in'>If you created a JSP or HTML file then all you
+need to do is to place it in the <span class=code1>subforms</span> directory
+inside the folder containing the installed ISIM web application. For a self
+service console installation this will be <span class=code1>WAS_HOME/profiles/[profile]/installedApps/[cell]/ITIM.ear/itim_self_service.war/subforms</span>,
+for an administrative console installation this will be: <span class=code1>WAS_HOME/profiles/[profile]/installedApps/[cell]/ITIM.ear/itim_console.war/subforms</span>,
+and for Identity Service Center installation this will be: <span class=code1>WAS_HOME/profiles/[profile]/installedApps/[cell]/ITIM.ear/isim_isc_subform.war/subforms.</span>
+For a clustered environment, perform this step for each cluster member that is
+running ISIM. </p>
+
+<p style='margin-left:1.0in'>Once you have installed your subform, you must use
+the Form Designer to configure it. The Form Designer is available in the
+administrative console under the Configure System heading. Using the Form
+Designer, select the category in the left pane that you planned to customize.
+Select the attribute in the form template that will use your subform, right
+click and select &quot;Change to&quot; and pick Subform as the control type. A
+popup window will be displayed titled &quot;Subform Editor&quot;. The &quot;Subform
+Editor&quot; consists of a table of keys and values. It starts out empty and it
+must contain at least one key, the <span class=code1>customServletURI</span>
+key. Add the <span class=code1>customServletURI</span> key, and use the
+Servlet/Jsp name of your subform as your value. If you have any other constants
+that you need to pass to your subform at runtime, than add them here as well.
+They will be available in the request object; the key to retrieve the parameter
+will have this format: </p>
+
+<div>
+
+<p  style='margin-left:1.0in'><span style='font-family:"Courier New"'>[prefix].[attribute
+name].[parameter name]</span></p>
+
+</div>
+
+<p  style='margin-left:1.0in'>Where <span class=code1>prefix</span>
+will be <span class=code1>property.data.</span>, for example: If I was editing
+the &quot;description&quot; attribute and added a key named <span class=code1>foo</span>
+using the Subform Editor, I would expect the value to be found in the request
+object under the key named <span class=code1>property.data.description.foo</span>
+</p>
+
+<p style='margin-left:1.0in'>Once you have added all the keys and values using
+the Subform Editor, click OK to close the Subform Editor and make sure to save
+your custom form template using the menu &quot;Form&quot; and selecting
+&quot;Save Form Template&quot;. Your subform is now ready to be used. </p>
+
+<div style='margin-top:15.0pt' id=10>
+
+<p  style='margin-left:1.0in'><span style='font-size:18.0pt;
+font-family:"Arial","sans-serif";color:#005A9C'>10 Uninstalling a Subform</span></p>
+
+</div>
+
+<p style='margin-left:1.0in'>The steps to uninstall a subform will be a
+complete reversal of the installation steps. First we should use the Form
+Designer to change the control type from Subform to the control type that will
+handle your attribute. If no such control exists then you should remove the
+attribute from the form template, you can do this by selecting the attribute
+and pressing the delete button. </p>
+
+<p style='margin-left:1.0in'>Once you have unconfigured the subform you can
+proceed to remove the source files that comprise the subform from the <span
+class=code1>subforms</span> folder. Refer to the previous section for the exact
+<span class=code1>subforms</span> folder locations. </p>
+
+<p style='margin-left:1.0in'>Remove any custom java libraries that were added
+to ISIM's classpath during the subform installation. Also, any servlets that
+were added to ISIM's web.xml file need to be removed, along with their servlet
+mappings. Note that changes to ISIM's classpath and ISIM's web.xml will require
+a restart of the ISIM application server. </p>
+
+<div style='margin-top:15.0pt' id=11>
+
+<p  style='margin-left:1.0in'><span style='font-size:18.0pt;
+font-family:"Arial","sans-serif";color:#005A9C'>11 Example</span></p>
+
+</div>
+
+<p style='margin-left:1.0in'>The sample subform implementation included
+maintains an attribute containing an XML document defining a user's emergency
+contact information. The subform is implemented as a JSP. </p>
+
+<p style='margin-left:1.0in'>The attribute is a single-value attribute with a
+simple xml structure, thus keeping the details of the example simple so we can
+better focus on the subform infrastructure. </p>
+
+<p style='margin-left:1.0in'>The XML document maintained by the subform
+consists of an <span class=code1>emergency-contact</span> element with the
+following attributes: </p>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
+</span></span><span class=code1>name</span></p>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span class=code1>telephone</span></p>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span><span class=code1>relationship</span></p>
+
+<p style='margin-left:1.0in'>For example: </p>
+
+<p  style='margin-left:1.0in'><span class=code1>&lt;emergency-contact
+name=&quot;John Smith&quot; telephone=&quot;(205)123-5555&quot;
+relationship=&quot;spouse&quot;/&gt;</span> </p>
+
+<p style='margin-left:1.0in'>The subform window is pictured below. </p>
+
+<p  style='margin-left:1.0in'><img border=0 width=812
+height=373 src=image002.png></p>
+
+<p style='margin-left:1.0in'>This subform allows a user, in this case Janice,
+three fields on which to provide emergency contact information. The subform's
+Jsp than converts this data into an XML document and stores it as a single
+value as part of Janice's person definition. </p>
+
+<p style='margin-left:1.0in'>It is worth noting that the subform implementer is
+expected to update the value in the session. Therefore the mechanism for
+relaying to ISIM that a user has updated the value is <span class=bold1>not</span>
+via an html POST request. Instead, it is common for a subform to post to itself
+when saving values. Then the subform code can set the value in the session and
+then load an html page that closes the subform pop-up window using the body
+tag's &quot;onLoad&quot; event. </p>
+
+<div style='margin-top:15.0pt' id=11.1>
+
+<p  style='margin-left:1.0in'><b><span style='font-family:"Arial","sans-serif"'>11.1
+Installing the Example</span></b></p>
+
+</div>
+
+<p style='margin-left:1.0in'>The example implementation contains 3 parts: </p>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span>The JSP files that define the subform. </p>
+
+<ul type=disc>
+ <ul type=circle>
+  <ul type=square>
+   <ul type=square>
+    <li ><span class=code1>sample.jsp</span></li>
+    <li ><span class=code1>sample_utils.jspf</span></li>
+   </ul>
+  </ul>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>The JavaScript file that provides the interaction with the
+browser. </p>
+
+<ul type=disc>
+ <ul type=circle>
+  <ul type=square>
+   <ul type=square>
+    <li ><span class=code1>sample.js</span></li>
+   </ul>
+  </ul>
+ </ul>
+</ul>
+
+<p  style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Wingdings'>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
+</span></span>The CSS file that provides the look-n-feel. </p>
+
+<ul type=disc>
+ <ul type=circle>
+  <ul type=square>
+   <ul type=square>
+    <li ><span class=code1>sample.css</span></li>
+   </ul>
+  </ul>
+ </ul>
+</ul>
+
+<p style='margin-left:1.0in'>The ISIM web application directory (see section 9,
+Installation) contains a <span class=code1>subforms</span> directory. Create a <span
+class=code1>sample</span> directory in the subforms directory. Copy all 4 (<span
+class=code1>sample.jsp, sample_utils.jspf,sample.js,sample.css</span>) files to
+the newly created <span class=code1>sample</span> folder. </p>
+
+<p style='margin-left:1.0in'><b>Note</b> that for this example to work, we must
+have <span class=code1>enrole.appServer.ejbuser.credentials</span> property
+value in <span class=code1>enRole.properties</span> file in clear text. In
+other words, the value of <span class=code1>enrole.passord.appServer.encrypted</span>
+property in <span class=code1>enRole.properties</span> file should be false
+indicating that the app server credentials are not encrypted. </p>
+
+<p style='margin-left:1.0in'>Login to ISIM as an administrator and launch the
+Form Designer. Open the form template for Person or for your custom person
+entity type. </p>
+
+<p style='margin-left:1.0in'>Choose an attribute to be edited by the subform.
+Make sure that you choose an attribute that can hold the resulting XML
+document. If you are using IDS as your LDAP server you will find that many
+inetOrgPerson attributes have maximum lengths that are too small to hold an
+emergency-contact XML document. For example, the initials attribute is one of
+these. One such attribute is <span class=code1>homepostaladdress</span>
+attribute. Make sure you choose an attribute that is not already populated on
+any of your users. Any existing values will cause the XML parser to fail when
+the subform is opened. </p>
+
+<p style='margin-left:1.0in'>In the Form Designer, right click on the chosen
+attribute and select &quot;Change To&quot; and &quot;SubForm&quot;. This will
+open the subform editor window. </p>
+
+<p style='margin-left:1.0in'>In the subform editor, double click on the empty
+box under &quot;Name&quot;. Enter <span class=code1>customServletURI</span>
+into this box. Double click on the empty box under &quot;Value&quot; and enter <span
+class=code1>sample/sample.jsp</span>. Click the OK button. </p>
+
+<p style='margin-left:1.0in'>Select &quot;Save Form Template&quot; from the
+applet's &quot;Form&quot; menu, and then close the form designer. </p>
+
+<p style='margin-left:1.0in'>You should now be able to browse to a person and
+see that your subform attribute is rendered as a &quot;Details&quot; button.
+Click on this button to open the subform. </p>
+
+</div>
+
+</body>
+
+</html>

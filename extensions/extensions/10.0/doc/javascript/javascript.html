@@ -1,0 +1,455 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><IMG SRC="../../image001.png" NAME="graphics1" ALIGN=BOTTOM WIDTH=264 HEIGHT=59 BORDER=0></P>
+<P><BR><BR>
+</P>
+<H1 ALIGN=CENTER>JavaScript Extensions API</H1>
+<P><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>IBM Security</P>
+<P><BR><BR><BR><BR><BR>
+</P>
+<P ALIGN=CENTER>&copy; Copyright International Business Machines
+Corporation 2003, 2012. All rights reserved. <BR>US Government Users
+Restricted Rights – Use, duplication or disclosure restricted by
+GSA ADP Schedule Contract with IBM Corp.</P>
+<P><BR><BR>
+</P>
+<P>
+<A HREF="#purpose">Purpose of this Document</A><BR>
+<A HREF="#overview">Overview</A><br>
+<A HREF="#scriptFramework">FESI API Description</A><br>
+<a href="#platformAPI">Platform Specific API Description</a><BR>
+<A HREF="#apiExample">API Example</A></P>
+<H2><A NAME="purpose"></A>Purpose of this Document</H2>
+<P>The Identity Manager provisioning platform is designed with
+extensibility as a primary goal. Many of the architectural components
+have been built using frameworks that can make use of custom
+extensions. This document describes the framework used within the
+scripting component of Identity Manager and how it can be extended.
+The part of the framework that will be extended by a client will be
+called the Application Programming Interface (API). The APIs for
+extending the scripting component are specific to the scripting
+language configured with the product. This document specifically
+addresses extending the JavaScript configuration.</P>
+<H2><A NAME="overview"></A>Overview</H2>
+<P>The scripting API is based on the use of the Identity Manager script framework. The purpose of extending the script framework is not necessarily to alter the capabilities of the script interpreter but to add additional objects and functions to the interpreter so  clients can use a richer set of capabilities than provided by default.</P>
+<p>The API provided by the script framework allows clients to create and register these additional objects and functions with the interpreter so they can be executed at runtime. Although the script framework internally uses the Apache Bean Script Framework (BSF) the APIs are not tied to BSF or any other third party framework. This decoupling of responsibilites means that changes to BSF, the script interpreter, or many of the other framework components will not break script extensions written for the script framework.</p>
+<p>The script framework API consists of a set of interfaces, abstract classes, and classes that provide integration with the script interprter for creating and retrieving information available in the runtime context of the interpreter, as well as for registering new types of objects and functions that user scripts can use. The general set of script framework classes are found in the <a
+	href="../../api/com/ibm/itim/script/package-summary.html">com.ibm.itim.script</a> and <a
+	href="../../api/com/ibm/itim/script/wrappers/package-summary.html">com.ibm.itim.script.wrapper</a> packages.</p>
+<h2><a name="scriptFramework"></a>Script Framework API Description</h2>
+<P>The <a href="../../api/com/ibm/itim/script/ScriptExtension.html">ScriptExtension</a> interface is the
+natural place to start when learning about the script framework. The
+script framework uses ScriptExtensions to add new script objects and
+functions. ScriptExtension defines two methods that must be
+implemented: initialize() and getContextItems().</P>
+<P>initialize() will always be called by
+the script framework before getContextItems(). initialize() is passed
+two parameters, a <a
+	href="../../api/com/ibm/itim/script/ScriptInterface.html">ScriptInterface</a> object, which is discussed in more
+details later, and a <a
+	href="../../api/com/ibm/itim/script/ScriptContextDAO.html">ScriptContextDAO</a> object. The ScriptContextDAO
+object provides the extension methods to interact with other script
+objects. The ScriptExtension should maintain a reference to the
+ScriptContextDAO if the extension needs to communicate with other
+objects.</P>
+<P>The ScriptInterface object passed to
+initialize() provides some information about the host component that
+is using the extension. ScriptInterface itself contains no methods
+that must be implemented, but other interfaces that subclass
+ScriptInterface do. For example, <a
+	href="../../api/com/ibm/itim/script/extensions/model/ModelScriptInterface.html">ModelScriptInterface</a> specifies three
+methods that must be implemented to provide information to the model
+extensions, and <a
+	href="../../api/com/ibm/itim/script/extensions/SubjectScriptInterface.html">SubjectScriptInterface</a> contains a single method. If a
+new extension requires information from both the ModelScriptInterface
+and SubjectScriptInterface then the initialize() method should check
+that the provided ScriptInterface class implements both.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">                </FONT><B>throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">        </FONT><B>if</FONT></B><FONT COLOR="#000000"> (!(<FONT COLOR="#000000">si </FONT><B><FONT COLOR="#7f0055">instanceof</FONT></B><FONT COLOR="#000000"> ModelScriptInterface) &amp;&amp; </FONT></FONT>
+            <font color="#000000">!(si </font><b><font color="#7f0055">instanceof</font></b><font color="#000000"> SubjectScriptInterface)) {</font>
+<font color="#000000">                 // Best to include a more detailed message.</font>
+<font color="#7f0055"><font color="#000000">                 </font><b>throw</b></font><b></b><font
+	color="#000000"> </font><b><font color="#7f0055">new</font></b><font
+	color="#000000"> IllegalArgumentException(</font><font color="#2a00ff">&quot;bad si&quot;</font><font
+	color="#000000">);</font>
+        }
+<font color="#000000">        ...</font>
+}
+</pre>
+<P>
+A list of all of the ScriptInterface subclasses can be found in the
+<a href="../../api/com/ibm/itim/script/ScriptInterface.html">ScriptInterface
+JavaDoc</a>.</P>
+<P>The initialize() method will also create the ContextItems that the
+extension wants exposed to scripts. A <a
+	href="../../api/com/ibm/itim/script/ContextItem.html">ContextItem</a> is a simple object
+that stores a name with an object. The name is what the object is
+called in scripts. Currently there are three types of ContextItems:
+SimpleContextItem, ConstructorContextItem, and
+GlobalFunctionContextItem. Each of these ContextItem types are named
+to follow their function; for instance, to create a new global
+function use a GlobalFunctionContextItem. ContextItem has several
+static methods to create the different types of ContextItems.</P>
+<P>To add a constructor to the script context, use a
+ConstructorContextItem. To create a ConstructorContextItem use the
+method <a
+	href="../../api/com/ibm/itim/script/ContextItem.html#createConstructor(java.lang.String,%20java.lang.Class)">ContextItem.createConstructor(String
+name, Class prototype)</a>.
+The first argument is the name of the constructor and the second
+argument is the Class object of the type to create. Due to a
+limitation in a supported scripting engine the type that you are
+constructing must have a default, no-argument constructor.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#7f0055"><FONT COLOR="#000000">                </FONT><B>throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+        // allItems is a private member data of the class.
+<FONT COLOR="#0000c0"><FONT COLOR="#000000">        </FONT>allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+
+<FONT COLOR="#000000">        ContextItem constructor = ContextItem.<I>createConstructor</I>(</FONT><FONT COLOR="#2a00ff">&quot;Builder&quot;</FONT><FONT COLOR="#000000">,</FONT>
+<FONT COLOR="#000000">                StringBuilder.</FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">        </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(constructor);</FONT>
+}
+</PRE><P>
+Now scripts can create a new DistinguishedName object like: 
+</P>
+<PRE STYLE="margin-bottom: 0.2in">var builder = new Builder(&quot;ou=mycorp&quot;)
+builder.append(&quot;,ou=org&quot;);
+builder.append(&quot;,dc=com&quot;);</PRE>
+<P>To create a global function, use the GlobalFunctionContextItem. To
+create a GlobalFunctionContextItem use the method
+<a
+	href="../../api/com/ibm/itim/script/ContextItem.html#createGlobalFunction(java.lang.String,%20com.ibm.itim.script.GlobalFunction)">ContextItem.createConstructor(String
+name, GlobalFunction function)</a>.
+The <a href="../../api/com/ibm/itim/script/GlobalFunction.html">GlobalFunction</a> object is a special type of java object with a
+method named call. Whenever a global function added to the script
+environment is called, the call method associated with it gets
+called.</P>
+<PRE>
+<B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> EchoFunction </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> GlobalFunction {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> Object call(Object[] parameters)</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptEvaluationException {</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">if</FONT></B><FONT COLOR="#000000"> (parameters == </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000"> || parameters.</FONT><FONT COLOR="#0000c0">length</FONT><FONT COLOR="#000000"> != 1) {</FONT>
+<FONT COLOR="#000000">                                System.</FONT><I><FONT COLOR="#0000c0">err</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;no args!&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">;</FONT>
+                        }
+<FONT COLOR="#000000">                        System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;echo: &quot;</FONT><FONT COLOR="#000000"> + parameters[0].toString());</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">;</FONT>
+                }
+        }
+
+<FONT COLOR="#000000">        ...</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        ...</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+
+<FONT COLOR="#000000">                ContextItem globalFunc = ContextItem.<I>createGlobalFunction</I>(</FONT><FONT COLOR="#2a00ff">&quot;echo&quot;</FONT><FONT COLOR="#000000">,</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> EchoFunction());</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(globalFunc);</FONT>
+        }
+<FONT COLOR="#000000">}</FONT></PRE><P>
+Now scripts can use the echo global function like this:</P>
+<PRE STYLE="margin-bottom: 0.2in">echo(&quot;Echo this sentence&quot;);</PRE><P>
+Notice in the code snippet above that EchoFunction is a static inner
+class of MyExtension. 
+</P>
+<P>As nice as global functions can be, they are not the preferred
+method to add functions to the script environment. The call method is
+passed an array of Objects as parameters, and the code must check the
+parameters, both in number and in type, to make sure that everything
+is correct. This is mistake prone. The preferred method is to create
+a Java class that contains the methods you want to expose, and then
+place that object into the scripting environment using a
+SimpleContextItem.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> EchoBean </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ExtensionBean {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> echo(String msg) {</FONT>
+<FONT COLOR="#000000">                        System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;echo: &quot;</FONT><FONT COLOR="#000000"> + msg);</FONT>
+                }
+        }
+
+        ...
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        ...</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+                ...
+<FONT COLOR="#000000">                </FONT>
+<FONT COLOR="#000000">                ContextItem echoBean = ContextItem.<I>createItem</I>(</FONT><FONT COLOR="#2a00ff">&quot;bean&quot;</FONT><FONT COLOR="#000000">, </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> EchoBean());</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(echoBean);</FONT>
+                ...
+        }
+<FONT COLOR="#000000">}</FONT></PRE><P>
+After these changes, script can now call echo like this:</P>
+<PRE STYLE="margin-bottom: 0.2in">bean.echo(&quot;Echo this sentence&quot;);</PRE><P>
+So for the price of adding &quot;bean&quot; (or any other name you
+like) in front of the call you get to write less code to implement
+the functionality.</P>
+<P>Notice that the class EchoBean implements <a
+	href="../../api/com/ibm/itim/script/ExtensionBean.html">ExtensionBean</a>.
+ExtensionBean is a marker interface that tells the script framework
+that this class is adding methods to the scripting environment, and
+to not hide those methods. If EchoBean does not implement
+ExtensionBean, then when a script calls bean.echo() there will be an
+error about the method not existing and the script will fail.</P>
+<P>Sometimes you want to wait until right before the script runs to
+add a ContextItem to the script environment. To do this, you can
+still create the ContextItem during the initialize() call, but you
+use the <a
+	href="../../api/com/ibm/itim/script/ContextItem.html#createItem(java.lang.String)">ContextItem.createItem(String
+name)</a> method.</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+        ...
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> ContextItem </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        ...</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000"> = ContextItem.<I>createItem</I>(</FONT><FONT COLOR="#2a00ff">&quot;subject&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(</FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">);</FONT>
+                ...
+        }
+
+<FONT COLOR="#000000"><FONT FACE="Monospace"><FONT SIZE=2>}</FONT></FONT></FONT></PRE>
+<P>The value for the ContextItem gets set in the getContextItems()
+call. The getContextItems() returns a List of ContextItem objects and
+is called right before a script runs. To continue on with the
+example from above:</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+        ...
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> ContextItem </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        ...</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> List getContextItems() {</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">.setContextObject(</FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> Object());</FONT>
+
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+        }
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+<FONT COLOR="#000000">        }</FONT>
+}</PRE><P>
+In a more typical case, instead of setting the context object to a
+new object, the code would make use of the ScriptInterface passed
+into initialize:</P>
+<PRE><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+        ...
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> ContextItem </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> SubjectScriptInterface </FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000">;</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> List getContextItems() {</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">.setContextObject(</FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000">.getSubject());</FONT>
+
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+        }
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">if</FONT></B><FONT COLOR="#000000"> (si </FONT><B><FONT COLOR="#7f0055">instanceof</FONT></B><FONT COLOR="#000000"> SubjectScriptInterface) {</FONT>
+<FONT COLOR="#000000">                        </FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000"> = (SubjectScriptInterface) si;</FONT>
+<FONT COLOR="#000000">                } </FONT><B><FONT COLOR="#7f0055">else</FONT></B><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throw</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> IllegalArgumentException(</FONT><FONT COLOR="#2a00ff">&quot;bad si&quot;</FONT><FONT COLOR="#000000">);</FONT>
+                }
+
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+<FONT COLOR="#000000">                ...</FONT>
+<FONT COLOR="#000000">        }</FONT>
+}</PRE><P>
+Notice how we save a reference to the ScriptInterface in initialize,
+and then use it to get the current subject right before the script
+runs. That is all there is to creating a script extension. Below is
+the full source for an example that uses all of the different
+examples.</P>
+<PRE><B><FONT COLOR="#7f0055">package</FONT></B><FONT COLOR="#000000"> com.ibm.itim.script;</FONT>
+
+<B><FONT COLOR="#7f0055">import</FONT></B><FONT COLOR="#000000"> java.util.ArrayList;</FONT>
+<B><FONT COLOR="#7f0055">import</FONT></B><FONT COLOR="#000000"> java.util.List;</FONT>
+
+<B><FONT COLOR="#7f0055">import</FONT></B><FONT COLOR="#000000"> com.ibm.itim.dataservices.model.DistinguishedName;</FONT>
+<B><FONT COLOR="#7f0055">import</FONT></B><FONT COLOR="#000000"> com.ibm.itim.script.extensions.SubjectScriptInterface;</FONT>
+
+<B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> MyExtension </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ScriptExtension {</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> EchoFunction </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> GlobalFunction {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> Object call(Object[] parameters)</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptEvaluationException {</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">if</FONT></B><FONT COLOR="#000000"> (parameters == </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000"> || parameters.</FONT><FONT COLOR="#0000c0">length</FONT><FONT COLOR="#000000"> != 1) {</FONT>
+<FONT COLOR="#000000">                                System.</FONT><I><FONT COLOR="#0000c0">err</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;no args!&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">;</FONT>
+                        }
+<FONT COLOR="#000000">                        System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;echo: &quot;</FONT><FONT COLOR="#000000"> + parameters[0].toString());</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">null</FONT></B><FONT COLOR="#000000">;</FONT>
+                }
+        }
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">static</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000"> EchoBean </FONT><B><FONT COLOR="#7f0055">implements</FONT></B><FONT COLOR="#000000"> ExtensionBean {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> echo(String msg) {</FONT>
+<FONT COLOR="#000000">                        System.</FONT><I><FONT COLOR="#0000c0">out</FONT></I><FONT COLOR="#000000">.println(</FONT><FONT COLOR="#2a00ff">&quot;echo: &quot;</FONT><FONT COLOR="#000000"> + msg);</FONT>
+                }
+        }
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> List&lt;ContextItem&gt; </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> ContextItem </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">;</FONT>
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">private</FONT></B><FONT COLOR="#000000"> SubjectScriptInterface </FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000">;</FONT>
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> List getContextItems() {</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">.setContextObject(</FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000">.getSubject());</FONT>
+
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">return</FONT></B><FONT COLOR="#000000"> </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">;</FONT>
+        }
+
+<FONT COLOR="#000000">        </FONT><B><FONT COLOR="#7f0055">public</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">void</FONT></B><FONT COLOR="#000000"> initialize(ScriptInterface si, ScriptContextDAO dao)</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throws</FONT></B><FONT COLOR="#000000"> ScriptException, IllegalArgumentException {</FONT>
+<FONT COLOR="#000000">                </FONT><B><FONT COLOR="#7f0055">if</FONT></B><FONT COLOR="#000000"> (si </FONT><B><FONT COLOR="#7f0055">instanceof</FONT></B><FONT COLOR="#000000"> SubjectScriptInterface) {</FONT>
+<FONT COLOR="#000000">                        </FONT><FONT COLOR="#0000c0">subjectI</FONT><FONT COLOR="#000000"> = (SubjectScriptInterface) si;</FONT>
+<FONT COLOR="#000000">                } </FONT><B><FONT COLOR="#7f0055">else</FONT></B><FONT COLOR="#000000"> {</FONT>
+<FONT COLOR="#000000">                        </FONT><B><FONT COLOR="#7f0055">throw</FONT></B><FONT COLOR="#000000"> </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> IllegalArgumentException(</FONT><FONT COLOR="#2a00ff">&quot;bad si&quot;</FONT><FONT COLOR="#000000">);</FONT>
+                }
+
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000"> = </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> ArrayList&lt;ContextItem&gt;();</FONT>
+
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000"> = ContextItem.<I>createItem</I>(</FONT><FONT COLOR="#2a00ff">&quot;subject&quot;</FONT><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(</FONT><FONT COLOR="#0000c0">subject</FONT><FONT COLOR="#000000">);</FONT>
+
+<FONT COLOR="#000000">                ContextItem echoBean = ContextItem.<I>createItem</I>(</FONT><FONT COLOR="#2a00ff">&quot;bean&quot;</FONT><FONT COLOR="#000000">, </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> EchoBean());</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(echoBean);</FONT>
+
+<FONT COLOR="#000000">                ContextItem globalFunc = ContextItem.<I>createGlobalFunction</I>(</FONT><FONT COLOR="#2a00ff">&quot;echo&quot;</FONT><FONT COLOR="#000000">,</FONT>
+<FONT COLOR="#000000">                                </FONT><B><FONT COLOR="#7f0055">new</FONT></B><FONT COLOR="#000000"> EchoFunction());</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(globalFunc);</FONT>
+
+<FONT COLOR="#000000">                ContextItem constructor = ContextItem.<I>createConstructor</I>(</FONT><FONT COLOR="#2a00ff">&quot;DN&quot;</FONT><FONT COLOR="#000000">,</FONT>
+<FONT COLOR="#000000">                                DistinguishedName.</FONT><B><FONT COLOR="#7f0055">class</FONT></B><FONT COLOR="#000000">);</FONT>
+<FONT COLOR="#000000">                </FONT><FONT COLOR="#0000c0">allItems</FONT><FONT COLOR="#000000">.add(constructor);</FONT>
+        }
+}</PRE>
+<H2><a name="platformAPI"></a>Platform Specific API Description</H2>
+<P>
+Beyond the basic script extension capabilities provided by the Script
+Framework API, there are additional capabilities provided by the
+Identity Manager provisioning platform to ensure a more cohesive
+integration with the provisioning business logic executed by the
+platform. For example, the interpreter is constructed by the platform
+itself, so how are the extension classes provided to the interpreter?</P>
+<P>Script interpreters are constructed in various areas of the
+platform’s business logic, each with a different context. For
+example, an interpreter is used when evaluating Provisioning Policy
+parameters, when evaluating Identity Policies, when determining the
+placement of identities in the platform’s org chart from an
+identity feed, and a few others. Because the context in which the
+platform constructs the interpreters can be quite different, they
+each have a different set of extensions that can be loaded. These
+extensions are defined within the scriptframework.properties file.
+The property file is formatted with the standard Java Properties
+&lt;key&gt;=&lt;value&gt; format, where the key is the interpreter
+context and the value is the full class name of the Script Extension
+to register. The following line is an example of registering an
+extension for the Identity Policy context:</P>
+<PRE>
+ITIM.extension.IdentityPolicy=com.ibm.itim.policy.script.IdentityPolicy</PRE>
+<P>
+There is one slight twist to this file format. Since all keys in the
+Java Properties format must be unique, and because the platform
+supports multiple extension classes to be registered per context, the
+key used in the file really just needs to be prefixed with the
+platform context name. These context names, or prefixes, are listed
+below:</P>
+<table border="1">
+	<tbody>
+		<tr>
+			<td align="center"><b>Script Class Key</b></td>
+			<td align="center"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.PostOffice</td>
+			<td>Extensions registered using this key are loaded by Post Office templates.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.ProvisioningPolicy</td>
+			<td>Extensions registered using this key are loaded by Provisioning parameters.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.AccountTemplate</td>
+			<td>Extensions registered using this key are loaded by Account Template parameters.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.HostSelection</td>
+			<td>Extensions registered using this key are loaded by Service Selection policies.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.PersonPlacementRules</td>
+			<td>Extensions registered using this key are loaded by placement rules during identity feeds.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.Workflow</td>
+			<td>Extensions registered using this key are loaded by workflow scripts.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.Reminder</td>
+			<td>Extensions registered using this key are loaded by email reminder templates.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.IdentityPolicy</td>
+			<td>Extensions registered using this key are loaded by Identity Policies.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.OrphanAdoption</td>
+			<td>Extensions registered using this key are loaded by adoption scripts.</td>
+		</tr>
+		<tr>
+			<td>ITIM.extension.Notification</td>
+			<td>Extensions registered using this key are loaded by notification templates.</td>
+		</tr>
+	</tbody>
+</table>
+<P>Warning: The platform is deployed with a set of extensions for
+each context already defined in scriptframework.properties. Please do
+not remove these from the file, as this will cause the platform to
+behave improperly. Simply add additional extensions if needed using
+the context names as prefixes. For example, to add the extension
+examples.javascript.SampleExtension to the Identity Policy context
+without removing the installed extension, add the following line to
+the scriptframework.properties file:</P>
+<PRE>
+ITIM.extension.IdentityPolicy.sample=examples.javascript.SampleExtension</PRE>
+<P>
+Another opportunity for a more cohesive integration with the platform
+is when throwing exceptions from extensions. When an extension is
+executed and errors are detected, most often when the script author
+misuses the extension, exceptions should be thrown from the extension
+business logic. These exceptions are generally converted into error
+messages that end users of the provisioning platform will see. The
+signatures provided by the script framework API’s identify a ScriptException as
+the exception object to be thrown. However, Identity Manager supports
+internationalization (I18N), so that all messages to the end user can
+be translated to the locale of the end user. The ScriptException
+class is an extension of the ITIMException class, which supports the
+identification of a resource bundle key and a set of parameters that
+can be used to generate error messages using the correct locale.</P>
+<H2><a name="apiExample"></a>API Example</H2>
+<P>Please see the accompanying example code with this package.</P>
+</BODY>
+</HTML>

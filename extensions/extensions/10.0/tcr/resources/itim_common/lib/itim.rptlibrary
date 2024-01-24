@@ -1,0 +1,1214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.15" id="1">
+    <property name="author">Chris Hemp</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.2.2.r222_v20071226 Build &lt;2.2.2.v20080227-1131></property>
+    <property name="includeResource">itim/properties/itim_common</property>
+    <text-property name="title">ITIM Report Library</text-property>
+    <property name="comments">Copyright (c) 2007 IBM Tivoli</property>
+    <property name="theme">defaultTheme</property>
+    <list-property name="includeScripts">
+        <property>itim/js/itim.js</property>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="Service Dn" id="1637">
+            <property name="hidden">false</property>
+            <text-property name="helpText" key="parameter_tooltip_service"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_service"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">ServicesParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["ERSERVICENAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Service No ITIM Dn" id="1685">
+            <property name="hidden">false</property>
+            <text-property name="helpText" key="parameter_tooltip_service"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_service"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">ServicesNoITIMParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["ERSERVICENAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Dormant Period" id="1647">
+            <text-property name="helpText" key="parameter_tooltip_dormant_period"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <text-property name="promptText" key="parameter_dormant_period"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">14</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Account Status" id="1652">
+            <text-property name="helpText" key="parameter_tooltip_account_status"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_account_status"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="defaultValue">%</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">%</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+                <structure>
+                    <property name="value">0</property>
+                    <property name="label">Active</property>
+                    <property name="labelID">active</property>
+                </structure>
+                <structure>
+                    <property name="value">1</property>
+                    <property name="label">Inactive</property>
+                    <property name="labelID">inactive</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <scalar-parameter name="Account Compliance" id="1653">
+            <text-property name="helpText" key="parameter_tooltip_account_compliance"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_account_compliance"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">true</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">%</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+                <structure>
+                    <property name="value">3</property>
+                    <property name="label">Non-compliant</property>
+                    <property name="labelID">noncompliant</property>
+                </structure>
+                <structure>
+                    <property name="value">2</property>
+                    <property name="label">Disallowed</property>
+                    <property name="labelID">disallowed</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <scalar-parameter name="User Dn" id="1654">
+            <text-property name="helpText" key="parameter_tooltip_user"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_user"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">UsersParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["CN"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="User Id" id="1656">
+            <text-property name="helpText" key="parameter_tooltip_user_id"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_user_id"></text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Access Dn" id="1657">
+            <text-property name="helpText" key="parameter_tooltip_access"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_access"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">AccessesParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["ERACCESSNAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">true</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Access Type" id="1676">
+            <text-property name="helpText" key="parameter_tooltip_access_type"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_access_type"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">Application</property>
+                    <property name="label">Application</property>
+                    <property name="labelID">Application</property>
+                </structure>
+                <structure>
+                    <property name="value">MailGroup</property>
+                    <property name="label">Email Group</property>
+                    <property name="labelID">MailGroup</property>
+                </structure>
+                <structure>
+                    <property name="value">SharedFolder</property>
+                    <property name="label">Shared Folder</property>
+                    <property name="labelID">SharedFolder</property>
+                </structure>
+                <structure>
+                    <property name="value">%</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <scalar-parameter name="Business Unit Dn" id="1680">
+            <text-property name="helpText" key="parameter_tooltip_business_unit"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_business_unit"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">BusinessUnitParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["NAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Approval Request Status" id="1681">
+            <text-property name="helpText" key="parameter_tooltip_approval_request_status"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_approval_request_status"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">true</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">false</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">%</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+                <structure>
+                    <property name="value">AA</property>
+                    <property name="label">Approved</property>
+                    <property name="labelID">approved</property>
+                </structure>
+                <structure>
+                    <property name="value">AR</property>
+                    <property name="label">Rejected</property>
+                    <property name="labelID">rejected</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+        <scalar-parameter name="Approval Activity Name" id="1682">
+            <text-property name="helpText" key="parameter_tooltip_approval_activity_name"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_approval_activity_name"></text-property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">%</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="User Dn as Approver" id="1683">
+            <text-property name="helpText" key="parameter_tooltip_approver"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText" key="parameter_approver"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">UsersParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["CN"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Role Dn" id="1891">
+            <text-property name="helpText" key="parameter_tooltip_role"></text-property>
+            <property name="valueType">dynamic</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_role"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="dataSetName">RoleParameter</property>
+            <expression name="valueExpr">dataSetRow["DN"]</expression>
+            <expression name="labelExpr">dataSetRow["ERROLENAME"]</expression>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">Any</property>
+            <property name="distinct">false</property>
+            <property name="sortBy">label</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Entitlement Type" id="1779">
+            <property name="hidden">false</property>
+            <text-property name="helpText" key="parameter_tooltip_entitlement_type"></text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText" key="parameter_entitlement_type"></text-property>
+            <property name="controlType">list-box</property>
+            <property name="mustMatch">true</property>
+            <property name="fixedOrder">false</property>
+            <property name="defaultValue">-1</property>
+            <property name="distinct">true</property>
+            <property name="sortBy">value</property>
+            <property name="sortDirection">asc</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+            <list-property name="selectionList">
+                <structure>
+                    <property name="value">0</property>
+                    <property name="label">Credential</property>
+                    <property name="labelID">Credential</property>
+                </structure>
+                <structure>
+                    <property name="value">1</property>
+                    <property name="label">Credential Pool</property>
+                    <property name="labelID">Credential_Pool</property>
+                </structure>
+                <structure>
+                    <property name="value">-1</property>
+                    <property name="label">Any</property>
+                    <property name="labelID">any</property>
+                </structure>
+            </list-property>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="ITIM Database" id="5">
+            <property name="odaDriverClass">com.ibm.db2.jcc.DB2Driver</property>
+            <property name="odaURL">jdbc:db2://itimdbhostname:50002/itimdb</property>
+            <property name="odaJndiName">jdbc/ibm/tivoli/tim</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="I18NMessages_1" id="6">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">MESSAGE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">name</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">function getCustomLabelsBundleName() {
+	var name = "CustomLabels";
+	var locale = reportContext.getLocale();
+	if (locale != null) {
+		if (locale.getLanguage() != null) {
+			name += "_" + locale.getLanguage();
+		}
+		/*if (locale.getCountry() != null) {
+			name += "_" + locale.getCountry();
+		}
+		if (locale.getVariant() != null) {
+			name += "_" + locale.getVariant();
+		}*/
+	}
+	return name;
+}
+getCustomLabelsBundleName();</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">profile</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">messagekey</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">MESSAGE</property>
+                    <property name="nativeName">MESSAGE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select message 
+from 
+	i18nmessages 
+where name = ? and 
+	profile like ? and
+	messagekey = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="I18NMessages_1_2" id="1648">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">MESSAGEKEY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">MESSAGE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">name</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">function getCustomLabelsBundleName() {
+	var name = "CustomLabels";
+	var locale = reportContext.getLocale();
+	if (locale != null) {
+		if (locale.getLanguage() != null) {
+			name += "_" + locale.getLanguage();
+		}
+		if (locale.getCountry() != null) {
+			name += "_" + locale.getCountry();
+		}
+		/*if (locale.getVariant() != null) {
+			name += "_" + locale.getVariant();
+		}*/
+	}
+	return name;
+}
+getCustomLabelsBundleName();</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">MESSAGEKEY</property>
+                    <property name="nativeName">MESSAGEKEY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">MESSAGE</property>
+                    <property name="nativeName">MESSAGE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select messagekey, 
+	message 
+from 
+	i18nmessages 
+where name = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="I18NMessages_1_2_3" id="1649">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">MESSAGEKEY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">MESSAGE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">name</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">function getCustomLabelsBundleName() {
+	var name = "CustomLabels";
+	var locale = reportContext.getLocale();
+	if (locale != null) {
+		if (locale.getLanguage() != null) {
+			name += "_" + locale.getLanguage();
+		}
+		if (locale.getCountry() != null) {
+			name += "_" + locale.getCountry();
+		}
+		if (locale.getVariant() != null) {
+			name += "_" + locale.getVariant();
+		}
+	}
+	Packages.java.lang.System.out.println("name:" + name);
+	return name;
+}
+getCustomLabelsBundleName();</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">MESSAGEKEY</property>
+                    <property name="nativeName">MESSAGEKEY</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">MESSAGE</property>
+                    <property name="nativeName">MESSAGE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select messagekey, 
+	message 
+from 
+	i18nmessages 
+where name = ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServicesParameter" id="1589">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct SERVICE."DN",
+	SERVICE."ERSERVICENAME"
+from SERVICE</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServicesNoITIMParameter" id="1684">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select distinct SERVICE."DN",
+	SERVICE."ERSERVICENAME"
+from SERVICE
+where SERVICE."ERSERVICENAME" &lt;> 'ITIM Service'</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ServiceNameBasedOnServicesParameter" id="1646">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ERSERVICENAME</property>
+                    <property name="displayName">ERSERVICENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERSERVICENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Service Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERSERVICENAME</property>
+                    <property name="nativeName">ERSERVICENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select
+	SERVICE."ERSERVICENAME"
+from SERVICE
+where
+	SERVICE.DN like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UsersParameter" id="1650">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">CN</property>
+                    <property name="displayName">CN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT Person_cn."CN" , 
+                Person."DN" 
+        FROM    Person_cn , 
+                Person 
+        WHERE Person."DN" = Person_cn."DN" and
+        Person."DN" &lt;> 'DUMMYDN'</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UserNameBasedOnUsersParameter" id="1651">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">CN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">User Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">CN</property>
+                    <property name="nativeName">CN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT Person_cn."CN", Person."DN" 
+        FROM    Person_cn , 
+                Person 
+        WHERE Person."DN" = Person_cn."DN" and
+        Person."DN" &lt;> 'DUMMYDN' and
+        Person."DN" like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="AccessesParameter" id="1658">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ERACCESSNAME</property>
+                    <property name="displayName">ERACCESSNAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERGROUPID</property>
+                    <property name="displayName">ERGROUPID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ACCESSTYPE</property>
+                    <property name="displayName">ACCESSTYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">GROUPTYPE</property>
+                    <property name="displayName">GROUPTYPE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERACCESSNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ERGROUPID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ACCESSTYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">GROUPTYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERACCESSNAME</property>
+                    <property name="nativeName">ERACCESSNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ERGROUPID</property>
+                    <property name="nativeName">ERGROUPID</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ACCESSTYPE</property>
+                    <property name="nativeName">ACCESSTYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">GROUPTYPE</property>
+                    <property name="nativeName">GROUPTYPE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT Groupz."ERACCESSNAME" , 
+                Groupz."DN" ,
+                Groupz."ERGROUPID" ,
+                Groupz."ACCESSTYPE" ,
+                Groupz."GROUPTYPE" 
+        FROM    Groupz 
+        WHERE Groupz."ERACCESSNAME" &lt;> ' ' AND
+        Groupz."ERACCESSNAME" is not null</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="AccessNameBasedOnAccessesParameter" id="1675">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERACCESSNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Access Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERACCESSNAME</property>
+                    <property name="nativeName">ERACCESSNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT distinct Groupz."ERACCESSNAME"
+        FROM    Groupz 
+        WHERE Groupz."ERACCESSNAME" &lt;> ' ' AND
+        Groupz."ERACCESSNAME" is not null and 
+        Groupz."DN" like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="BusinessUnitParameter" id="1677">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">NAME</property>
+                    <property name="displayName">NAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select "NAME", "DN"
+from ORGANIZATIONALCONT0</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="BusinessUnitNameBasedOnBusinessUnitParameter" id="1679">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">NAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Business Unit Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">false</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">NAME</property>
+                    <property name="nativeName">NAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select "NAME"
+from ORGANIZATIONALCONT0
+where "DN" like ?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleNameBasedOnRolesParameter" id="1777">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERROLENAME</property>
+                    <property name="displayName">ERROLENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERROLENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">Role Dn</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'%'</expression>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERROLENAME</property>
+                    <property name="nativeName">ERROLENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ROLE.DN, ROLE.ERROLENAME
+from ROLE where ROLE.DN like ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>1</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:defaultScalarValue>%</design:defaultScalarValue>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RoleParameter" id="1890">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">DN</property>
+                    <property name="displayName">DN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ERROLENAME</property>
+                    <property name="displayName">ERROLENAME</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">DN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ERROLENAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">ITIM Database</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">DN</property>
+                    <property name="nativeName">DN</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ERROLENAME</property>
+                    <property name="nativeName">ERROLENAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ROLE.DN, ROLE.ERROLENAME
+from ROLE</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>DN</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>DN</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>DN</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ERROLENAME</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>255</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>ERROLENAME</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ERROLENAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>255</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <themes>
+        <theme name="defaultTheme" id="4"/>
+    </themes>
+    <page-setup>
+        <simple-master-page name="NewSimpleMasterPage" id="3"/>
+    </page-setup>
+</library>
